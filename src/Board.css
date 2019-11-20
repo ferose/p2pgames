@@ -1,0 +1,24 @@
+.board {
+    padding: 5px;
+    border: 1px solid black;
+    background: yellow;
+}
+
+.circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 1px solid black;
+}
+
+.blank {
+    background: white;
+}
+
+.blue {
+    background: #89aeb2;
+}
+
+.red {
+    background: #d2a3a9;
+}
