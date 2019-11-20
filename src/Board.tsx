@@ -15,6 +15,7 @@ export interface IBoardState {
    * CellType[Rows][Columns]
    */
   grid: CellType[][];
+  clicked: [number, number] | null;
 }
 
 function createEmptyBoard(rows: Number, columns: Number) {
@@ -41,17 +42,38 @@ export default class Board extends React.Component<IBoardProps, IBoardState> {
   public constructor(props: IBoardProps) {
     super(props);
     this.state = {
-      grid: createEmptyBoard(6,7)
+      grid: createEmptyBoard(6,7),
+      clicked: null
     }
+    this.handleClick = this.handleClick.bind(this);
   }
 
+  public handleClick(event: React.MouseEvent){
+    event.preventDefault();
+    const dataset = (event.currentTarget as any).dataset;
+    const col = Number(dataset.col);
+    const row = Number(dataset.row);
+    this.setState({
+      clicked: [row, col]
+    });
+  }
+
+  componentDidUpdate(prevProps: IBoardProps, prevState: IBoardState): void {
+    console.log(this.state.clicked);
+  }
+  
   public render() {
     return (
       <table className="board">
         <tbody>
         {this.state.grid.map((row, i) => {
           return <tr key={i}>{row.map((cell, j) => {
-            return <td key={j} className={[cell, "circle"].join(" ")}></td>
+            return <td 
+              key={j}
+              data-row={i}
+              data-col={j}
+              className={[cell, "circle"].join(" ")}
+              onClick={this.handleClick}></td>
           })}</tr>
         })}
         </tbody>
