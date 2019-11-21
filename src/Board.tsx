@@ -54,26 +54,36 @@ export default class Board extends React.Component<IBoardProps, IBoardState> {
     const col = Number(dataset.col);
     const row = Number(dataset.row);
     this.setState({
-      clicked: [row, col]
+      clicked: [row, col],
     });
   }
 
   componentDidUpdate(prevProps: IBoardProps, prevState: IBoardState): void {
     console.log(this.state.clicked);
   }
-  
+
   public render() {
     return (
-      <table className="board">
-        <tbody>
+      <table>
+        <thead className="top-row">
+          <tr>
+            {this.state.grid[0].map((cell, j) => {
+              const cellType = j === (this.state.clicked && this.state.clicked[1]) ? "red border-black" : "blank border-white";
+              return <th
+                key={j}
+                className={["circle", cellType].join(" ")}></th>
+            })}
+          </tr>
+        </thead>
+        <tbody className="board">
         {this.state.grid.map((row, i) => {
           return <tr key={i}>{row.map((cell, j) => {
-            return <td 
+            return <td
               key={j}
               data-row={i}
               data-col={j}
-              className={[cell, "circle"].join(" ")}
-              onClick={this.handleClick}></td>
+              className={["circle", "border-black", cell].join(" ")}
+              onMouseOver={this.handleClick}></td>
           })}</tr>
         })}
         </tbody>
