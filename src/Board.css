@@ -22,3 +22,4 @@
 .red { background: #d2a3a9; }
 .border-white { border: 1px solid white; }
 .border-black { border: 1px solid black; }
+.winner {filter: brightness(0.4);}

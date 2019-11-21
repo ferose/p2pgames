@@ -1,5 +1,6 @@
 import * as React from 'react';
 import './Board.css';
+import _ from 'lodash';
 
 export enum CellType {
   Blank = "blank",
@@ -7,15 +8,123 @@ export enum CellType {
   Blue = "blue",
 }
 
+/**
+ * CellType[Rows][Columns]
+ */
+type Grid = CellType[][];
+
+type Point = {row: number, col: number};
+
 export interface IBoardProps {
 }
 
 export interface IBoardState {
-  /**
-   * CellType[Rows][Columns]
-   */
-  grid: CellType[][];
-  clicked: [number, number] | null;
+  grid: Grid;
+  headerColumn: number | null;
+  currentPlayer: CellType;
+  winner: Point[] | null;
+}
+
+/**
+ * @param grid
+ * @param col
+ *
+ * @returns True if successfully inserted
+ */
+function insertPiece(grid: Grid, col: number, currentPlayer: CellType): boolean {
+  let row = grid.length-1;
+  while (row >= 0 && grid[row][col] !== CellType.Blank) {
+    row--;
+  }
+  if (row < 0) {
+    return false;
+  }
+  grid[row][col] = currentPlayer;
+  return true;
+}
+
+function findWinner(grid: Grid): Point[] | null {
+  const coordinates: Point[] = [];
+
+  // rows
+  for (let i = 0; i < grid.length; i++){
+    for (let j = 0; j < grid[i].length - 3; j++){
+      if (grid[i][j] !== CellType.Blank &&
+          grid[i][j] === grid[i][j+1] &&
+          grid[i][j] === grid[i][j+2] &&
+          grid[i][j] === grid[i][j+3]){
+        coordinates.push({row:i, col:j});
+        coordinates.push({row:i, col:j + 1});
+        coordinates.push({row:i, col:j + 2});
+        coordinates.push({row:i, col:j + 3});
+        j = j + 3;
+      }
+    }
+  }
+
+  // columns
+  for (let j = 0; j < grid[0].length; j++){
+    for (let i = 0; i < grid.length - 3; i++){
+      if (grid[i][j] !== CellType.Blank &&
+          grid[i][j] === grid[i + 1][j] &&
+          grid[i][j] === grid[i + 2][j] &&
+          grid[i][j] === grid[i + 3][j]){
+        coordinates.push({row:i, col:j});
+        coordinates.push({row:i + 1, col:j});
+        coordinates.push({row:i + 2, col:j});
+        coordinates.push({row:i + 3, col:j});
+        j = j + 3;
+      }
+    }
+  }
+
+  // top left to bottom right diagonals
+  for (let i = 0; i < grid.length - 3; i++){
+    for (let j = 0; j < grid[i].length - 3; j++){
+      if (grid[i][j] !== CellType.Blank &&
+          grid[i][j] === grid[i+1][j+1] &&
+          grid[i][j] === grid[i+2][j+2] &&
+          grid[i][j] === grid[i+3][j+3]){
+        coordinates.push({row:i, col:j});
+        coordinates.push({row:i + 1, col:j + 1});
+        coordinates.push({row:i + 2, col:j + 2});
+        coordinates.push({row:i + 3, col:j + 3});
+        i = i + 3;
+        j = j + 3;
+      }
+    }
+  }
+
+  // bottom left to top right diagonals
+  for (let i = grid.length - 1; i > 3; i--){
+    for (let j = 0; j < grid[i].length - 3; j++){
+      if (grid[i][j] !== CellType.Blank &&
+          grid[i][j] === grid[i-1][j+1] &&
+          grid[i][j] === grid[i-2][j+2] &&
+          grid[i][j] === grid[i-3][j+3]){
+        coordinates.push({row:i, col:j});
+        coordinates.push({row:i - 1, col:j + 1});
+        coordinates.push({row:i - 2, col:j + 2});
+        coordinates.push({row:i - 3, col:j + 3});
+        i = i - 3;
+        j = j + 3;
+      }
+    }
+  }
+
+  if (coordinates.length) {
+    return coordinates;
+  }
+  return null;
+}
+
+function inWinner(winner: Point[], point:Point): boolean {
+  for (const p of winner) {
+    if (p.row === point.row && p.col === point.col) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function createEmptyBoard(rows: Number, columns: Number) {
@@ -26,15 +135,6 @@ function createEmptyBoard(rows: Number, columns: Number) {
       board[i].push(CellType.Blank);
     }
   }
-  board[0][0] = CellType.Blue;
-  board[0][1] = CellType.Blue;
-  board[0][2] = CellType.Blue;
-  board[0][3] = CellType.Blue;
-
-  board[1][0] = CellType.Red;
-  board[1][1] = CellType.Red;
-  board[1][2] = CellType.Red;
-  board[1][3] = CellType.Red;
   return board;
 }
 
@@ -43,23 +143,40 @@ export default class Board extends React.Component<IBoardProps, IBoardState> {
     super(props);
     this.state = {
       grid: createEmptyBoard(6,7),
-      clicked: null
+      headerColumn: null,
+      currentPlayer: CellType.Blue,
+      winner: null,
     }
+    this.handleHover = this.handleHover.bind(this);
     this.handleClick = this.handleClick.bind(this);
+  }
+
+  public handleHover(event: React.MouseEvent){
+    event.preventDefault();
+    const dataset = (event.currentTarget as any).dataset;
+    const col = Number(dataset.col);
+    this.setState({
+      headerColumn: col,
+    });
   }
 
   public handleClick(event: React.MouseEvent){
     event.preventDefault();
+
+    if (findWinner(this.state.grid) !== null) {
+      return;
+    }
+
     const dataset = (event.currentTarget as any).dataset;
     const col = Number(dataset.col);
-    const row = Number(dataset.row);
-    this.setState({
-      clicked: [row, col],
-    });
-  }
-
-  componentDidUpdate(prevProps: IBoardProps, prevState: IBoardState): void {
-    console.log(this.state.clicked);
+    const newGrid = _.cloneDeep(this.state.grid);
+    if (insertPiece(newGrid, col, this.state.currentPlayer)) {
+      this.setState({
+        winner: findWinner(newGrid),
+        grid: newGrid,
+        currentPlayer: this.state.currentPlayer === CellType.Red ? CellType.Blue : CellType.Red,
+      });
+    }
   }
 
   public render() {
@@ -68,7 +185,7 @@ export default class Board extends React.Component<IBoardProps, IBoardState> {
         <thead className="top-row">
           <tr>
             {this.state.grid[0].map((cell, j) => {
-              const cellType = j === (this.state.clicked && this.state.clicked[1]) ? "red border-black" : "blank border-white";
+              const cellType = j === this.state.headerColumn ? `${this.state.currentPlayer} border-black` : `blank border-white`;
               return <th
                 key={j}
                 className={["circle", cellType].join(" ")}></th>
@@ -78,12 +195,18 @@ export default class Board extends React.Component<IBoardProps, IBoardState> {
         <tbody className="board">
         {this.state.grid.map((row, i) => {
           return <tr key={i}>{row.map((cell, j) => {
+            const classes = ["circle", "border-black", cell];
+            if (this.state.winner && inWinner(this.state.winner, {row: i, col: j})) {
+              classes.push("winner");
+            }
             return <td
               key={j}
               data-row={i}
               data-col={j}
-              className={["circle", "border-black", cell].join(" ")}
-              onMouseOver={this.handleClick}></td>
+              className={classes.join(" ")}
+              onMouseOver={this.handleHover}
+              onClick={this.handleClick}
+              ></td>
           })}</tr>
         })}
         </tbody>
