@@ -138,25 +138,34 @@ function createEmptyBoard(rows: Number, columns: Number) {
   return board;
 }
 
+const defaultState = {
+  grid: createEmptyBoard(6,7),
+  headerColumn: null,
+  currentPlayer: CellType.Blue,
+  winner: null,
+};
+
 export default class Board extends React.Component<IBoardProps, IBoardState> {
   public constructor(props: IBoardProps) {
     super(props);
-    this.state = {
-      grid: createEmptyBoard(6,7),
-      headerColumn: null,
-      currentPlayer: CellType.Blue,
-      winner: null,
-    }
-    this.handleHover = this.handleHover.bind(this);
+    this.state = defaultState;
+    this.handleMouseOver = this.handleMouseOver.bind(this);
+    this.handleMouseLeave = this.handleMouseLeave.bind(this);
     this.handleClick = this.handleClick.bind(this);
+    this.resetGame = this.resetGame.bind(this);
   }
 
-  public handleHover(event: React.MouseEvent){
-    event.preventDefault();
+  public handleMouseOver(event: React.MouseEvent){
     const dataset = (event.currentTarget as any).dataset;
     const col = Number(dataset.col);
     this.setState({
       headerColumn: col,
+    });
+  }
+
+  public handleMouseLeave(event: React.MouseEvent){
+    this.setState({
+      headerColumn: null,
     });
   }
 
@@ -179,38 +188,57 @@ export default class Board extends React.Component<IBoardProps, IBoardState> {
     }
   }
 
+  private resetGame() {
+    this.setState(defaultState);
+  }
+
+  private getStatus() {
+    if (this.state.winner) {
+      const winningPoint: Point = this.state.winner[0];
+      const winningPlayer = this.state.grid[winningPoint.row][winningPoint.col];
+      return `${winningPlayer} wins`;
+    }
+    return `${this.state.currentPlayer}'s turn`;
+  }
+
   public render() {
     return (
-      <table>
-        <thead className="top-row">
-          <tr>
-            {this.state.grid[0].map((cell, j) => {
-              const cellType = j === this.state.headerColumn ? `${this.state.currentPlayer} border-black` : `blank border-white`;
-              return <th
+      <div>
+        <div className="top-bar">
+          <h2>{this.getStatus()}</h2>
+          <button onClick={this.resetGame}>Reset</button>
+        </div>
+        <table>
+          <thead className="top-row">
+            <tr>
+              {this.state.grid[0].map((cell, j) => {
+                const cellType = j === this.state.headerColumn ? `${this.state.currentPlayer} border-black` : `blank border-white`;
+                return <th
+                  key={j}
+                  className={["circle", cellType].join(" ")}></th>
+              })}
+            </tr>
+          </thead>
+          <tbody className="board" onMouseLeave={this.handleMouseLeave}>
+          {this.state.grid.map((row, i) => {
+            return <tr key={i}>{row.map((cell, j) => {
+              const classes = ["circle", "border-black", cell];
+              if (this.state.winner && inWinner(this.state.winner, {row: i, col: j})) {
+                classes.push("winner");
+              }
+              return <td
                 key={j}
-                className={["circle", cellType].join(" ")}></th>
-            })}
-          </tr>
-        </thead>
-        <tbody className="board">
-        {this.state.grid.map((row, i) => {
-          return <tr key={i}>{row.map((cell, j) => {
-            const classes = ["circle", "border-black", cell];
-            if (this.state.winner && inWinner(this.state.winner, {row: i, col: j})) {
-              classes.push("winner");
-            }
-            return <td
-              key={j}
-              data-row={i}
-              data-col={j}
-              className={classes.join(" ")}
-              onMouseOver={this.handleHover}
-              onClick={this.handleClick}
-              ></td>
-          })}</tr>
-        })}
-        </tbody>
-      </table>
+                data-row={i}
+                data-col={j}
+                className={classes.join(" ")}
+                onMouseOver={this.handleMouseOver}
+                onClick={this.handleClick}
+                ></td>
+            })}</tr>
+          })}
+          </tbody>
+        </table>
+      </div>
     );
   }
 }
