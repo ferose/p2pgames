@@ -208,7 +208,7 @@ export default class Board extends React.Component<IBoardProps, IBoardState> {
           <h2>{this.getStatus()}</h2>
           <button onClick={this.resetGame}>Reset</button>
         </div>
-        <table>
+        <table className="outer">
           <thead className="top-row">
             <tr>
               {this.state.grid[0].map((cell, j) => {
