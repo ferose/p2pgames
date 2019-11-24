@@ -36,29 +36,43 @@ export default class GameCanvas extends React.Component<any,any> {
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        const boardPadding = 10;
-        const cellSpacing = 5;
-        let cellSize = (canvas.width-boardPadding*2-cellSpacing*(NUM_COLS-1))/NUM_COLS;
-        let width = canvas.width;
+        const margin = 10;
+        const boardPadding = 20;
+        const cellSpacing = 10;
+        let width = canvas.width-margin*2;
+        let cellSize = (width-boardPadding*2-cellSpacing*(NUM_COLS-1))/NUM_COLS;
         let height = boardPadding*2+cellSize*NUM_ROWS+cellSpacing*(NUM_ROWS-1);
 
-        if (height > canvas.height) {
-            cellSize = (canvas.height-boardPadding*2-cellSpacing*(NUM_ROWS-1))/NUM_ROWS;
+        if (height > canvas.height-margin*2) {
+            height = canvas.height-margin*2;
+            cellSize = (height-boardPadding*2-cellSpacing*(NUM_ROWS-1))/NUM_ROWS;
             width = boardPadding*2+cellSize*NUM_COLS+cellSpacing*(NUM_COLS-1);
-            height = canvas.height;
         }
 
         ctx.fillStyle = "yellow";
         ctx.fillRect((canvas.width-width)/2, (canvas.height-height)/2, width, height);
+        ctx.strokeRect((canvas.width-width)/2, (canvas.height-height)/2, width, height);
 
         ctx.fillStyle = "white";
         for (let col = 0; col < NUM_COLS; col++) {
             for (let row = 0; row < NUM_ROWS; row++) {
-                ctx.fillRect(
-                    (canvas.width-width)/2+boardPadding+col*(cellSize+cellSpacing),
-                    (canvas.height-height)/2+boardPadding+row*(cellSize+cellSpacing),
-                    cellSize,
-                    cellSize);
+
+                ctx.beginPath();
+                ctx.arc(
+                    (canvas.width-width)/2+boardPadding+col*(cellSize+cellSpacing)+cellSize/2,
+                    (canvas.height-height)/2+boardPadding+row*(cellSize+cellSpacing)+cellSize/2,
+                    cellSize/2,
+                    0,
+                    2 * Math.PI
+                );
+                ctx.fill();
+                ctx.stroke();
+
+                // ctx.fillRect(
+                //     (canvas.width-width)/2+boardPadding+col*(cellSize+cellSpacing),
+                //     (canvas.height-height)/2+boardPadding+row*(cellSize+cellSpacing),
+                //     cellSize,
+                //     cellSize);
             }
         }
 
