@@ -74,6 +74,21 @@ export default class GameCanvas extends React.Component<any,any> {
         }
 
         if (this.cursor) {
+            ctx.beginPath();
+            let col = Math.round((this.cursor.x-(canvas.width-width)/2-boardPadding-margin-cellSize/2+cellSpacing)/(cellSize+cellSpacing));
+            if (col >= 0 && col <= NUM_COLS-1){
+                ctx.arc(
+                    (canvas.width-width)/2+boardPadding+col*(cellSize+cellSpacing)+cellSize/2,
+                    (canvas.height-height)/2+cellSize/2,
+                    cellSize/2,
+                    0,
+                    2 * Math.PI
+                );
+                ctx.fillStyle = "#d2a3a9";
+                ctx.fill();
+                ctx.stroke();
+            }
+
             ctx.fillStyle = "red";
             ctx.fillRect(this.cursor.x-5, this.cursor.y-5, 10, 10);
         }
