@@ -53,26 +53,6 @@ export default class GameCanvas extends React.Component<any,any> {
             return;
         }
 
-        ctx.fillStyle = "yellow";
-        ctx.fillRect((canvas.width-width)/2, (canvas.height-height)/2+cellSize+cellSpacing, width, height-cellSize-cellSpacing);
-        ctx.strokeRect((canvas.width-width)/2, (canvas.height-height)/2+cellSize+cellSpacing, width, height-cellSize-cellSpacing);
-
-        ctx.fillStyle = "white";
-        for (let col = 0; col < NUM_COLS; col++) {
-            for (let row = 1; row < NUM_ROWS+1; row++) {
-                ctx.beginPath();
-                ctx.arc(
-                    (canvas.width-width)/2+boardPadding+col*(cellSize+cellSpacing)+cellSize/2,
-                    (canvas.height-height)/2+boardPadding+row*(cellSize+cellSpacing)+cellSize/2,
-                    cellSize/2,
-                    0,
-                    2 * Math.PI
-                );
-                ctx.fill();
-                ctx.stroke();
-            }
-        }
-
         if (this.cursor) {
             ctx.beginPath();
             let col = Math.round((this.cursor.x-(canvas.width-width)/2-boardPadding-margin-cellSize/2+cellSpacing)/(cellSize+cellSpacing));
@@ -91,6 +71,29 @@ export default class GameCanvas extends React.Component<any,any> {
 
             ctx.fillStyle = "red";
             ctx.fillRect(this.cursor.x-5, this.cursor.y-5, 10, 10);
+        }
+
+        ctx.fillStyle = "yellow";
+        ctx.fillRect((canvas.width-width)/2, (canvas.height-height)/2+cellSize+cellSpacing, width, height-cellSize-cellSpacing);
+        ctx.strokeRect((canvas.width-width)/2, (canvas.height-height)/2+cellSize+cellSpacing, width, height-cellSize-cellSpacing);
+
+        ctx.fillStyle = "white";
+        for (let col = 0; col < NUM_COLS; col++) {
+            for (let row = 1; row < NUM_ROWS+1; row++) {
+                ctx.beginPath();
+                ctx.arc(
+                    (canvas.width-width)/2+boardPadding+col*(cellSize+cellSpacing)+cellSize/2,
+                    (canvas.height-height)/2+boardPadding+row*(cellSize+cellSpacing)+cellSize/2,
+                    cellSize/2,
+                    0,
+                    2 * Math.PI
+                );
+                ctx.fill();
+                ctx.stroke();
+
+                // MDN HTML Canvas Compositing
+                // https://codepen.io/ferose-the-typescripter/pen/VwwOYqx?editors=0010
+            }
         }
     }
 
