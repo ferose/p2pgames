@@ -41,22 +41,25 @@ export default class GameCanvas extends React.Component<any,any> {
         const cellSpacing = 10;
         let width = canvas.width-margin*2;
         let cellSize = (width-boardPadding*2-cellSpacing*(NUM_COLS-1))/NUM_COLS;
-        let height = boardPadding*2+cellSize*NUM_ROWS+cellSpacing*(NUM_ROWS-1);
+        let height = boardPadding*2+cellSize*(NUM_ROWS+1)+cellSpacing*(NUM_ROWS);
 
         if (height > canvas.height-margin*2) {
             height = canvas.height-margin*2;
-            cellSize = (height-boardPadding*2-cellSpacing*(NUM_ROWS-1))/NUM_ROWS;
+            cellSize = (height-boardPadding*2-cellSpacing*(NUM_ROWS))/(NUM_ROWS+1);
             width = boardPadding*2+cellSize*NUM_COLS+cellSpacing*(NUM_COLS-1);
         }
 
+        if (cellSize <= 0) {
+            return;
+        }
+
         ctx.fillStyle = "yellow";
-        ctx.fillRect((canvas.width-width)/2, (canvas.height-height)/2, width, height);
-        ctx.strokeRect((canvas.width-width)/2, (canvas.height-height)/2, width, height);
+        ctx.fillRect((canvas.width-width)/2, (canvas.height-height)/2+cellSize+cellSpacing, width, height-cellSize-cellSpacing);
+        ctx.strokeRect((canvas.width-width)/2, (canvas.height-height)/2+cellSize+cellSpacing, width, height-cellSize-cellSpacing);
 
         ctx.fillStyle = "white";
         for (let col = 0; col < NUM_COLS; col++) {
-            for (let row = 0; row < NUM_ROWS; row++) {
-
+            for (let row = 1; row < NUM_ROWS+1; row++) {
                 ctx.beginPath();
                 ctx.arc(
                     (canvas.width-width)/2+boardPadding+col*(cellSize+cellSpacing)+cellSize/2,
@@ -67,12 +70,6 @@ export default class GameCanvas extends React.Component<any,any> {
                 );
                 ctx.fill();
                 ctx.stroke();
-
-                // ctx.fillRect(
-                //     (canvas.width-width)/2+boardPadding+col*(cellSize+cellSpacing),
-                //     (canvas.height-height)/2+boardPadding+row*(cellSize+cellSpacing),
-                //     cellSize,
-                //     cellSize);
             }
         }
 
