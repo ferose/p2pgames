@@ -18,6 +18,7 @@ export default class GameCanvas extends React.Component<any,any> {
 
     private _cursor: Cursor | null = null;
     private boardCanvas: HTMLCanvasElement | null = null;
+    private intervalID?: number;
 
     public constructor(props: any) {
         super(props);
@@ -129,6 +130,7 @@ export default class GameCanvas extends React.Component<any,any> {
      */
     componentDidMount() {
         this.updateDimensions();
+        this.intervalID = window.setInterval(this.updateDimensions, 1000);
         window.addEventListener("resize", this.updateDimensions);
         window.requestAnimationFrame(this.draw);
     }
@@ -138,6 +140,7 @@ export default class GameCanvas extends React.Component<any,any> {
      */
     componentWillUnmount() {
         window.removeEventListener("resize", this.updateDimensions);
+        window.clearInterval(this.intervalID);
     }
 
     private set cursor(c:Cursor|null) {
@@ -179,8 +182,8 @@ export default class GameCanvas extends React.Component<any,any> {
         return (
             <canvas
                 ref={this.canvasRef}
-                width={window.innerWidth}
-                height={window.innerHeight}
+                width={1}
+                height={1}
                 onMouseMove={this.onMouseMove}
                 onTouchMove={this.onTouchMove}
                 onTouchStart={this.onTouchMove}
