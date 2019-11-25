@@ -1,4 +1,5 @@
 import * as React from 'react';
+import './GameCanvas.css';
 
 type Cursor = {
     x: number,
@@ -34,8 +35,6 @@ export default class GameCanvas extends React.Component<any,any> {
             return;
         }
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
         const margin = 10;
         const boardPadding = 20;
         const cellSpacing = 10;
@@ -52,6 +51,10 @@ export default class GameCanvas extends React.Component<any,any> {
         if (cellSize <= 0) {
             return;
         }
+
+        ctx.save();
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         if (this.cursor) {
             ctx.beginPath();
@@ -95,14 +98,20 @@ export default class GameCanvas extends React.Component<any,any> {
                 // https://codepen.io/ferose-the-typescripter/pen/VwwOYqx?editors=0010
             }
         }
+
+        ctx.restore();
     }
 
     public updateDimensions = () => {
         if (!this.canvas) {
             return;
         }
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+        const dpr = window.devicePixelRatio || 1;
+        this.canvas.width = window.innerWidth * dpr;
+        this.canvas.height = window.innerHeight * dpr;
+
+        this.canvas.style.width = window.innerWidth + 'px';
+        this.canvas.style.height = window.innerHeight + 'px';
     }
 
       /**
@@ -130,9 +139,10 @@ export default class GameCanvas extends React.Component<any,any> {
     }
 
     private onMouseMove = (e: React.MouseEvent) => {
+        const dpr = window.devicePixelRatio || 1;
         this.cursor = {
-            x: e.clientX,
-            y: e.clientY,
+            x: e.clientX*dpr,
+            y: e.clientY*dpr,
         }
     }
 
@@ -147,10 +157,11 @@ export default class GameCanvas extends React.Component<any,any> {
 
     private onTouchMove = (e: React.TouchEvent) => {
         e.preventDefault();
+        const dpr = window.devicePixelRatio || 1;
         const touch = e.touches[0];
         this.cursor = {
-            x: touch.clientX,
-            y: touch.clientY,
+            x: touch.clientX*dpr,
+            y: touch.clientY*dpr,
         };
     }
 
