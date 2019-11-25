@@ -1,18 +1,23 @@
 import * as React from 'react';
 import './GameCanvas.css';
+import { createBoardCanvas } from './canvas/BoardCanvas';
 
 type Cursor = {
     x: number,
     y: number,
 }
 
-const NUM_ROWS = 6;
-const NUM_COLS = 7;
+const numRows = 6;
+const numCols = 7;
+const boardPadding = 20;
+const circleSpacing = 10;
+const margin = 10;
 
 export default class GameCanvas extends React.Component<any,any> {
     private canvasRef: React.RefObject<HTMLCanvasElement>;
 
     private _cursor: Cursor | null = null;
+    private boardCanvas: HTMLCanvasElement | null = null;
 
     public constructor(props: any) {
         super(props);
@@ -21,6 +26,23 @@ export default class GameCanvas extends React.Component<any,any> {
 
     private get canvas() {
         return this.canvasRef.current;
+    }
+
+    private getBoardDimensions() {
+        const canvas = this.canvas;
+        if (!canvas) {
+            return null;
+        }
+        let width = canvas.width-margin*2;
+        let circleSize = (width-boardPadding*2-circleSpacing*(numCols-1))/numCols;
+        let height = boardPadding*2+circleSize*(numRows+1)+circleSpacing*(numRows);
+
+        if (height > canvas.height-margin*2) {
+            height = canvas.height-margin*2;
+            circleSize = (height-boardPadding*2-circleSpacing*(numRows))/(numRows+1);
+            width = boardPadding*2+circleSize*numCols+circleSpacing*(numCols-1);
+        }
+        return {width, height, circleSize};
     }
 
     private draw = () => {
@@ -35,22 +57,15 @@ export default class GameCanvas extends React.Component<any,any> {
             return;
         }
 
-        const margin = 10;
-        const boardPadding = 20;
-        const cellSpacing = 10;
-        let width = canvas.width-margin*2;
-        let cellSize = (width-boardPadding*2-cellSpacing*(NUM_COLS-1))/NUM_COLS;
-        let height = boardPadding*2+cellSize*(NUM_ROWS+1)+cellSpacing*(NUM_ROWS);
+        const dimensions = this.getBoardDimensions();
 
-        if (height > canvas.height-margin*2) {
-            height = canvas.height-margin*2;
-            cellSize = (height-boardPadding*2-cellSpacing*(NUM_ROWS))/(NUM_ROWS+1);
-            width = boardPadding*2+cellSize*NUM_COLS+cellSpacing*(NUM_COLS-1);
-        }
-
-        if (cellSize <= 0) {
+        if (!dimensions || dimensions.circleSize <= 0) {
             return;
         }
+
+        const width = dimensions.width;
+        const height = dimensions.height;
+        const circleSize = dimensions.circleSize;
 
         ctx.save();
 
@@ -58,12 +73,12 @@ export default class GameCanvas extends React.Component<any,any> {
 
         if (this.cursor) {
             ctx.beginPath();
-            let col = Math.round((this.cursor.x-(canvas.width-width)/2-boardPadding-margin-cellSize/2+cellSpacing)/(cellSize+cellSpacing));
-            if (col >= 0 && col <= NUM_COLS-1){
+            let col = Math.round((this.cursor.x-(canvas.width-width)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing));
+            if (col >= 0 && col <= numCols-1){
                 ctx.arc(
-                    (canvas.width-width)/2+boardPadding+col*(cellSize+cellSpacing)+cellSize/2,
-                    (canvas.height-height)/2+cellSize/2,
-                    cellSize/2,
+                    (canvas.width-width)/2+boardPadding+col*(circleSize+circleSpacing)+circleSize/2,
+                    (canvas.height-height)/2+circleSize/2,
+                    circleSize/2,
                     0,
                     2 * Math.PI
                 );
@@ -76,42 +91,37 @@ export default class GameCanvas extends React.Component<any,any> {
             ctx.fillRect(this.cursor.x-5, this.cursor.y-5, 10, 10);
         }
 
-        ctx.fillStyle = "yellow";
-        ctx.fillRect((canvas.width-width)/2, (canvas.height-height)/2+cellSize+cellSpacing, width, height-cellSize-cellSpacing);
-        ctx.strokeRect((canvas.width-width)/2, (canvas.height-height)/2+cellSize+cellSpacing, width, height-cellSize-cellSpacing);
-
-        ctx.fillStyle = "white";
-        for (let col = 0; col < NUM_COLS; col++) {
-            for (let row = 1; row < NUM_ROWS+1; row++) {
-                ctx.beginPath();
-                ctx.arc(
-                    (canvas.width-width)/2+boardPadding+col*(cellSize+cellSpacing)+cellSize/2,
-                    (canvas.height-height)/2+boardPadding+row*(cellSize+cellSpacing)+cellSize/2,
-                    cellSize/2,
-                    0,
-                    2 * Math.PI
-                );
-                ctx.fill();
-                ctx.stroke();
-
-                // MDN HTML Canvas Compositing
-                // https://codepen.io/ferose-the-typescripter/pen/VwwOYqx?editors=0010
-            }
+        if (this.boardCanvas) {
+            ctx.drawImage(
+                this.boardCanvas,
+                (canvas.width-this.boardCanvas.width)/2,
+                (canvas.height-this.boardCanvas.height)/2 + (circleSize + circleSpacing)/2
+            );
         }
 
         ctx.restore();
     }
 
     public updateDimensions = () => {
-        if (!this.canvas) {
-            return;
-        }
+        if (!this.canvas) return;
         const dpr = window.devicePixelRatio || 1;
+        if (this.canvas.width === window.innerWidth*dpr && this.canvas.height === window.innerHeight*dpr) return;
         this.canvas.width = window.innerWidth * dpr;
         this.canvas.height = window.innerHeight * dpr;
 
         this.canvas.style.width = window.innerWidth + 'px';
         this.canvas.style.height = window.innerHeight + 'px';
+
+        const dimensions = this.getBoardDimensions();
+        if (!dimensions) return;
+        this.boardCanvas = createBoardCanvas({
+            numCols,
+            numRows,
+            boardPadding,
+            circleSpacing,
+            maxWidth: dimensions.width,
+            maxHeight: dimensions.height,
+        });
     }
 
       /**
