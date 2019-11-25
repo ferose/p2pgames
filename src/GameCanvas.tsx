@@ -18,7 +18,6 @@ export default class GameCanvas extends React.Component<any,any> {
 
     private _cursor: Cursor | null = null;
     private boardCanvas: HTMLCanvasElement | null = null;
-    private intervalID?: number;
 
     public constructor(props: any) {
         super(props);
@@ -64,6 +63,8 @@ export default class GameCanvas extends React.Component<any,any> {
             return;
         }
 
+        this.updateDimensions();
+
         const width = dimensions.width;
         const height = dimensions.height;
         const circleSize = dimensions.circleSize;
@@ -106,9 +107,9 @@ export default class GameCanvas extends React.Component<any,any> {
     public updateDimensions = () => {
         if (!this.canvas) return;
         const dpr = window.devicePixelRatio || 1;
-        if (this.canvas.width === window.innerWidth*dpr && this.canvas.height === window.innerHeight*dpr) return;
-        this.canvas.width = window.innerWidth * dpr;
-        this.canvas.height = window.innerHeight * dpr;
+        if (this.canvas.width === Math.round(window.innerWidth*dpr) && this.canvas.height === Math.round(window.innerHeight*dpr)) return;
+        this.canvas.width = Math.round(window.innerWidth*dpr);
+        this.canvas.height = Math.round(window.innerHeight*dpr);
 
         this.canvas.style.width = window.innerWidth + 'px';
         this.canvas.style.height = window.innerHeight + 'px';
@@ -130,7 +131,6 @@ export default class GameCanvas extends React.Component<any,any> {
      */
     componentDidMount() {
         this.updateDimensions();
-        this.intervalID = window.setInterval(this.updateDimensions, 1000);
         window.addEventListener("resize", this.updateDimensions);
         window.requestAnimationFrame(this.draw);
     }
@@ -140,7 +140,6 @@ export default class GameCanvas extends React.Component<any,any> {
      */
     componentWillUnmount() {
         window.removeEventListener("resize", this.updateDimensions);
-        window.clearInterval(this.intervalID);
     }
 
     private set cursor(c:Cursor|null) {
