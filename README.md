@@ -1,4 +1,4 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Play demo on [github pages](https://ferose.github.io/connect4-react/).
 
 ## Available Scripts
 
