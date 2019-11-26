@@ -22,7 +22,6 @@ export default class GameCanvas extends React.Component<any,any> {
     private _cursor: Cursor | null = null;
     private boardCanvas: HTMLCanvasElement | null = null;
     private gameState = new GameState();
-    private animationTween: TWEEN.Tween | null = null;
     private animationTweenDestination = {} as Circle;
 
     public constructor(props: any) {
@@ -82,13 +81,21 @@ export default class GameCanvas extends React.Component<any,any> {
             ctx.fillRect(this.cursor.x-5, this.cursor.y-5, 10, 10);
         }
 
+        if (this.boardCanvas) {
+            ctx.drawImage(
+                this.boardCanvas,
+                (canvas.width-this.boardCanvas.width)/2,
+                (canvas.height-this.boardCanvas.height)/2 + (circleSize + circleSpacing)/2
+            );
+        }
+
         if (this.gameState.animatedCircle.alpha > 0) {
             ctx.beginPath();
             let x = this.gameState.animatedCircle.x;
             ctx.arc(
                 (canvas.width-width)/2+boardPadding+x*(circleSize+circleSpacing)+circleSize/2,
                 (canvas.height-height)/2+circleSize/2,
-                circleSize/2,
+                (circleSize/2)*this.gameState.animatedCircle.scale,
                 0,
                 2 * Math.PI
             );
@@ -97,14 +104,6 @@ export default class GameCanvas extends React.Component<any,any> {
             ctx.fill();
             ctx.stroke();
             ctx.globalAlpha = 1;
-        }
-
-        if (this.boardCanvas) {
-            ctx.drawImage(
-                this.boardCanvas,
-                (canvas.width-this.boardCanvas.width)/2,
-                (canvas.height-this.boardCanvas.height)/2 + (circleSize + circleSpacing)/2
-            );
         }
 
         ctx.restore();
@@ -161,20 +160,22 @@ export default class GameCanvas extends React.Component<any,any> {
                     this.gameState.animatedCircle.x = x;
                 }
                 if (this.animationTweenDestination.x !== x) {
-                    this.animationTweenDestination = {x, alpha: 1} as Circle;
-                    this.animationTween = new TWEEN.Tween(this.gameState.animatedCircle)
+                    this.animationTweenDestination = {x, alpha: 1, scale: 1} as Circle;
+                    new TWEEN.Tween(this.gameState.animatedCircle)
                         .to(this.animationTweenDestination, 250)
                         .easing(TWEEN.Easing.Quadratic.Out)
-                        .start()
+                        .start();
                 }
                 return;
             }
         }
-        this.animationTweenDestination = {alpha: 0} as Circle;
-        this.animationTween = new TWEEN.Tween(this.gameState.animatedCircle)
+        if (this.animationTweenDestination.alpha !== 0) {
+            this.animationTweenDestination = {alpha: 0, scale: 1.2} as Circle;
+            new TWEEN.Tween(this.gameState.animatedCircle)
             .to(this.animationTweenDestination, 250)
             .easing(TWEEN.Easing.Quadratic.Out)
-            .start()
+            .start();
+        }
     }
 
     private get cursor() {
