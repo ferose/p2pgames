@@ -2,7 +2,6 @@ import * as React from 'react';
 import './GameCanvas.css';
 import { createBoardCanvas } from './canvas/BoardCanvas';
 import { GameState, Circle } from './model/GameState';
-import { disableBodyScroll } from 'body-scroll-lock';
 import TWEEN from '@tweenjs/tween.js';
 
 type Cursor = {
@@ -133,12 +132,13 @@ export default class GameCanvas extends React.Component<any,any> {
      * Add event listener
      */
     componentDidMount() {
-        if (this.canvas) {
-            disableBodyScroll(this.canvas);
-        }
         this.updateDimensions();
         window.addEventListener("resize", this.updateDimensions);
         window.requestAnimationFrame(this.draw);
+
+        document.addEventListener('gesturestart', function (e) {
+            e.preventDefault();
+        });
     }
 
     /**
