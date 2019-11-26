@@ -30,14 +30,18 @@ export function createBoardCanvas(params: {
         width = boardPadding*2+circleSize*params.numCols+circleSpacing*(params.numCols-1);
     }
 
+
     if (circleSize <= 0) return null;
 
-    canvas.width = width+1;
-    canvas.height = height+1;
+    width = Math.round(width);
+    height = Math.round(height);
+
+    canvas.width = width;
+    canvas.height = height;
 
     ctx.fillStyle = "yellow";
     ctx.fillRect(0, 0, width, height);
-    ctx.strokeRect(0, 0, width, height);
+    ctx.strokeRect(0, 0, width-1, height-1);
 
     ctx.globalCompositeOperation = "destination-out";
 
