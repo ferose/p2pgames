@@ -1,8 +1,9 @@
 import * as React from 'react';
 import './GameCanvas.css';
 import { createBoardCanvas } from './canvas/BoardCanvas';
-import { GameState } from './model/GameState';
+import { GameState, Circle } from './model/GameState';
 import { disableBodyScroll } from 'body-scroll-lock';
+import TWEEN from '@tweenjs/tween.js';
 
 type Cursor = {
     x: number,
@@ -21,6 +22,8 @@ export default class GameCanvas extends React.Component<any,any> {
     private _cursor: Cursor | null = null;
     private boardCanvas: HTMLCanvasElement | null = null;
     private gameState = new GameState();
+    private animationTween: TWEEN.Tween | null = null;
+    private animationTweenDestination = {} as Circle;
 
     public constructor(props: any) {
         super(props);
@@ -28,14 +31,11 @@ export default class GameCanvas extends React.Component<any,any> {
     }
 
     private get canvas() {
-        return this.canvasRef.current;
+        return this.canvasRef.current as HTMLCanvasElement;
     }
 
     private getBoardDimensions() {
         const canvas = this.canvas;
-        if (!canvas) {
-            return null;
-        }
         let width = canvas.width-margin*2;
         let circleSize = (width-boardPadding*2-circleSpacing*(numCols-1))/numCols;
         let height = boardPadding*2+circleSize*(numRows+1)+circleSpacing*(numRows);
@@ -48,11 +48,12 @@ export default class GameCanvas extends React.Component<any,any> {
         return {width, height, circleSize};
     }
 
-    private draw = () => {
+    private draw = (time:number) => {
         window.requestAnimationFrame(this.draw);
+        TWEEN.update(time);
 
         const canvas = this.canvas;
-        if (!canvas || !canvas.getContext) {
+        if (!canvas.getContext) {
             return;
         }
         const ctx = canvas.getContext('2d');
@@ -62,7 +63,7 @@ export default class GameCanvas extends React.Component<any,any> {
 
         const dimensions = this.getBoardDimensions();
 
-        if (!dimensions || dimensions.circleSize <= 0) {
+        if (dimensions.circleSize <= 0) {
             return;
         }
 
@@ -77,23 +78,25 @@ export default class GameCanvas extends React.Component<any,any> {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         if (this.cursor) {
-            ctx.beginPath();
-            let col = Math.round((this.cursor.x-(canvas.width-width)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing));
-            if (col >= 0 && col <= numCols-1){
-                ctx.arc(
-                    (canvas.width-width)/2+boardPadding+col*(circleSize+circleSpacing)+circleSize/2,
-                    (canvas.height-height)/2+circleSize/2,
-                    circleSize/2,
-                    0,
-                    2 * Math.PI
-                );
-                ctx.fillStyle = "#d2a3a9";
-                ctx.fill();
-                ctx.stroke();
-            }
-
             ctx.fillStyle = "red";
             ctx.fillRect(this.cursor.x-5, this.cursor.y-5, 10, 10);
+        }
+
+        if (this.gameState.animatedCircle.alpha > 0) {
+            ctx.beginPath();
+            let x = this.gameState.animatedCircle.x;
+            ctx.arc(
+                (canvas.width-width)/2+boardPadding+x*(circleSize+circleSpacing)+circleSize/2,
+                (canvas.height-height)/2+circleSize/2,
+                circleSize/2,
+                0,
+                2 * Math.PI
+            );
+            ctx.globalAlpha = this.gameState.animatedCircle.alpha;
+            ctx.fillStyle = "#d2a3a9";
+            ctx.fill();
+            ctx.stroke();
+            ctx.globalAlpha = 1;
         }
 
         if (this.boardCanvas) {
@@ -108,7 +111,6 @@ export default class GameCanvas extends React.Component<any,any> {
     }
 
     public updateDimensions = () => {
-        if (!this.canvas) return;
         const dpr = window.devicePixelRatio || 1;
         if (this.canvas.width === Math.round(window.innerWidth*dpr) && this.canvas.height === Math.round(window.innerHeight*dpr)) return;
         this.canvas.width = Math.round(window.innerWidth*dpr);
@@ -118,7 +120,6 @@ export default class GameCanvas extends React.Component<any,any> {
         this.canvas.style.height = window.innerHeight + 'px';
 
         const dimensions = this.getBoardDimensions();
-        if (!dimensions) return;
         this.boardCanvas = createBoardCanvas({
             numCols,
             numRows,
@@ -150,6 +151,30 @@ export default class GameCanvas extends React.Component<any,any> {
 
     private set cursor(c:Cursor|null) {
         this._cursor = c;
+        if (c) {
+            const canvas = this.canvas;
+            const {width, circleSize} = this.getBoardDimensions();
+            let x = Math.round((c.x-(canvas.width-width)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing));
+
+            if (x >= 0 && x < numCols) {
+                if (this.gameState.animatedCircle.alpha === 0) {
+                    this.gameState.animatedCircle.x = x;
+                }
+                if (this.animationTweenDestination.x !== x) {
+                    this.animationTweenDestination = {x, alpha: 1} as Circle;
+                    this.animationTween = new TWEEN.Tween(this.gameState.animatedCircle)
+                        .to(this.animationTweenDestination, 250)
+                        .easing(TWEEN.Easing.Quadratic.Out)
+                        .start()
+                }
+                return;
+            }
+        }
+        this.animationTweenDestination = {alpha: 0} as Circle;
+        this.animationTween = new TWEEN.Tween(this.gameState.animatedCircle)
+            .to(this.animationTweenDestination, 250)
+            .easing(TWEEN.Easing.Quadratic.Out)
+            .start()
     }
 
     private get cursor() {
