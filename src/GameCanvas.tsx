@@ -212,6 +212,7 @@ export default class GameCanvas extends React.Component<any,any> {
         const c = this.cursor;
         if (!c) return;
         if (this.gameState.isAnimating) return;
+        if (this.animationTweenDestination.alpha === 0) return;
         const canvas = this.canvas;
         const {width, circleSize} = this.getBoardDimensions();
         let x = Math.round((c.x-(canvas.width-width)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing));
