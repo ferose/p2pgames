@@ -220,20 +220,21 @@ export default class GameCanvas extends React.Component<any,any> {
         const y = this.gameState.lastMove.y;
         const distance = Math.abs(y-this.gameState.animatedCircle.y);
         new TWEEN.Tween(this.gameState.animatedCircle)
-            .to({y}, (distance+3)*200)
+            .to({y, alpha: 1, size: 1}, (distance+3)*200)
             .easing(TWEEN.Easing.Bounce.Out)
             .onComplete(() => {
                 this.gameState.completeMove();
+                this.gameState.animatedCircle.alpha = 0;
+                this.gameState.animatedCircle.scale = 1.2;
                 if (this.cursor) {
                     const canvas = this.canvas;
                     const {width, circleSize} = this.getBoardDimensions();
                     let x = Math.round((this.cursor.x-(canvas.width-width)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing));
                     if (x >= 0 && x <= numCols-1) {
-                        this.gameState.animatedCircle.x = x;
+                        this.cursor = this.cursor;
                         return;
                     }
                 }
-                this.gameState.animatedCircle.alpha = 0;
             })
             .start();
     }
