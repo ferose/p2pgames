@@ -22,7 +22,7 @@ export default class GameCanvas extends React.Component<any,any> {
 
     private _cursor: Cursor | null = null;
     private boardCanvas: HTMLCanvasElement | null = null;
-    private gameState = new GameState();
+    private gameState = new GameState(numCols, numRows);
     private animationTweenDestination = {} as Circle;
 
     public constructor(props: any) {
@@ -82,6 +82,29 @@ export default class GameCanvas extends React.Component<any,any> {
             ctx.fillRect(this.cursor.x-5, this.cursor.y-5, 10, 10);
         }
 
+        for (const move of this.gameState.moves) {
+            if (move.alpha > 0) {
+                ctx.beginPath();
+                let {x, y} = move;
+                // Make sure y at -1 is at the correct position up top
+                if (y < 0) {
+                    y *= -(-2*boardPadding-canvas.height+height-2*circleSize)/(2*circleSpacing+2*circleSize);
+                }
+                ctx.arc(
+                    (canvas.width-width)/2+boardPadding+x*(circleSize+circleSpacing)+circleSize/2,
+                    (canvas.height-height)/2+boardPadding+(y+1)*(circleSize+circleSpacing)+circleSize/2,
+                    (circleSize/2)*move.scale,
+                    0,
+                    2 * Math.PI
+                );
+                ctx.globalAlpha = move.alpha;
+                ctx.fillStyle = move.hexColor;
+                ctx.fill();
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+            }
+        }
+
         if (this.gameState.animatedCircle.alpha > 0) {
             ctx.beginPath();
             let {x, y} = this.gameState.animatedCircle;
@@ -97,7 +120,7 @@ export default class GameCanvas extends React.Component<any,any> {
                 2 * Math.PI
             );
             ctx.globalAlpha = this.gameState.animatedCircle.alpha;
-            ctx.fillStyle = "#d2a3a9";
+            ctx.fillStyle = this.gameState.animatedCircle.hexColor;
             ctx.fill();
             ctx.stroke();
             ctx.globalAlpha = 1;
@@ -156,6 +179,7 @@ export default class GameCanvas extends React.Component<any,any> {
 
     private set cursor(c:Cursor|null) {
         this._cursor = c;
+        if (this.gameState.isAnimating) return;
         if (c) {
             const canvas = this.canvas;
             const {width, height, circleSize} = this.getBoardDimensions();
@@ -187,14 +211,30 @@ export default class GameCanvas extends React.Component<any,any> {
     public clicked = () => {
         const c = this.cursor;
         if (!c) return;
+        if (this.gameState.isAnimating) return;
         const canvas = this.canvas;
-        const {width, height, circleSize} = this.getBoardDimensions();
-        let y = Math.round((c.y-(canvas.height-height)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing))-1;
-        if (y < 0 || y >= numCols) return;
-        const distance = Math.abs(y - this.gameState.animatedCircle.y);
+        const {width, circleSize} = this.getBoardDimensions();
+        let x = Math.round((c.x-(canvas.width-width)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing));
+        if (!this.gameState.makeMove(x)) return;
+        if (!this.gameState.lastMove) return;
+        const y = this.gameState.lastMove.y;
+        const distance = Math.abs(y-this.gameState.animatedCircle.y);
         new TWEEN.Tween(this.gameState.animatedCircle)
             .to({y}, (distance+3)*200)
             .easing(TWEEN.Easing.Bounce.Out)
+            .onComplete(() => {
+                this.gameState.completeMove();
+                if (this.cursor) {
+                    const canvas = this.canvas;
+                    const {width, circleSize} = this.getBoardDimensions();
+                    let x = Math.round((this.cursor.x-(canvas.width-width)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing));
+                    if (x >= 0 && x <= numCols-1) {
+                        this.gameState.animatedCircle.x = x;
+                        return;
+                    }
+                }
+                this.gameState.animatedCircle.alpha = 0;
+            })
             .start();
     }
 
@@ -216,6 +256,7 @@ export default class GameCanvas extends React.Component<any,any> {
 
     private onMouseUp = (e: React.MouseEvent) => {
         e.preventDefault();
+        this.onMouseMove(e);
         this.clicked();
         this.cursor = null;
     }
@@ -241,12 +282,15 @@ export default class GameCanvas extends React.Component<any,any> {
                 ref={this.canvasRef}
                 width={1}
                 height={1}
+
                 onMouseMove={this.onMouseMove}
+                onMouseDown={this.onMouseMove}
+                onMouseUp={this.onMouseUp}
+                onMouseOut={this.onMouseOut}
+
                 onTouchMove={this.onTouchMove}
                 onTouchStart={this.onTouchMove}
-                onMouseOut={this.onMouseOut}
                 onTouchEnd={this.onTouchEnd}
-                onMouseUp={this.onMouseUp}
             ></canvas>
         );
     }
