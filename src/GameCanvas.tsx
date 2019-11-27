@@ -11,6 +11,8 @@ type Cursor = {
 
 const numRows = 6;
 const numCols = 7;
+
+// windowEdge <magin> boardEdge <boardPadding> circle <circleSpacing> circle...
 const boardPadding = 20;
 const circleSpacing = 10;
 const margin = 10;
@@ -80,20 +82,12 @@ export default class GameCanvas extends React.Component<any,any> {
             ctx.fillRect(this.cursor.x-5, this.cursor.y-5, 10, 10);
         }
 
-        if (this.boardCanvas) {
-            ctx.drawImage(
-                this.boardCanvas,
-                (canvas.width-this.boardCanvas.width)/2,
-                (canvas.height-this.boardCanvas.height)/2 + (circleSize + circleSpacing)/2
-            );
-        }
-
         if (this.gameState.animatedCircle.alpha > 0) {
             ctx.beginPath();
-            let x = this.gameState.animatedCircle.x;
+            let {x, y} = this.gameState.animatedCircle;
             ctx.arc(
                 (canvas.width-width)/2+boardPadding+x*(circleSize+circleSpacing)+circleSize/2,
-                (canvas.height-height)/2+circleSize/2,
+                (canvas.height-height)/2+boardPadding+y*(circleSize+circleSpacing)+circleSize/2,
                 (circleSize/2)*this.gameState.animatedCircle.scale,
                 0,
                 2 * Math.PI
@@ -103,6 +97,14 @@ export default class GameCanvas extends React.Component<any,any> {
             ctx.fill();
             ctx.stroke();
             ctx.globalAlpha = 1;
+        }
+
+        if (this.boardCanvas) {
+            ctx.drawImage(
+                this.boardCanvas,
+                (canvas.width-this.boardCanvas.width)/2,
+                (canvas.height-this.boardCanvas.height)/2 + (circleSize + circleSpacing)/2
+            );
         }
 
         ctx.restore();
@@ -166,16 +168,29 @@ export default class GameCanvas extends React.Component<any,any> {
                         .easing(TWEEN.Easing.Quadratic.Out)
                         .start();
                 }
-                return;
+            } else {
+                if (this.animationTweenDestination.alpha !== 0) {
+                    this.animationTweenDestination = {alpha: 0, scale: 1.2} as Circle;
+                    new TWEEN.Tween(this.gameState.animatedCircle)
+                    .to(this.animationTweenDestination, 250)
+                    .easing(TWEEN.Easing.Quadratic.Out)
+                    .start();
+                }
             }
         }
-        if (this.animationTweenDestination.alpha !== 0) {
-            this.animationTweenDestination = {alpha: 0, scale: 1.2} as Circle;
-            new TWEEN.Tween(this.gameState.animatedCircle)
-            .to(this.animationTweenDestination, 250)
+    }
+
+    public clicked = () => {
+        const c = this.cursor;
+        if (!c) return;
+        const canvas = this.canvas;
+        const {width, height, circleSize} = this.getBoardDimensions();
+        let y = Math.round((c.y-(canvas.height-height)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing));
+        if (y < 0 || y >= numCols) return;
+        new TWEEN.Tween(this.gameState.animatedCircle)
+            .to({y}, 250)
             .easing(TWEEN.Easing.Quadratic.Out)
             .start();
-        }
     }
 
     private get cursor() {
@@ -194,13 +209,20 @@ export default class GameCanvas extends React.Component<any,any> {
         this.cursor = null;
     }
 
+    private onMouseUp = (e: React.MouseEvent) => {
+        e.preventDefault();
+        this.clicked();
+        this.cursor = null;
+    }
+
     private onTouchEnd = (e: React.TouchEvent) => {
         e.preventDefault();
+        this.clicked();
         this.cursor = null;
     }
 
     private onTouchMove = (e: React.TouchEvent) => {
-        e.preventDefault();
+        // e.preventDefault();
         const dpr = window.devicePixelRatio || 1;
         const touch = e.touches[0];
         this.cursor = {
@@ -220,6 +242,7 @@ export default class GameCanvas extends React.Component<any,any> {
                 onTouchStart={this.onTouchMove}
                 onMouseOut={this.onMouseOut}
                 onTouchEnd={this.onTouchEnd}
+                onMouseUp={this.onMouseUp}
             ></canvas>
         );
     }

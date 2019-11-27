@@ -61,6 +61,22 @@ export function createBoardCanvas(params: {
         }
     }
 
+    ctx.globalCompositeOperation = "source-over";
+
+    for (let col = 0; col < params.numCols; col++) {
+        for (let row = 0; row < params.numRows; row++) {
+            ctx.beginPath();
+            ctx.arc(
+                boardPadding+col*(circleSize+circleSpacing)+circleSize/2,
+                boardPadding+row*(circleSize+circleSpacing)+circleSize/2,
+                circleSize/2,
+                0,
+                2 * Math.PI
+            );
+            ctx.stroke();
+        }
+    }
+
     ctx.restore();
     return canvas;
 }
