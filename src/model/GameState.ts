@@ -32,7 +32,7 @@ export class GameState {
      * y or row position
      * -1 y means header row
      */
-    public animatedCircle = new Circle({x: 0, y:0, alpha:0});
+    public animatedCircle = new Circle({x: 0, y:-1, alpha:0});
     constructor() {
     }
 }

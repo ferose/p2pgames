@@ -85,9 +85,13 @@ export default class GameCanvas extends React.Component<any,any> {
         if (this.gameState.animatedCircle.alpha > 0) {
             ctx.beginPath();
             let {x, y} = this.gameState.animatedCircle;
+            // Make sure y at -1 is at the correct position up top
+            if (y < 0) {
+                y *= -(-2*boardPadding-canvas.height+height-2*circleSize)/(2*circleSpacing+2*circleSize);
+            }
             ctx.arc(
                 (canvas.width-width)/2+boardPadding+x*(circleSize+circleSpacing)+circleSize/2,
-                (canvas.height-height)/2+boardPadding+y*(circleSize+circleSpacing)+circleSize/2,
+                (canvas.height-height)/2+boardPadding+(y+1)*(circleSize+circleSpacing)+circleSize/2,
                 (circleSize/2)*this.gameState.animatedCircle.scale,
                 0,
                 2 * Math.PI
@@ -185,11 +189,12 @@ export default class GameCanvas extends React.Component<any,any> {
         if (!c) return;
         const canvas = this.canvas;
         const {width, height, circleSize} = this.getBoardDimensions();
-        let y = Math.round((c.y-(canvas.height-height)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing));
+        let y = Math.round((c.y-(canvas.height-height)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing))-1;
         if (y < 0 || y >= numCols) return;
+        const distance = Math.abs(y - this.gameState.animatedCircle.y);
         new TWEEN.Tween(this.gameState.animatedCircle)
-            .to({y}, 250)
-            .easing(TWEEN.Easing.Quadratic.Out)
+            .to({y}, (distance+3)*200)
+            .easing(TWEEN.Easing.Bounce.Out)
             .start();
     }
 
@@ -222,7 +227,6 @@ export default class GameCanvas extends React.Component<any,any> {
     }
 
     private onTouchMove = (e: React.TouchEvent) => {
-        // e.preventDefault();
         const dpr = window.devicePixelRatio || 1;
         const touch = e.touches[0];
         this.cursor = {

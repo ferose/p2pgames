@@ -30,7 +30,6 @@ export function createBoardCanvas(params: {
         width = boardPadding*2+circleSize*params.numCols+circleSpacing*(params.numCols-1);
     }
 
-
     if (circleSize <= 0) return null;
 
     width = Math.round(width);
