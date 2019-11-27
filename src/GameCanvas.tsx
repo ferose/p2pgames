@@ -220,7 +220,7 @@ export default class GameCanvas extends React.Component<any,any> {
         const y = this.gameState.lastMove.y;
         const distance = Math.abs(y-this.gameState.animatedCircle.y);
         new TWEEN.Tween(this.gameState.animatedCircle)
-            .to({y, alpha: 1, size: 1}, (distance+3)*200)
+            .to({y, alpha: 1, scale: 1} as Circle, (distance+3)*200)
             .easing(TWEEN.Easing.Bounce.Out)
             .onComplete(() => {
                 this.gameState.completeMove();
