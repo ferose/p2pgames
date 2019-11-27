@@ -110,7 +110,7 @@ export default class GameCanvas extends React.Component<any,any> {
             let {x, y} = this.gameState.animatedCircle;
             // Make sure y at -1 is at the correct position up top
             if (y < 0) {
-                y *= -(-2*boardPadding-canvas.height+height-2*circleSize)/(2*circleSpacing+2*circleSize);
+                y *= -(-boardPadding-circleSpacing-circleSize)/(circleSpacing+circleSize);
             }
             ctx.arc(
                 (canvas.width-width)/2+boardPadding+x*(circleSize+circleSpacing)+circleSize/2,
