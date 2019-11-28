@@ -1,5 +1,6 @@
 import * as React from 'react';
 import './GameCanvas.css';
+import _ from 'lodash';
 import { createBoardCanvas } from './canvas/BoardCanvas';
 import { GameState, Circle } from './model/GameState';
 import TWEEN from '@tweenjs/tween.js';
@@ -76,27 +77,30 @@ export default class GameCanvas extends React.Component<any,any> {
         ctx.save();
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.lineWidth = 1;
 
         if (this.cursor) {
             ctx.fillStyle = "red";
             ctx.fillRect(this.cursor.x-5, this.cursor.y-5, 10, 10);
         }
 
+        const getCircleCoordinates = (circle:Circle) => {
+            let {x, y} = circle;
+            // Make sure y at -1 is at the correct position up top
+            if (y < 0) {
+                y *= -(-2*boardPadding-canvas.height+height-2*circleSize)/(2*circleSpacing+2*circleSize);
+            }
+            return {
+                x: (canvas.width-width)/2+boardPadding+x*(circleSize+circleSpacing)+circleSize/2,
+                y: (canvas.height-height)/2+boardPadding+(y+1)*(circleSize+circleSpacing)+circleSize/2,
+            }
+        }
+
         for (const move of this.gameState.moves) {
             if (move.alpha > 0) {
                 ctx.beginPath();
-                let {x, y} = move;
-                // Make sure y at -1 is at the correct position up top
-                if (y < 0) {
-                    y *= -(-2*boardPadding-canvas.height+height-2*circleSize)/(2*circleSpacing+2*circleSize);
-                }
-                ctx.arc(
-                    (canvas.width-width)/2+boardPadding+x*(circleSize+circleSpacing)+circleSize/2,
-                    (canvas.height-height)/2+boardPadding+(y+1)*(circleSize+circleSpacing)+circleSize/2,
-                    (circleSize/2)*move.scale,
-                    0,
-                    2 * Math.PI
-                );
+                const {x, y} = getCircleCoordinates(move);
+                ctx.arc(x, y, (circleSize/2)*move.scale, 0, 2*Math.PI);
                 ctx.globalAlpha = move.alpha;
                 ctx.fillStyle = move.hexColor;
                 ctx.fill();
@@ -107,18 +111,8 @@ export default class GameCanvas extends React.Component<any,any> {
 
         if (this.gameState.animatedCircle.alpha > 0) {
             ctx.beginPath();
-            let {x, y} = this.gameState.animatedCircle;
-            // Make sure y at -1 is at the correct position up top
-            if (y < 0) {
-                y *= -(-boardPadding-circleSpacing-circleSize)/(circleSpacing+circleSize);
-            }
-            ctx.arc(
-                (canvas.width-width)/2+boardPadding+x*(circleSize+circleSpacing)+circleSize/2,
-                (canvas.height-height)/2+boardPadding+(y+1)*(circleSize+circleSpacing)+circleSize/2,
-                (circleSize/2)*this.gameState.animatedCircle.scale,
-                0,
-                2 * Math.PI
-            );
+            const {x, y} = getCircleCoordinates(this.gameState.animatedCircle);
+            ctx.arc(x, y, (circleSize/2)*this.gameState.animatedCircle.scale, 0, 2*Math.PI);
             ctx.globalAlpha = this.gameState.animatedCircle.alpha;
             ctx.fillStyle = this.gameState.animatedCircle.hexColor;
             ctx.fill();
@@ -132,6 +126,18 @@ export default class GameCanvas extends React.Component<any,any> {
                 (canvas.width-this.boardCanvas.width)/2,
                 (canvas.height-this.boardCanvas.height)/2 + (circleSize + circleSpacing)/2
             );
+        }
+
+        if (this.gameState.winningCircles && !this.gameState.isAnimating) {
+            ctx.lineWidth = 10;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = 'black';
+            const c1 = getCircleCoordinates(_.first(this.gameState.winningCircles) as Circle);
+            const c2 = getCircleCoordinates(_.last(this.gameState.winningCircles) as Circle);
+            ctx.beginPath();
+            ctx.moveTo(c1.x, c1.y);
+            ctx.lineTo(c2.x, c2.y);
+            ctx.stroke();
         }
 
         ctx.restore();
@@ -211,6 +217,7 @@ export default class GameCanvas extends React.Component<any,any> {
     public clicked = () => {
         const c = this.cursor;
         if (!c) return;
+        if (this.gameState.winningCircles !== null) return;
         if (this.gameState.isAnimating) return;
         if (this.animationTweenDestination.alpha === 0) return;
         const canvas = this.canvas;
@@ -221,7 +228,7 @@ export default class GameCanvas extends React.Component<any,any> {
         const y = this.gameState.lastMove.y;
         const distance = Math.abs(y-this.gameState.animatedCircle.y);
         new TWEEN.Tween(this.gameState.animatedCircle)
-            .to({y, alpha: 1, scale: 1} as Circle, (distance+3)*200)
+            .to({y, alpha: 1, scale: 1} as Circle, (distance+4)*150)
             .easing(TWEEN.Easing.Bounce.Out)
             .onComplete(() => {
                 this.gameState.completeMove();

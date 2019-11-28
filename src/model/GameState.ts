@@ -47,6 +47,7 @@ export class GameState {
      */
     public animatedCircle = new Circle({x: 0, y:-1, alpha:0, type: CircleType.red});
     public moves: Circle[] = [];
+    public winningCircles: Circle[] | null = null;
 
     constructor(public numCols: number, public numRows: number) {
     }
@@ -69,6 +70,7 @@ export class GameState {
         const y = circleBelow ? circleBelow.y-1 : this.numRows-1;
         if (y < 0) return false;
         this.moves.push(new Circle({x, y, alpha:0, type: this.currentPlayer}));
+        this.winningCircles = this.findWinningCircles();
         return true;
     }
 
