@@ -90,7 +90,7 @@ export default class GameCanvas extends React.Component<any,any> {
             let {x, y} = circle;
             // Make sure y at -1 is at the correct position up top
             if (y < 0) {
-                y *= -(-2*boardPadding-canvas.height+height-2*circleSize)/(2*circleSpacing+2*circleSize);
+                y *= -(-boardPadding-circleSpacing-circleSize)/(circleSpacing+circleSize);
             }
             return {
                 x: (canvas.width-width)/2+boardPadding+x*(circleSize+circleSpacing)+circleSize/2,
@@ -130,18 +130,6 @@ export default class GameCanvas extends React.Component<any,any> {
             boardCanvasY = (canvas.height-this.boardCanvas.height)/2 + (circleSize + circleSpacing)/2;
             ctx.drawImage(this.boardCanvas, boardCanvasX, boardCanvasY);
         }
-
-        // if (this.gameState.winningCircles && !this.gameState.isAnimating) {
-        //     ctx.lineWidth = 10;
-        //     ctx.lineCap = 'round';
-        //     ctx.strokeStyle = 'black';
-        //     const c1 = getCircleCoordinates(_.first(this.gameState.winningCircles) as Circle);
-        //     const c2 = getCircleCoordinates(_.last(this.gameState.winningCircles) as Circle);
-        //     ctx.beginPath();
-        //     ctx.moveTo(c1.x, c1.y);
-        //     ctx.lineTo(c2.x, c2.y);
-        //     ctx.stroke();
-        // }
 
         if (this.overlayCanvas && this.boardCanvas && this.gameState.winningCircles) {
             const ctx2 = this.overlayCanvas.getContext('2d') as CanvasRenderingContext2D;
@@ -278,6 +266,7 @@ export default class GameCanvas extends React.Component<any,any> {
             const {width, circleSize} = this.getBoardDimensions();
             let x = Math.round((c.x-(canvas.width-width)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing));
             if (x >= 0 && x <= numCols-1) {
+                this.gameState.animatedCircle.x = x;
                 this.animationTweenDestination = {x, alpha: 1, scale: 1} as Circle;
                 new TWEEN.Tween(this.gameState.animatedCircle)
                     .to(this.animationTweenDestination, 250)
