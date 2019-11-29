@@ -79,3 +79,13 @@ export function createBoardCanvas(params: {
     ctx.restore();
     return canvas;
 }
+
+export function createBlankCanvas(params: {
+    width: number,
+    height: number,
+}) {
+    const canvas = document.createElement("canvas");
+    canvas.width = params.width;
+    canvas.height = params.height;
+    return canvas;
+}

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import './GameCanvas.css';
 import _ from 'lodash';
-import { createBoardCanvas } from './canvas/BoardCanvas';
+import { createBoardCanvas, createBlankCanvas } from './canvas/CanvasFactory';
 import { GameState, Circle } from './model/GameState';
 import TWEEN from '@tweenjs/tween.js';
 
@@ -23,6 +23,8 @@ export default class GameCanvas extends React.Component<any,any> {
 
     private _cursor: Cursor | null = null;
     private boardCanvas: HTMLCanvasElement | null = null;
+    private overlayCanvas: HTMLCanvasElement | null = null;
+    private overlayCanvasAlpha = 0;
     private gameState = new GameState(numCols, numRows);
     private animationTweenDestination = {} as Circle;
 
@@ -120,24 +122,48 @@ export default class GameCanvas extends React.Component<any,any> {
             ctx.globalAlpha = 1;
         }
 
+        let boardCanvasX = 0;
+        let boardCanvasY = 0;
+
         if (this.boardCanvas) {
-            ctx.drawImage(
-                this.boardCanvas,
-                (canvas.width-this.boardCanvas.width)/2,
-                (canvas.height-this.boardCanvas.height)/2 + (circleSize + circleSpacing)/2
-            );
+            boardCanvasX = (canvas.width-this.boardCanvas.width)/2;
+            boardCanvasY = (canvas.height-this.boardCanvas.height)/2 + (circleSize + circleSpacing)/2;
+            ctx.drawImage(this.boardCanvas, boardCanvasX, boardCanvasY);
         }
 
-        if (this.gameState.winningCircles && !this.gameState.isAnimating) {
-            ctx.lineWidth = 10;
-            ctx.lineCap = 'round';
-            ctx.strokeStyle = 'black';
+        // if (this.gameState.winningCircles && !this.gameState.isAnimating) {
+        //     ctx.lineWidth = 10;
+        //     ctx.lineCap = 'round';
+        //     ctx.strokeStyle = 'black';
+        //     const c1 = getCircleCoordinates(_.first(this.gameState.winningCircles) as Circle);
+        //     const c2 = getCircleCoordinates(_.last(this.gameState.winningCircles) as Circle);
+        //     ctx.beginPath();
+        //     ctx.moveTo(c1.x, c1.y);
+        //     ctx.lineTo(c2.x, c2.y);
+        //     ctx.stroke();
+        // }
+
+        if (this.overlayCanvas && this.boardCanvas && this.gameState.winningCircles) {
+            const ctx2 = this.overlayCanvas.getContext('2d') as CanvasRenderingContext2D;
+            ctx2.save();
+
+            ctx2.clearRect(0, 0, this.overlayCanvas.width, this.overlayCanvas.height);
+            ctx2.fillStyle = `rgba(0,0,0,${this.overlayCanvasAlpha})`;
+            ctx2.fillRect(boardCanvasX, boardCanvasY, this.boardCanvas.width, this.boardCanvas.height);
+
+            ctx2.globalCompositeOperation = "destination-out";
+            ctx2.lineWidth = circleSize;
+            ctx2.lineCap = 'round';
+            ctx2.strokeStyle = 'black';
             const c1 = getCircleCoordinates(_.first(this.gameState.winningCircles) as Circle);
             const c2 = getCircleCoordinates(_.last(this.gameState.winningCircles) as Circle);
-            ctx.beginPath();
-            ctx.moveTo(c1.x, c1.y);
-            ctx.lineTo(c2.x, c2.y);
-            ctx.stroke();
+            ctx2.beginPath();
+            ctx2.moveTo(c1.x, c1.y);
+            ctx2.lineTo(c2.x, c2.y);
+            ctx2.stroke();
+
+            ctx2.restore();
+            ctx.drawImage(this.overlayCanvas, 0, 0);
         }
 
         ctx.restore();
@@ -161,6 +187,11 @@ export default class GameCanvas extends React.Component<any,any> {
             maxWidth: dimensions.width,
             maxHeight: dimensions.height,
         });
+
+        if (this.overlayCanvas) {
+            this.overlayCanvas.width = this.canvas.width;
+            this.overlayCanvas.height = this.canvas.height;
+        }
     }
 
       /**
@@ -228,22 +259,44 @@ export default class GameCanvas extends React.Component<any,any> {
         const y = this.gameState.lastMove.y;
         const distance = Math.abs(y-this.gameState.animatedCircle.y);
         new TWEEN.Tween(this.gameState.animatedCircle)
-            .to({y, alpha: 1, scale: 1} as Circle, (distance+4)*150)
+            .to({y, alpha: 1, scale: 1} as Circle, (distance+4)*150/1)
             .easing(TWEEN.Easing.Bounce.Out)
             .onComplete(() => {
                 this.gameState.completeMove();
                 this.gameState.animatedCircle.alpha = 0;
                 this.gameState.animatedCircle.scale = 1.2;
-                if (this.cursor) {
-                    const canvas = this.canvas;
-                    const {width, circleSize} = this.getBoardDimensions();
-                    let x = Math.round((this.cursor.x-(canvas.width-width)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing));
-                    if (x >= 0 && x <= numCols-1) {
-                        this.cursor = this.cursor;
-                        return;
-                    }
-                }
+                this.updateTopCirclePosition();
+                this.updateOverlay();
             })
+            .start();
+    }
+
+    private updateTopCirclePosition() {
+        const c = this.cursor
+        if (c) {
+            const canvas = this.canvas;
+            const {width, circleSize} = this.getBoardDimensions();
+            let x = Math.round((c.x-(canvas.width-width)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing));
+            if (x >= 0 && x <= numCols-1) {
+                this.animationTweenDestination = {x, alpha: 1, scale: 1} as Circle;
+                new TWEEN.Tween(this.gameState.animatedCircle)
+                    .to(this.animationTweenDestination, 250)
+                    .easing(TWEEN.Easing.Quadratic.Out)
+                    .start();
+            }
+        }
+    }
+
+    private updateOverlay() {
+        // If there's no winner there's no need for an overlay
+        if (!this.gameState.winningCircles) return;
+        this.overlayCanvas = createBlankCanvas({
+            width: this.canvas.width,
+            height: this.canvas.height,
+        });
+        new TWEEN.Tween(this)
+            .to({overlayCanvasAlpha: 0.5}, 500)
+            .easing(TWEEN.Easing.Quadratic.Out)
             .start();
     }
 
@@ -267,7 +320,7 @@ export default class GameCanvas extends React.Component<any,any> {
         e.preventDefault();
         this.onMouseMove(e);
         this.clicked();
-        this.cursor = null;
+        // this.cursor = null;
     }
 
     private onTouchEnd = (e: React.TouchEvent) => {
