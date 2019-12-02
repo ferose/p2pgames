@@ -1,9 +1,24 @@
-html, body, .App {
+html, body {
     margin: 0;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    width:100%;
+    height:100%;
     overflow: hidden;
-    position: fixed;
+}
+
+#root {
+    width: 100%;
+    height: 100%;
+}
+
+.App {
+    width: 100%;
+    height: 100%;
+}
+
+.Banner {
+    height: 20%;
+}
+
+.GameCanvas {
+    height: 80%;
 }

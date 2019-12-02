@@ -1,3 +1,5 @@
+// Deprecated
+
 import * as React from 'react';
 import './Board.css';
 import _ from 'lodash';

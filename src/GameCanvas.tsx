@@ -20,6 +20,7 @@ const margin = 10;
 
 export default class GameCanvas extends React.Component<any,any> {
     private canvasRef: React.RefObject<HTMLCanvasElement>;
+    private divRef: React.RefObject<HTMLDivElement>;
 
     private _cursor: Cursor | null = null;
     private boardCanvas: HTMLCanvasElement | null = null;
@@ -31,6 +32,7 @@ export default class GameCanvas extends React.Component<any,any> {
     public constructor(props: any) {
         super(props);
         this.canvasRef = React.createRef();
+        this.divRef = React.createRef();
     }
 
     private get canvas() {
@@ -159,12 +161,15 @@ export default class GameCanvas extends React.Component<any,any> {
 
     public updateDimensions = () => {
         const dpr = window.devicePixelRatio || 1;
-        if (this.canvas.width === Math.round(window.innerWidth*dpr) && this.canvas.height === Math.round(window.innerHeight*dpr)) return;
-        this.canvas.width = Math.round(window.innerWidth*dpr);
-        this.canvas.height = Math.round(window.innerHeight*dpr);
+        if (!this.divRef.current) return;
+        const width = this.divRef.current.clientWidth;
+        const height = this.divRef.current.clientHeight;
+        if (this.canvas.width === Math.round(width*dpr) && this.canvas.height === Math.round(height*dpr)) return;
+        this.canvas.width = Math.round(width*dpr);
+        this.canvas.height = Math.round(height*dpr);
 
-        this.canvas.style.width = window.innerWidth + 'px';
-        this.canvas.style.height = window.innerHeight + 'px';
+        this.canvas.style.width = width + 'px';
+        this.canvas.style.height = height + 'px';
 
         const dimensions = this.getBoardDimensions();
         this.boardCanvas = createBoardCanvas({
@@ -293,14 +298,6 @@ export default class GameCanvas extends React.Component<any,any> {
         return this._cursor;
     }
 
-    private onMouseMove = (e: React.MouseEvent) => {
-        const dpr = window.devicePixelRatio || 1;
-        this.cursor = {
-            x: e.clientX*dpr,
-            y: e.clientY*dpr,
-        }
-    }
-
     private onMouseOut = (e: React.MouseEvent) => {
         this.cursor = null;
     }
@@ -309,7 +306,6 @@ export default class GameCanvas extends React.Component<any,any> {
         e.preventDefault();
         this.onMouseMove(e);
         this.clicked();
-        // this.cursor = null;
     }
 
     private onTouchEnd = (e: React.TouchEvent) => {
@@ -318,31 +314,45 @@ export default class GameCanvas extends React.Component<any,any> {
         this.cursor = null;
     }
 
+    private onMouseMove = (e: React.MouseEvent) => {
+        if (!this.divRef.current) return;
+        const div = this.divRef.current;
+        const dpr = window.devicePixelRatio || 1;
+        this.cursor = {
+            x: (e.pageX-div.offsetLeft)*dpr,
+            y: (e.pageY-div.offsetTop)*dpr,
+        }
+    }
+
     private onTouchMove = (e: React.TouchEvent) => {
+        if (!this.divRef.current) return;
+        const div = this.divRef.current;
         const dpr = window.devicePixelRatio || 1;
         const touch = e.touches[0];
         this.cursor = {
-            x: touch.clientX*dpr,
-            y: touch.clientY*dpr,
+            x: (touch.pageX-div.offsetLeft)*dpr,
+            y: (touch.pageY-div.offsetTop)*dpr,
         };
     }
 
     public render() {
         return (
-            <canvas
-                ref={this.canvasRef}
-                width={1}
-                height={1}
+            <div className="GameCanvas" ref={this.divRef}>
+                <canvas
+                    ref={this.canvasRef}
+                    width={1}
+                    height={1}
 
-                onMouseMove={this.onMouseMove}
-                onMouseDown={this.onMouseMove}
-                onMouseUp={this.onMouseUp}
-                onMouseOut={this.onMouseOut}
+                    onMouseMove={this.onMouseMove}
+                    onMouseDown={this.onMouseMove}
+                    onMouseUp={this.onMouseUp}
+                    onMouseOut={this.onMouseOut}
 
-                onTouchMove={this.onTouchMove}
-                onTouchStart={this.onTouchMove}
-                onTouchEnd={this.onTouchEnd}
-            ></canvas>
+                    onTouchMove={this.onTouchMove}
+                    onTouchStart={this.onTouchMove}
+                    onTouchEnd={this.onTouchEnd}
+                ></canvas>
+            </div>
         );
     }
 }
