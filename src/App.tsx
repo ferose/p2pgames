@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import './App.scss';
 import GameCanvas from './GameCanvas';
 import Banner from './Banner';
 

@@ -304,17 +304,21 @@ export default class GameCanvas extends React.Component<any,any> {
 
     private onMouseUp = (e: React.MouseEvent) => {
         e.preventDefault();
+        e.stopPropagation();
         this.onMouseMove(e);
         this.clicked();
     }
 
     private onTouchEnd = (e: React.TouchEvent) => {
         e.preventDefault();
+        e.stopPropagation();
         this.clicked();
         this.cursor = null;
     }
 
     private onMouseMove = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
         if (!this.divRef.current) return;
         const div = this.divRef.current;
         const dpr = window.devicePixelRatio || 1;
@@ -325,6 +329,8 @@ export default class GameCanvas extends React.Component<any,any> {
     }
 
     private onTouchMove = (e: React.TouchEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
         if (!this.divRef.current) return;
         const div = this.divRef.current;
         const dpr = window.devicePixelRatio || 1;

@@ -1,3 +1,9 @@
 .Banner {
+    background-color: lightgray;
+}
+
+.ad {
     background-color: red;
+    width: 728px;
+    height: 90px;
 }
