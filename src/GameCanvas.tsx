@@ -226,15 +226,15 @@ export default class GameCanvas extends React.Component<any,any> {
                         .easing(TWEEN.Easing.Quadratic.Out)
                         .start();
                 }
-            } else {
-                if (this.animationTweenDestination.alpha !== 0) {
-                    this.animationTweenDestination = {alpha: 0, scale: 1.2} as Circle;
-                    new TWEEN.Tween(this.gameState.animatedCircle)
-                    .to(this.animationTweenDestination, 250)
-                    .easing(TWEEN.Easing.Quadratic.Out)
-                    .start();
-                }
+                return;
             }
+        }
+        if (this.animationTweenDestination.alpha !== 0) {
+            this.animationTweenDestination = {alpha: 0, scale: 1.2} as Circle;
+            new TWEEN.Tween(this.gameState.animatedCircle)
+            .to(this.animationTweenDestination, 250)
+            .easing(TWEEN.Easing.Quadratic.Out)
+            .start();
         }
     }
 
