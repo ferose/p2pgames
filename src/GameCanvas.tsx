@@ -80,7 +80,8 @@ export default class GameCanvas extends React.Component<any,any> {
 
         ctx.save();
 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.lineWidth = 1;
 
         if (this.cursor) {
@@ -345,6 +346,20 @@ export default class GameCanvas extends React.Component<any,any> {
             x: (touch.pageX-div.offsetLeft)*dpr,
             y: (touch.pageY-div.offsetTop)*dpr,
         };
+    }
+
+    public async requestfullscreen() {
+        const elem = this.divRef.current
+        if (!elem) return;
+        try {
+            if (!elem.requestFullscreen) {
+                alert("Your browser does not support fullscreen");
+                return;
+            }
+            elem.requestFullscreen();
+        } catch (e) {
+            console.error(e);
+        }
     }
 
     public render() {
