@@ -1,3 +1,5 @@
+$banner-height: 90px;
+
 html, body {
     margin: 0;
     width:100%;
@@ -20,12 +22,12 @@ html, body {
     top: 0;
     left: 0;
     right: 0;
-    height: 90px;
+    height: $banner-height;
     position: absolute;
 }
 
 .GameCanvas {
-    top: 90px;
+    top: $banner-height;
     left: 0;
     right: 0;
     bottom: 0;
