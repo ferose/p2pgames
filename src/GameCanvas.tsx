@@ -310,8 +310,6 @@ export default class GameCanvas extends React.Component<any,any> {
     }
 
     private onTouchEnd = (e: React.TouchEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
         this.clicked();
         this.cursor = null;
     }

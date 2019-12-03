@@ -2,11 +2,15 @@ import React from 'react';
 import './Banner.css';
 import Button from 'react-bootstrap/Button';
 
-const Banner: React.FC = () => {
+interface IBannerProps {
+  onMenuClick: () => void;
+}
+
+const Banner: React.FC<IBannerProps> = (props) => {
   return (
     <div className="Banner">
-      <div className="ad"></div>
-      <Button className="menu-button">Menu</Button>
+      <div id="ad"></div>
+      <Button id="menu-button" onClick={props.onMenuClick}>Menu</Button>
     </div>
   );
 }
