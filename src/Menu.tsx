@@ -1,7 +1,10 @@
 import React from 'react';
+import "./Menu.scss";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEnvelope, faGamepad } from '@fortawesome/free-solid-svg-icons'
 
 interface IMenuProps {
     onHide: () => void;
@@ -29,10 +32,10 @@ const Menu: React.FC<IMenuProps> = (props) => {
         <Modal.Body>
             <ListGroup>
                 <ListGroup.Item action onClick={()=>{alert("Under construction")}}>
-                    More Games
+                    <FontAwesomeIcon className="link-icon" icon={faGamepad} fixedWidth/> More Games
                 </ListGroup.Item>
                 <ListGroup.Item action onClick={sendSupportEmail}>
-                    Feedback
+                    <FontAwesomeIcon className="link-icon" icon={faEnvelope} fixedWidth/> Feedback
                 </ListGroup.Item>
             </ListGroup>
         </Modal.Body>

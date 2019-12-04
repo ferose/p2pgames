@@ -1,4 +1,4 @@
-import React, { RefObject } from 'react';
+import React from 'react';
 import './App.scss';
 import GameCanvas from './GameCanvas';
 import Banner from './Banner';
@@ -15,7 +15,6 @@ const App: React.FC = () => {
       <Banner/>
       <div id="alert">
         Game status goes here.
-
       </div>
       <GameCanvas/>
 
