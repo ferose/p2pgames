@@ -4,6 +4,8 @@ import GameCanvas from './GameCanvas';
 import Banner from './Banner';
 import Menu from './Menu';
 import Button from 'react-bootstrap/Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faBars } from '@fortawesome/free-solid-svg-icons'
 
 const App: React.FC = () => {
   const [modalShow, setModalShow] = React.useState(false);
@@ -13,10 +15,17 @@ const App: React.FC = () => {
       <Banner/>
       <div id="alert">
         Game status goes here.
+
       </div>
       <GameCanvas/>
 
-      <Button id="menu-button" onClick={() => setModalShow(true)}>Menu</Button>
+      <Button
+        variant="primary"
+        id="menu-button"
+        onClick={() => setModalShow(true)}
+      >
+        <FontAwesomeIcon icon={faBars} />
+      </Button>
 
       <Menu
         show={modalShow}

@@ -1,5 +1,7 @@
 @import "utilities/Variables";
 
+$ad-margin: 60px;
+
 .Banner {
     background-color: lightgray;
     display: flex;
@@ -10,4 +12,6 @@
     background-color: gray;
     width: 320px;
     height: $banner-height;
+    margin-left: $ad-margin;
+    margin-right: $ad-margin;
 }

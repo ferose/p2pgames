@@ -4,6 +4,9 @@
   "private": true,
   "homepage": "https://ferose.github.io/connect4-react/",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.25",
+    "@fortawesome/free-solid-svg-icons": "^5.11.2",
+    "@fortawesome/react-fontawesome": "^0.1.7",
     "@tweenjs/tween.js": "^18.4.2",
     "@types/jest": "24.0.23",
     "@types/lodash": "^4.14.149",
