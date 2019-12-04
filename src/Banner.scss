@@ -1,3 +1,5 @@
+@import "utilities/Variables";
+
 .Banner {
     background-color: lightgray;
     display: flex;
@@ -6,10 +8,6 @@
 
 #ad {
     background-color: gray;
-    width: 728px;
-    height: 90px;
-}
-
-#menu-button {
-    margin: 10px 20px;
+    width: 320px;
+    height: $banner-height;
 }

@@ -1,4 +1,6 @@
-$banner-height: 90px;
+@import "utilities/Variables";
+
+$menu-margin: 10px;
 
 html, body {
     margin: 0;
@@ -26,10 +28,27 @@ html, body {
     position: absolute;
 }
 
-.GameCanvas {
+#alert {
     top: $banner-height;
     left: 0;
     right: 0;
+    height: $alert-height;
+    position: absolute;
+    text-align: center;
+    font-size: 0.8rem;
+}
+
+.GameCanvas {
+    top: $banner-height + $alert-height;
+    left: 0;
+    right: 0;
     bottom: 0;
+    position: absolute;
+}
+
+#menu-button {
+    top: $menu-margin;
+    right: $menu-margin;
+    height: $banner-height - 2*$menu-margin;
     position: absolute;
 }
