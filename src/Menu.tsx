@@ -5,17 +5,11 @@ import ListGroup from 'react-bootstrap/ListGroup';
 
 interface IMenuProps {
     onHide: () => void;
-    requestfullscreen: () => void;
     show: boolean;
 }
 
 function sendSupportEmail() {
     window.open("mailto:ferosegame@gmail.com");
-}
-
-function fullscreenClicked(props: IMenuProps) {
-    props.onHide();
-    props.requestfullscreen();
 }
 
 const Menu: React.FC<IMenuProps> = (props) => {
@@ -32,13 +26,6 @@ const Menu: React.FC<IMenuProps> = (props) => {
             Menu
             </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-            <ListGroup>
-                <ListGroup.Item action onClick={() => fullscreenClicked(props)}>
-                    Fullscreen
-                </ListGroup.Item>
-            </ListGroup>
-        </Modal.Body>
         <Modal.Body>
             <ListGroup>
                 <ListGroup.Item action onClick={()=>{alert("Under construction")}}>

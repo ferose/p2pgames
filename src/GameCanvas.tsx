@@ -348,20 +348,6 @@ export default class GameCanvas extends React.Component<any,any> {
         };
     }
 
-    public async requestfullscreen() {
-        const elem = this.divRef.current
-        if (!elem) return;
-        try {
-            if (!elem.requestFullscreen) {
-                alert("Your browser does not support fullscreen");
-                return;
-            }
-            elem.requestFullscreen();
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
     public render() {
         return (
             <div className="GameCanvas" ref={this.divRef}>
