@@ -9,14 +9,15 @@ import { faBars } from '@fortawesome/free-solid-svg-icons'
 
 const App: React.FC = () => {
   const [modalShow, setModalShow] = React.useState(false);
+  const [status, setStatus] = React.useState(<span>status goes here</span>);
 
   return (
     <div className="App">
       <Banner/>
       <div id="alert">
-        Game status goes here.
+        {status}
       </div>
-      <GameCanvas/>
+      <GameCanvas setStatus={setStatus}/>
 
       <Button
         variant="primary"

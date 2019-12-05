@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import * as React from 'react';
 
 export class Pair<X=number, Y=number> {
     constructor(public x:X, public y:Y) {}
@@ -49,7 +50,18 @@ export class GameState {
     public moves: Circle[] = [];
     public winningCircles: Circle[] | null = null;
 
-    constructor(public numCols: number, public numRows: number) {
+    private numCols: number;
+    private numRows: number;
+    private setStatus: (status: JSX.Element) => void;
+
+    constructor(params: {
+        numCols: number,
+        numRows: number,
+        setStatus: (status: JSX.Element) => void
+    }){
+        this.numCols = params.numCols;
+        this.numRows = params.numRows;
+        this.setStatus = params.setStatus;
     }
 
     public get currentPlayer() {
@@ -83,6 +95,17 @@ export class GameState {
         this.animatedCircle.y = -1;
         this.lastMove.alpha = 1;
         this.currentPlayer = this.currentPlayer === CircleType.red ? CircleType.blue : CircleType.red;
+
+        const player = this.winningCircles ? this.winningCircles[0].type : this.currentPlayer;
+        const playerName = player == CircleType.red ? "Red" : "Blue";
+        const playerCSS = player == CircleType.red ? "red" : "blue";
+        const playerHTML = <b className={playerCSS}>{playerName}</b>;
+        if (this.winningCircles){
+            this.setStatus(<span>{playerHTML} wins!</span>);
+        }
+        else {
+            this.setStatus(<span>It is {playerHTML}'s return</span>);
+        }
     }
 
     public get isAnimating() {

@@ -18,7 +18,13 @@ const boardPadding = 20;
 const circleSpacing = 10;
 const margin = 10;
 
-export default class GameCanvas extends React.Component<any,any> {
+interface IGameCanvasProps {
+    setStatus(status: JSX.Element): void;
+}
+
+interface IGameCanvasState {}
+
+export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCanvasState> {
     private canvasRef: React.RefObject<HTMLCanvasElement>;
     private divRef: React.RefObject<HTMLDivElement>;
 
@@ -26,10 +32,10 @@ export default class GameCanvas extends React.Component<any,any> {
     private boardCanvas: HTMLCanvasElement | null = null;
     private overlayCanvas: HTMLCanvasElement | null = null;
     private overlayCanvasAlpha = 0;
-    private gameState = new GameState(numCols, numRows);
+    private gameState = new GameState({numCols, numRows, setStatus: this.props.setStatus});
     private animationTweenDestination = {} as Circle;
 
-    public constructor(props: any) {
+    public constructor(props: IGameCanvasProps) {
         super(props);
         this.canvasRef = React.createRef();
         this.divRef = React.createRef();
