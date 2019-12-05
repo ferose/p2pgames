@@ -100,6 +100,7 @@ export class GameState {
         const playerName = player == CircleType.red ? "Red" : "Blue";
         const playerCSS = player == CircleType.red ? "red" : "blue";
         const playerHTML = <b className={playerCSS}>{playerName}</b>;
+
         if (this.winningCircles){
             this.setStatus(<span>{playerHTML} wins!</span>);
         }
