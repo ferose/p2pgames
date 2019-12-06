@@ -62,6 +62,7 @@ export class GameState {
         this.numCols = params.numCols;
         this.numRows = params.numRows;
         this.setStatus = params.setStatus;
+        this.updateStatus();
     }
 
     public get currentPlayer() {
@@ -95,10 +96,13 @@ export class GameState {
         this.animatedCircle.y = -1;
         this.lastMove.alpha = 1;
         this.currentPlayer = this.currentPlayer === CircleType.red ? CircleType.blue : CircleType.red;
+        this.updateStatus();
+    }
 
+    private updateStatus() {
         const player = this.winningCircles ? this.winningCircles[0].type : this.currentPlayer;
-        const playerName = player == CircleType.red ? "Red" : "Blue";
-        const playerCSS = player == CircleType.red ? "red" : "blue";
+        const playerName = player === CircleType.red ? "Red" : "Blue";
+        const playerCSS = player === CircleType.red ? "red" : "blue";
         const playerHTML = <b className={playerCSS}>{playerName}</b>;
 
         if (this.winningCircles){
