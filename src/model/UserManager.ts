@@ -1,16 +1,25 @@
 import { User } from "./User";
 import Peer from 'peerjs';
 
+export enum UserStateType {
+
+}
+
+export interface IUserState {
+    userStateType?: UserStateType;
+}
+
 export class UserManager {
     public self: User | null = null;
     public other: User | null = null;
 
+    private listeners: React.Component<any, IUserState>[] = [];
+
     public constructor() {
-        this.connect();
+        // this.connect();
     }
 
     private connect() {
-
         const peer = new Peer(undefined, {
             debug: 3
         });
@@ -35,7 +44,6 @@ export class UserManager {
                 if (!window.location.hash) {
                     window.location.hash = id;
                 }
-
             });
         }
 

@@ -46,6 +46,14 @@ html, body {
     position: absolute;
 }
 
+.ConnectionPrompt {
+    top: $banner-height + $alert-height;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+}
+
 #menu-button {
     top: $menu-margin;
     right: $menu-margin;
