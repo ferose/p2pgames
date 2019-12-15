@@ -21,6 +21,7 @@ const margin = 10;
 
 interface IGameCanvasProps {
     setMessage(status: JSX.Element): void;
+    userManager: UserManager;
 }
 
 interface IGameCanvasState {}
@@ -35,10 +36,10 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
     private overlayCanvasAlpha = 0;
     private gameState = new GameState({numCols, numRows, setMessage: this.props.setMessage});
     private animationTweenDestination = {} as Circle;
-    private userManager: UserManager = new UserManager();
 
     public constructor(props: IGameCanvasProps) {
         super(props);
+        this.state = {};
         this.canvasRef = React.createRef();
         this.divRef = React.createRef();
     }

@@ -7,6 +7,7 @@ import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import ConnectionPrompt from './ConnectionPrompt';
+import { UserManager } from './model/UserManager';
 
 interface IAppProps {}
 interface IAppState {
@@ -15,12 +16,16 @@ interface IAppState {
 }
 
 export default class App extends React.Component<IAppProps, IAppState> {
+    private userManager: UserManager = new UserManager();
+
     constructor(props: IAppProps) {
         super(props);
         this.state = {
             message: <span></span>,
             modalShow: false,
         }
+
+        this.userManager.addListener(this);
     }
 
     public render() {
@@ -30,8 +35,8 @@ export default class App extends React.Component<IAppProps, IAppState> {
             <div id="alert">
                 {this.state.message}
             </div>
-            <GameCanvas setMessage={message => this.setState({message})}/>
-            <ConnectionPrompt/>
+            <GameCanvas userManager={this.userManager} setMessage={message => this.setState({message})}/>
+            <ConnectionPrompt userManager={this.userManager}/>
 
             <Button
                 variant="primary"
