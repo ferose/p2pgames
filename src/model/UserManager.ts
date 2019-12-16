@@ -56,7 +56,6 @@ export class UserManager {
         }
     }
 
-    // TODO: Handle errors nicely
     private connect() {
         const peer = new Peer(undefined, {
             debug: 3
@@ -69,14 +68,17 @@ export class UserManager {
                 reliable: true,
             });
             this.dataConnection = conn;
+            conn.on('data', (data) => {
+                this.recievedData(data);
+            });
             conn.on('open', () => {
-                conn.on('data', (data) => {
-                    this.recievedData(data);
-                });
                 this.sendData({type: NetworkMessageType.Connected});
             });
             conn.on('error', (e) => {
-                console.error(e);
+                if (e && e.message) {
+                    this.errorMessage = `Error: ${e.message}`;
+                }
+                this.setUserState(UserStateType.Failed);
             });
         } else {
             peer.on('open', (id) => {
@@ -97,28 +99,30 @@ export class UserManager {
                 return;
             };
             this.dataConnection = conn;
+            conn.on('data', (data) => {
+                this.recievedData(data);
+            });
             conn.on('open', () => {
-                conn.on('data', (data) => {
-                    this.recievedData(data);
-                });
                 this.sendData({type: NetworkMessageType.Connected});
             });
             conn.on('error', (e) => {
-                console.error(e);
+                if (e && e.message) {
+                    this.errorMessage = `Error: ${e.message}`;
+                }
+                this.setUserState(UserStateType.Failed);
             });
         });
-        peer.on('disconnected', function () {
+        peer.on('disconnected', () => {
             console.error('disconnected');
         });
-        peer.on('close', function() {
+        peer.on('close', () => {
             console.error('close');
         });
-        peer.on('error', function (e) {
-            console.error(e);
+        peer.on('error', (e) => {
+            if (e && e.message) {
+                this.errorMessage = `Error: ${e.message}`;
+            }
+            this.setUserState(UserStateType.Failed);
         });
-        peer.on('data', function() {
-            console.log("data");
-        })
-
     }
 }
