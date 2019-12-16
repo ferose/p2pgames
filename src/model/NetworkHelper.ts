@@ -3,6 +3,10 @@ export enum NetworkMessageType {
     Reject,
 }
 
+export interface INetworkRejectData {
+    msg: string;
+}
+
 export interface INetworkMessage {
     type: NetworkMessageType;
     data?: Object;

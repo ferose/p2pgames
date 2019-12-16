@@ -1,6 +1,6 @@
 import { User } from "./User";
 import Peer from 'peerjs';
-import { NetworkMessageType, INetworkMessage } from "./NetworkHelper";
+import { NetworkMessageType, INetworkMessage, INetworkRejectData } from "./NetworkHelper";
 
 export enum UserStateType {
     NoLink = 1,
@@ -33,7 +33,6 @@ export class UserManager {
 
     public addListener(listener: Listener) {
         this.listeners.push(listener);
-        listener.setState({userStateType: this.userStateType});
     }
 
     public constructor() {
@@ -53,15 +52,22 @@ export class UserManager {
             case NetworkMessageType.Connected:
                 this.setUserState(UserStateType.Connected);
                 break;
+            case NetworkMessageType.Reject:
+                const data = networkMessage.data as INetworkRejectData;
+                if (data) {
+                    this.errorMessage = data.msg;
+                    this.setUserState(UserStateType.Failed);
+                }
+                break;
         }
     }
 
-    private connect() {
-        const peer = new Peer(undefined, {
+    private connect(id?: string) {
+        const peer = new Peer(id, {
             debug: 3
         });
 
-        if (window.location.hash) {
+        if (window.location.hash && !id) {
             this.setUserState(UserStateType.WaitingForPeer);
             this.other = new User({id: window.location.hash.replace("#", "")});
             const conn = peer.connect(this.other.id, {
@@ -76,25 +82,25 @@ export class UserManager {
             });
             conn.on('error', (e) => {
                 if (e && e.message) {
-                    this.errorMessage = `Error: ${e.message}`;
+                    this.errorMessage = `Connection Error: ${e.message}`;
                 }
                 this.setUserState(UserStateType.Failed);
             });
-        } else {
-            peer.on('open', (id) => {
-                this.self = new User({id});
-                if (!window.location.hash) {
-                    window.location.hash = id;
-                    this.setUserState(UserStateType.WaitingForPeer);
-                }
-            });
         }
+
+        peer.on('open', (id) => {
+            this.self = new User({id});
+            if (!window.location.hash) {
+                window.location.hash = id;
+                this.setUserState(UserStateType.WaitingForPeer);
+            }
+        });
 
         peer.on('connection', (conn) => {
             if (this.dataConnection) {
                 conn.send({type: NetworkMessageType.Reject, data: {
                     msg: "Host already connected to another peer",
-                }})
+                } as INetworkRejectData})
                 conn.close();
                 return;
             };
@@ -107,20 +113,34 @@ export class UserManager {
             });
             conn.on('error', (e) => {
                 if (e && e.message) {
-                    this.errorMessage = `Error: ${e.message}`;
+                    this.errorMessage = `Remote Connection Error: ${e.message}`;
+                    this.dataConnection?.close();
+                    this.dataConnection = undefined;
                 }
                 this.setUserState(UserStateType.Failed);
             });
         });
         peer.on('disconnected', () => {
+            if (!peer.destroyed) {
+                peer.reconnect();
+            }
             console.error('disconnected');
         });
         peer.on('close', () => {
             console.error('close');
         });
         peer.on('error', (e) => {
-            if (e && e.message) {
-                this.errorMessage = `Error: ${e.message}`;
+            if (e) {
+                if (this.other && e.type === "peer-unavailable") {
+                    peer.destroy();
+                    this.dataConnection?.close();
+                    this.dataConnection = undefined;
+                    this.connect(this.other.id);
+                    return;
+                }
+                if (e.message) {
+                    this.errorMessage = `Error: ${e.message}`;
+                }
             }
             this.setUserState(UserStateType.Failed);
         });
