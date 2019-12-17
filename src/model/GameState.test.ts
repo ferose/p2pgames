@@ -1,7 +1,7 @@
 import { GameState, Circle, CircleType } from './GameState';
 
 describe('Win condition', () => {
-    const gameState = new GameState({numCols:5, numRows:6, setStatus:()=>{}});
+    const gameState = new GameState({numCols:5, numRows:6, setMessage:()=>{}});
 
     test('empty state', () => {
         expect(gameState.findWinningCircles()).toBeNull();

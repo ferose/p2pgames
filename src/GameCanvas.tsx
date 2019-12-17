@@ -4,6 +4,7 @@ import _ from 'lodash';
 import { createBoardCanvas, createBlankCanvas } from './canvas/CanvasFactory';
 import { GameState, Circle } from './model/GameState';
 import TWEEN from '@tweenjs/tween.js';
+import { UserManager } from './model/UserManager';
 
 type Cursor = {
     x: number,
@@ -19,7 +20,8 @@ const circleSpacing = 10;
 const margin = 10;
 
 interface IGameCanvasProps {
-    setStatus(status: JSX.Element): void;
+    setMessage(status: JSX.Element): void;
+    userManager: UserManager;
 }
 
 interface IGameCanvasState {}
@@ -32,11 +34,12 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
     private boardCanvas: HTMLCanvasElement | null = null;
     private overlayCanvas: HTMLCanvasElement | null = null;
     private overlayCanvasAlpha = 0;
-    private gameState = new GameState({numCols, numRows, setStatus: this.props.setStatus});
+    private gameState = new GameState({numCols, numRows, setMessage: this.props.setMessage});
     private animationTweenDestination = {} as Circle;
 
     public constructor(props: IGameCanvasProps) {
         super(props);
+        this.state = {};
         this.canvasRef = React.createRef();
         this.divRef = React.createRef();
     }

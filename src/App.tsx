@@ -6,33 +6,54 @@ import Menu from './Menu';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
+import ConnectionPrompt from './ConnectionPrompt';
+import { UserManager, UserStateType } from './model/UserManager';
 
-const App: React.FC = () => {
-  const [modalShow, setModalShow] = React.useState(false);
-  const [status, setStatus] = React.useState(<span>status goes here</span>);
-
-  return (
-    <div className="App">
-      <Banner/>
-      <div id="alert">
-        {status}
-      </div>
-      <GameCanvas setStatus={setStatus}/>
-
-      <Button
-        variant="primary"
-        id="menu-button"
-        onClick={() => setModalShow(true)}
-      >
-        <FontAwesomeIcon icon={faBars} />
-      </Button>
-
-      <Menu
-        show={modalShow}
-        onHide={() => setModalShow(false)}
-      />
-    </div>
-  );
+interface IAppProps {}
+interface IAppState {
+    modalShow: boolean;
+    message: JSX.Element;
 }
 
-export default App;
+export default class App extends React.Component<IAppProps, IAppState> {
+    private userManager: UserManager = new UserManager();
+
+    constructor(props: IAppProps) {
+        super(props);
+        this.state = {
+            message: <span></span>,
+            modalShow: false,
+        }
+
+        this.userManager.addListener(this);
+    }
+
+    public render() {
+         return (
+            <div className="App">
+            <Banner/>
+            <div id="alert">
+                {this.state.message}
+            </div>
+            <GameCanvas userManager={this.userManager} setMessage={message => this.setState({message})}/>
+
+            {this.userManager.getUserState() !== UserStateType.Connected &&
+                <ConnectionPrompt userManager={this.userManager}/>
+            }
+
+            <Button
+                variant="primary"
+                id="menu-button"
+                onClick={() => this.setState({modalShow: true})}
+            >
+                <FontAwesomeIcon icon={faBars} />
+            </Button>
+
+            <Menu
+                show={this.state.modalShow}
+                onHide={() => this.setState({modalShow: false})}
+            />
+            </div>
+      );
+    }
+}

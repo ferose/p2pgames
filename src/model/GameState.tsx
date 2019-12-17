@@ -52,16 +52,17 @@ export class GameState {
 
     private numCols: number;
     private numRows: number;
-    private setStatus: (status: JSX.Element) => void;
+    private setMessage: (status: JSX.Element) => void;
 
     constructor(params: {
         numCols: number,
         numRows: number,
-        setStatus: (status: JSX.Element) => void
+        setMessage: (status: JSX.Element) => void
     }){
         this.numCols = params.numCols;
         this.numRows = params.numRows;
-        this.setStatus = params.setStatus;
+        this.setMessage = params.setMessage;
+        this.updateStatus();
     }
 
     public get currentPlayer() {
@@ -95,17 +96,20 @@ export class GameState {
         this.animatedCircle.y = -1;
         this.lastMove.alpha = 1;
         this.currentPlayer = this.currentPlayer === CircleType.red ? CircleType.blue : CircleType.red;
+        this.updateStatus();
+    }
 
+    private updateStatus() {
         const player = this.winningCircles ? this.winningCircles[0].type : this.currentPlayer;
-        const playerName = player == CircleType.red ? "Red" : "Blue";
-        const playerCSS = player == CircleType.red ? "red" : "blue";
+        const playerName = player === CircleType.red ? "Red" : "Blue";
+        const playerCSS = player === CircleType.red ? "red" : "blue";
         const playerHTML = <b className={playerCSS}>{playerName}</b>;
 
         if (this.winningCircles){
-            this.setStatus(<span>{playerHTML} wins!</span>);
+            this.setMessage(<span>{playerHTML} wins!</span>);
         }
         else {
-            this.setStatus(<span>It is {playerHTML}'s return</span>);
+            this.setMessage(<span>It is {playerHTML}'s return</span>);
         }
     }
 
