@@ -35,6 +35,11 @@ export default class ConnectionPrompt extends React.Component<IConnectionPromptP
         }
     }
 
+    private shouldShowInstuctions() {
+        const userState = this.props.userManager.getUserState()
+        return userState === UserStateType.WaitingForPeer || userState === UserStateType.Failed;
+    }
+
     public render() {
         const thisURL = window.location.href;
         return (
@@ -45,7 +50,7 @@ export default class ConnectionPrompt extends React.Component<IConnectionPromptP
                     </Spinner>
                     <div>{this.message()}</div>
 
-                    {this.props.userManager.getUserState() === UserStateType.WaitingForPeer &&
+                    {this.shouldShowInstuctions() &&
                         <>
                         <QRCode className="qr" value={thisURL} />
                         <input
