@@ -9,16 +9,20 @@ export enum UserStateType {
     Failed,
 }
 
-type Listener = React.Component;
+export interface IUserListener {
+    forceUpdate() : void;
+}
 
 export class UserManager {
-    public self: User | null = null;
-    public other: User | null = null;
-    public errorMessage: string|null = null;
+    public thisUser?: User;
+    public otherUser?: User;
+    public errorMessage?: string;
 
+    private peer?: Peer;
     private userStateType: UserStateType = UserStateType.NoLink;
-    private listeners: Listener[] = [];
+    private listeners: IUserListener[] = [];
     private dataConnection?: Peer.DataConnection;
+    private hostID?: string;
 
     private setUserState(state: UserStateType) {
         this.userStateType = state;
@@ -27,11 +31,15 @@ export class UserManager {
         }
     }
 
+    public thisIsHost() {
+        return this.thisUser?.id === this.hostID;
+    }
+
     public getUserState() {
         return this.userStateType;
     }
 
-    public addListener(listener: Listener) {
+    public addListener(listener: IUserListener) {
         this.listeners.push(listener);
     }
 
@@ -62,15 +70,26 @@ export class UserManager {
         }
     }
 
+    private destroyConnections() {
+        this.peer?.destroy();
+        this.dataConnection?.close();
+        this.dataConnection = undefined;
+        this.peer = undefined;
+        this.thisUser = undefined;
+        this.otherUser = undefined;
+    }
+
     private connect(id?: string) {
         const peer = new Peer(id, {
             debug: 3
         });
+        this.peer = peer;
 
         if (window.location.hash && !id) {
             this.setUserState(UserStateType.WaitingForPeer);
-            this.other = new User({id: window.location.hash.replace("#", "")});
-            const conn = peer.connect(this.other.id, {
+            this.hostID = window.location.hash.replace("#", "");
+            this.otherUser = new User({id: this.hostID});
+            const conn = peer.connect(this.otherUser.id, {
                 reliable: true,
             });
             this.dataConnection = conn;
@@ -89,8 +108,9 @@ export class UserManager {
         }
 
         peer.on('open', (id) => {
-            this.self = new User({id});
+            this.thisUser = new User({id});
             if (!window.location.hash) {
+                this.hostID = id;
                 window.location.hash = id;
                 this.setUserState(UserStateType.WaitingForPeer);
             }
@@ -131,11 +151,9 @@ export class UserManager {
         });
         peer.on('error', (e) => {
             if (e) {
-                if (this.other && e.type === "peer-unavailable") {
-                    peer.destroy();
-                    this.dataConnection?.close();
-                    this.dataConnection = undefined;
-                    this.connect(this.other.id);
+                if (this.otherUser && e.type === "peer-unavailable") {
+                    this.destroyConnections();
+                    this.connect(this.otherUser.id);
                     return;
                 }
                 if (e.message) {
