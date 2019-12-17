@@ -18,9 +18,13 @@
 
 .connection-alert > * {
     margin: 5px;
+    text-align: center;
 }
 
 .connection-url-input {
-    text-align: center;
     width: 100%;
+}
+
+.connection-instruction {
+    font-size: 0.7rem;
 }

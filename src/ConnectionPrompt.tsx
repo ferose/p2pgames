@@ -54,6 +54,7 @@ export default class ConnectionPrompt extends React.Component<IConnectionPromptP
                             value={thisURL}
                             onFocus={this.handleFocus}
                         />
+                        <div className="connection-instruction">Share this URL or Airdrop it to your friend to connect with them.</div>
                         </>
                     }
                 </div>
