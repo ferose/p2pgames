@@ -4,6 +4,7 @@ import { NetworkMessageType, INetworkMessage, INetworkRejectData } from "./Netwo
 
 export enum UserStateType {
     NoLink = 1,
+    ConnectingToHost,
     WaitingForPeer,
     Connected,
     Failed,
@@ -80,13 +81,15 @@ export class UserManager {
     }
 
     private connect(id?: string) {
+        this.destroyConnections();
+
         const peer = new Peer(id, {
             debug: 3
         });
         this.peer = peer;
 
         if (window.location.hash && !id) {
-            this.setUserState(UserStateType.WaitingForPeer);
+            this.setUserState(UserStateType.ConnectingToHost);
             this.hostID = window.location.hash.replace("#", "");
             this.otherUser = new User({id: this.hostID});
             const conn = peer.connect(this.otherUser.id, {
@@ -112,6 +115,8 @@ export class UserManager {
             if (!window.location.hash) {
                 this.hostID = id;
                 window.location.hash = id;
+            }
+            if (this.thisIsHost()) {
                 this.setUserState(UserStateType.WaitingForPeer);
             }
         });
@@ -152,7 +157,6 @@ export class UserManager {
         peer.on('error', (e) => {
             if (e) {
                 if (this.otherUser && e.type === "peer-unavailable") {
-                    this.destroyConnections();
                     this.connect(this.otherUser.id);
                     return;
                 }

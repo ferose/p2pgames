@@ -7,7 +7,7 @@ import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import ConnectionPrompt from './ConnectionPrompt';
-import { UserManager } from './model/UserManager';
+import { UserManager, UserStateType } from './model/UserManager';
 
 interface IAppProps {}
 interface IAppState {
@@ -36,7 +36,10 @@ export default class App extends React.Component<IAppProps, IAppState> {
                 {this.state.message}
             </div>
             <GameCanvas userManager={this.userManager} setMessage={message => this.setState({message})}/>
-            <ConnectionPrompt userManager={this.userManager}/>
+
+            {this.userManager.getUserState() !== UserStateType.Connected &&
+                <ConnectionPrompt userManager={this.userManager}/>
+            }
 
             <Button
                 variant="primary"

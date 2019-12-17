@@ -26,6 +26,8 @@ export default class ConnectionPrompt extends React.Component<IConnectionPromptP
                 return "Generating URL";
             case UserStateType.WaitingForPeer:
                 return "Waiting for player to join";
+            case UserStateType.ConnectingToHost:
+                return "Connecting to host";
             case UserStateType.Connected:
                 return "Connected";
             case UserStateType.Failed:
@@ -42,13 +44,18 @@ export default class ConnectionPrompt extends React.Component<IConnectionPromptP
                         <span className="sr-only">Loading...</span>
                     </Spinner>
                     <div>{this.message()}</div>
-                    <QRCode className="qr" value={thisURL} />
-                    <input
-                        className="connection-url-input"
-                        readOnly
-                        value={thisURL}
-                        onFocus={this.handleFocus}
-                    />
+
+                    {this.props.userManager.getUserState() === UserStateType.WaitingForPeer &&
+                        <>
+                        <QRCode className="qr" value={thisURL} />
+                        <input
+                            className="connection-url-input"
+                            readOnly
+                            value={thisURL}
+                            onFocus={this.handleFocus}
+                        />
+                        </>
+                    }
                 </div>
             </div>
         )
