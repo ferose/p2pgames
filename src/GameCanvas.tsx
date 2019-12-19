@@ -383,6 +383,8 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
 
     private onTouchStart = (e: React.TouchEvent) => {
         if (!this.divRef.current) return;
+        e.preventDefault();
+        e.stopPropagation();
         const div = this.divRef.current;
         const dpr = window.devicePixelRatio || 1;
         const touch = e.touches[0];

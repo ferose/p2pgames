@@ -1,3 +1,4 @@
 canvas {
     display: block;
+    user-select: none;
 }
