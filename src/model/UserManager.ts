@@ -83,9 +83,14 @@ export class UserManager {
     private connect(id?: string) {
         this.destroyConnections();
 
-        const peer = new Peer(id, {
-            debug: 3
-        });
+        const host = process.env.REACT_APP_PEER_SERVER_HOST;
+        const config = {
+            debug: 3,
+        } as any;
+        if (host) {
+            [config.host, config.port] = host.split(":");
+        }
+        const peer = new Peer(id, config);
         this.peer = peer;
 
         if (window.location.hash && !id) {

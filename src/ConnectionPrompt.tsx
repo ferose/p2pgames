@@ -37,7 +37,7 @@ export default class ConnectionPrompt extends React.Component<IConnectionPromptP
 
     private shouldShowInstuctions() {
         const userState = this.props.userManager.getUserState()
-        return userState === UserStateType.WaitingForPeer || userState === UserStateType.Failed;
+        return userState === UserStateType.WaitingForPeer;
     }
 
     public render() {
@@ -59,7 +59,7 @@ export default class ConnectionPrompt extends React.Component<IConnectionPromptP
                             value={thisURL}
                             onFocus={this.handleFocus}
                         />
-                        <div className="connection-instruction">Share this URL or Airdrop it to your friend to connect with them.</div>
+                        <div className="connection-instruction">Share this URL, scan the barcode or Airdrop it to your friend to connect with them.</div>
                         </>
                     }
                 </div>
