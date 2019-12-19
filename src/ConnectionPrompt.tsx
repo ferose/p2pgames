@@ -2,14 +2,15 @@ import * as React from 'react';
 import './ConnectionPrompt.scss';
 import Spinner from 'react-bootstrap/Spinner';
 import QRCode from 'qrcode.react';
-import { UserManager, UserStateType } from './model/UserManager';
+import { UserManager, UserStateType, IUserListener } from './model/UserManager';
+import { INetworkMessage } from './model/NetworkHelper';
 
 interface IConnectionPromptProps {
     userManager: UserManager;
 }
 interface IConnectionPromptState {}
 
-export default class ConnectionPrompt extends React.Component<IConnectionPromptProps, IConnectionPromptState> {
+export default class ConnectionPrompt extends React.Component<IConnectionPromptProps, IConnectionPromptState> implements IUserListener {
     constructor(props: IConnectionPromptProps) {
         super(props);
         this.state = {};

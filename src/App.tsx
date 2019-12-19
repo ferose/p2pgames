@@ -7,7 +7,8 @@ import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import ConnectionPrompt from './ConnectionPrompt';
-import { UserManager, UserStateType } from './model/UserManager';
+import { UserManager, UserStateType, IUserListener } from './model/UserManager';
+import { INetworkMessage } from './model/NetworkHelper';
 
 interface IAppProps {}
 interface IAppState {
@@ -15,7 +16,7 @@ interface IAppState {
     message: JSX.Element;
 }
 
-export default class App extends React.Component<IAppProps, IAppState> {
+export default class App extends React.Component<IAppProps, IAppState> implements IUserListener {
     private userManager: UserManager = new UserManager();
 
     constructor(props: IAppProps) {

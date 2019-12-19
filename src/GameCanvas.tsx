@@ -4,7 +4,8 @@ import _ from 'lodash';
 import { createBoardCanvas, createBlankCanvas } from './canvas/CanvasFactory';
 import { GameState, Circle } from './model/GameState';
 import TWEEN from '@tweenjs/tween.js';
-import { UserManager } from './model/UserManager';
+import { UserManager, IUserListener, INetworkListener } from './model/UserManager';
+import { NetworkMessageType, INetworkMessage } from './model/NetworkHelper';
 
 type Cursor = {
     x: number,
@@ -26,7 +27,7 @@ interface IGameCanvasProps {
 
 interface IGameCanvasState {}
 
-export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCanvasState> {
+export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCanvasState> implements INetworkListener {
     private canvasRef: React.RefObject<HTMLCanvasElement>;
     private divRef: React.RefObject<HTMLDivElement>;
 
@@ -42,6 +43,7 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
         this.state = {};
         this.canvasRef = React.createRef();
         this.divRef = React.createRef();
+        this.props.userManager.addNetworkListener(this);
     }
 
     private get canvas() {
@@ -226,16 +228,14 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
             let x = Math.round((c.x-(canvas.width-width)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing));
             let y = (canvas.height-height)/2;
             if (x >= 0 && x < numCols && c.y >= y && c.y <= y+height) {
-                if (this.gameState.animatedCircle.alpha === 0) {
-                    this.gameState.animatedCircle.x = x;
-                }
-                if (this.animationTweenDestination.x !== x) {
-                    this.animationTweenDestination = {x, alpha: 1, scale: 1} as Circle;
-                    new TWEEN.Tween(this.gameState.animatedCircle)
-                        .to(this.animationTweenDestination, 250)
-                        .easing(TWEEN.Easing.Quadratic.Out)
-                        .start();
-                }
+                this.props.userManager.sendData({
+                    type: NetworkMessageType.Input,
+                    data: {
+                        method: "showAnimatedCircle",
+                        x
+                    }
+                });
+                this.showAnimatedCircle(x)
                 return;
             }
         }
@@ -257,6 +257,41 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
         const canvas = this.canvas;
         const {width, circleSize} = this.getBoardDimensions();
         let x = Math.round((c.x-(canvas.width-width)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing));
+        this.makeMove(x);
+        this.props.userManager.sendData({
+            type: NetworkMessageType.Input,
+            data: {
+                method: "makeMove",
+                x
+            }
+        });
+    }
+
+    public onNetworkData = (message: INetworkMessage) => {
+        if (message.type !== NetworkMessageType.Input) return;
+        const data = message.data as any;
+        if (!data) return;
+        if (data.method === "showAnimatedCircle") {
+            this.showAnimatedCircle(data.x);
+        } else if (data.method === "makeMove") {
+            this.makeMove(data.x);
+        }
+    }
+
+    private showAnimatedCircle(x:number) {
+        if (this.gameState.animatedCircle.alpha === 0) {
+            this.gameState.animatedCircle.x = x;
+        }
+        if (this.animationTweenDestination.x !== x) {
+            this.animationTweenDestination = {x, alpha: 1, scale: 1} as Circle;
+            new TWEEN.Tween(this.gameState.animatedCircle)
+                .to(this.animationTweenDestination, 250)
+                .easing(TWEEN.Easing.Quadratic.Out)
+                .start();
+        }
+    }
+
+    private makeMove(x:number) {
         if (!this.gameState.makeMove(x)) return;
         if (!this.gameState.lastMove) return;
         const y = this.gameState.lastMove.y;

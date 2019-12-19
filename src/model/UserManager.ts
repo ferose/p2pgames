@@ -14,6 +14,10 @@ export interface IUserListener {
     forceUpdate() : void;
 }
 
+export interface INetworkListener {
+    onNetworkData(message: INetworkMessage) : void;
+}
+
 export class UserManager {
     public thisUser?: User;
     public otherUser?: User;
@@ -22,6 +26,7 @@ export class UserManager {
     private peer?: Peer;
     private userStateType: UserStateType = UserStateType.NoLink;
     private listeners: IUserListener[] = [];
+    private networkListeners: INetworkListener[] = [];
     private dataConnection?: Peer.DataConnection;
     private hostID?: string;
 
@@ -44,11 +49,15 @@ export class UserManager {
         this.listeners.push(listener);
     }
 
+    public addNetworkListener(listener: INetworkListener) {
+        this.networkListeners.push(listener);
+    }
+
     public constructor() {
         this.connect();
     }
 
-    private sendData(networkMessage: INetworkMessage) {
+    public sendData(networkMessage: INetworkMessage) {
         if (!this.dataConnection) {
             console.error("No data connection");
             return;
@@ -68,6 +77,9 @@ export class UserManager {
                     this.setUserState(UserStateType.Failed);
                 }
                 break;
+        }
+        for (const listener of this.networkListeners) {
+            listener.onNetworkData(networkMessage);
         }
     }
 
