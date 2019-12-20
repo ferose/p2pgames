@@ -9,8 +9,8 @@ export class Support extends React.Component<ISupportProps, ISupportState> {
         return (
             <div className="Support">
                 <h1>Support</h1>
-                <p>This is a beta site with a lot under constructions.</p>
-                <p>Feedbacks are appreciated with email: ferosegame@gmail.com</p>
+                <p>This is a beta site with a lot under construction.</p>
+                <p>Feedback can be sent to: ferosegame@gmail.com</p>
             </div>
         )
     }
