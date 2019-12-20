@@ -2,7 +2,6 @@
   "name": "p2pgames",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://ferose.github.io/p2pgames/",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.25",
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
