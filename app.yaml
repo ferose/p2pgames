@@ -12,4 +12,4 @@ handlers:
 
   - url: .*
     static_files: build/index.html
-    upload: build/index.htmln
+    upload: build/index.html
