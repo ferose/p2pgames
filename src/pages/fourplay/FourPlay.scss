@@ -1,0 +1,32 @@
+
+$alert-height: 20px;
+
+#alert {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: $alert-height;
+    position: absolute;
+    text-align: center;
+    font-size: 0.8rem;
+    user-select: none;
+}
+
+.GameCanvas {
+    top: $alert-height;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+}
+
+.ConnectionPrompt {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+}
+
+.red {color: #d2a3a9}
+.blue {color: #89aeb2}

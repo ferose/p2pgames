@@ -11,10 +11,6 @@ interface IMenuProps {
     show: boolean;
 }
 
-function sendSupportEmail() {
-    window.open("mailto:ferosegame@gmail.com");
-}
-
 const Menu: React.FC<IMenuProps> = (props) => {
     return (
         <Modal
@@ -34,7 +30,7 @@ const Menu: React.FC<IMenuProps> = (props) => {
                 <ListGroup.Item action onClick={()=>{alert("Under construction")}}>
                     <FontAwesomeIcon className="link-icon" icon={faGamepad} fixedWidth/> More Games
                 </ListGroup.Item>
-                <ListGroup.Item action onClick={sendSupportEmail}>
+                <ListGroup.Item action href={"support"} target="_blank">
                     <FontAwesomeIcon className="link-icon" icon={faEnvelope} fixedWidth/> Feedback
                 </ListGroup.Item>
             </ListGroup>

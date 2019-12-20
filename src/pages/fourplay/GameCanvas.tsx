@@ -1,11 +1,11 @@
 import * as React from 'react';
 import './GameCanvas.css';
 import _ from 'lodash';
-import { createBoardCanvas, createBlankCanvas } from './canvas/CanvasFactory';
-import { GameState, Circle } from './model/GameState';
+import { createBoardCanvas, createBlankCanvas } from '../../canvas/CanvasFactory';
+import { GameState, Circle } from '../../model/GameState';
 import TWEEN from '@tweenjs/tween.js';
-import { UserManager, INetworkListener } from './model/UserManager';
-import { NetworkMessageType, INetworkMessage } from './model/NetworkHelper';
+import { UserManager, INetworkListener } from '../../model/UserManager';
+import { NetworkMessageType, INetworkMessage } from '../../model/NetworkHelper';
 
 type Cursor = {
     x: number,
