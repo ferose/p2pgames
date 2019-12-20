@@ -14,7 +14,7 @@ export class NotFound extends React.Component<INotFoundProps, INotFoundState> {
                 <h4>Page not found</h4>
                 <div className="links">
                     <Link to="/"><Button>Homepage</Button></Link>
-                    <Link to="/"><Button>Support</Button></Link>
+                    <Link to="/support"><Button>Support</Button></Link>
                 </div>
             </div>
         )

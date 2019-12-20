@@ -8,7 +8,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import Banner from './Banner';
 import FourPlay from './pages/fourplay/FourPlay';
-import { NotFound } from './pages/NotFound';
+import { NotFound } from './pages/notfound/NotFound';
+import { Support } from './pages/support/Support';
 
 interface IAppProps {
 }
@@ -34,6 +35,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
                 <Switch>
                     <Route path="/" component={FourPlay} exact/>
                     <Route path="/4play" component={FourPlay}/>
+                    <Route path="/support" component={Support}/>
                     <Route component={NotFound}/>
                 </Switch>
                 </div>
