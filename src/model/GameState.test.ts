@@ -1,5 +1,6 @@
 import { GameState, Circle, CircleType } from './GameState';
 import { UserManager } from './UserManager';
+jest.mock('./UserManager');
 
 describe('Win condition', () => {
     const gameState = new GameState({numCols:5, numRows:6, setMessage:()=>{}, userManager: new UserManager()});
