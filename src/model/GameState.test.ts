@@ -1,7 +1,8 @@
 import { GameState, Circle, CircleType } from './GameState';
+import { UserManager } from './UserManager';
 
 describe('Win condition', () => {
-    const gameState = new GameState({numCols:5, numRows:6, setMessage:()=>{}});
+    const gameState = new GameState({numCols:5, numRows:6, setMessage:()=>{}, userManager: new UserManager()});
 
     test('empty state', () => {
         expect(gameState.findWinningCircles()).toBeNull();
