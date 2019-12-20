@@ -1,4 +1,4 @@
-Play demo on [github pages](https://ferose.github.io/connect4-react/).
+Play demo on [github pages](https://ferose.github.io/p2pgames/).
 
 ## Available Scripts
 
