@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { createBoardCanvas, createBlankCanvas } from './canvas/CanvasFactory';
 import { GameState, Circle } from './model/GameState';
 import TWEEN from '@tweenjs/tween.js';
-import { UserManager, IUserListener, INetworkListener } from './model/UserManager';
+import { UserManager, INetworkListener } from './model/UserManager';
 import { NetworkMessageType, INetworkMessage } from './model/NetworkHelper';
 
 type Cursor = {
@@ -14,6 +14,7 @@ type Cursor = {
 
 const numRows = 6;
 const numCols = 7;
+
 
 // windowEdge <magin> boardEdge <boardPadding> circle <circleSpacing> circle...
 const boardPadding = 20;
@@ -35,7 +36,12 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
     private boardCanvas: HTMLCanvasElement | null = null;
     private overlayCanvas: HTMLCanvasElement | null = null;
     private overlayCanvasAlpha = 0;
-    private gameState = new GameState({numCols, numRows, setMessage: this.props.setMessage});
+    private gameState = new GameState({
+        numCols,
+        numRows,
+        setMessage: this.props.setMessage,
+        userManager: this.props.userManager,
+    });
     private animationTweenDestination = {} as Circle;
 
     public constructor(props: IGameCanvasProps) {
@@ -222,6 +228,7 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
     private set cursor(c:Cursor|null) {
         this._cursor = c;
         if (this.gameState.isAnimating) return;
+        if (!this.gameState.isLocalPlayersTurn()) return;
         if (c) {
             const canvas = this.canvas;
             const {width, height, circleSize} = this.getBoardDimensions();
@@ -254,6 +261,7 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
         if (this.gameState.winningCircles !== null) return;
         if (this.gameState.isAnimating) return;
         if (this.animationTweenDestination.alpha === 0) return;
+        if (!this.gameState.isLocalPlayersTurn()) return;
         const canvas = this.canvas;
         const {width, circleSize} = this.getBoardDimensions();
         let x = Math.round((c.x-(canvas.width-width)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing));
@@ -268,13 +276,17 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
     }
 
     public onNetworkData = (message: INetworkMessage) => {
-        if (message.type !== NetworkMessageType.Input) return;
-        const data = message.data as any;
-        if (!data) return;
-        if (data.method === "showAnimatedCircle") {
-            this.showAnimatedCircle(data.x);
-        } else if (data.method === "makeMove") {
-            this.makeMove(data.x);
+        if (message.type === NetworkMessageType.Input) {
+            const data = message.data as any;
+            if (!data) return;
+            if (data.method === "showAnimatedCircle") {
+                this.showAnimatedCircle(data.x);
+            } else if (data.method === "makeMove") {
+                this.makeMove(data.x);
+            }
+        }
+        else if (message.type === NetworkMessageType.Connected) {
+            this.gameState.updateStatus();
         }
     }
 

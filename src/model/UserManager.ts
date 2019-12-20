@@ -11,11 +11,11 @@ export enum UserStateType {
 }
 
 export interface IUserListener {
-    forceUpdate() : void;
+    forceUpdate(): void;
 }
 
 export interface INetworkListener {
-    onNetworkData(message: INetworkMessage) : void;
+    onNetworkData(message: INetworkMessage): void;
 }
 
 export class UserManager {

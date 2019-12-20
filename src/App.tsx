@@ -8,7 +8,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import ConnectionPrompt from './ConnectionPrompt';
 import { UserManager, UserStateType, IUserListener } from './model/UserManager';
-import { INetworkMessage } from './model/NetworkHelper';
 
 interface IAppProps {}
 interface IAppState {

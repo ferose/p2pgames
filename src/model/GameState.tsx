@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import * as React from 'react';
+import { UserManager } from './UserManager';
 
 export class Pair<X=number, Y=number> {
     constructor(public x:X, public y:Y) {}
@@ -53,15 +54,18 @@ export class GameState {
     private numCols: number;
     private numRows: number;
     private setMessage: (status: JSX.Element) => void;
+    private userManager: UserManager;
 
     constructor(params: {
         numCols: number,
         numRows: number,
-        setMessage: (status: JSX.Element) => void
+        setMessage: (status: JSX.Element) => void,
+        userManager: UserManager,
     }){
         this.numCols = params.numCols;
         this.numRows = params.numRows;
         this.setMessage = params.setMessage;
+        this.userManager = params.userManager;
         this.updateStatus();
     }
 
@@ -99,17 +103,30 @@ export class GameState {
         this.updateStatus();
     }
 
-    private updateStatus() {
-        const player = this.winningCircles ? this.winningCircles[0].type : this.currentPlayer;
+    private getPlayerHTML(player: CircleType) {
         const playerName = player === CircleType.red ? "Red" : "Blue";
         const playerCSS = player === CircleType.red ? "red" : "blue";
         const playerHTML = <b className={playerCSS}>{playerName}</b>;
+        return playerHTML;
+    }
+
+    private getLocalPlayer() {
+        return this.userManager.thisIsHost() ? CircleType.red : CircleType.blue;
+    }
+
+    public isLocalPlayersTurn() {
+        return this.currentPlayer === this.getLocalPlayer();
+    }
+
+    public updateStatus() {
+        const player = this.winningCircles ? this.winningCircles[0].type : this.currentPlayer;
+        const playerHTML = this.getPlayerHTML(player);
 
         if (this.winningCircles){
-            this.setMessage(<span>{playerHTML} wins!</span>);
+            this.setMessage(<span>You are {this.getPlayerHTML(this.getLocalPlayer())}. {playerHTML} wins!</span>);
         }
         else {
-            this.setMessage(<span>It is {playerHTML}'s return</span>);
+            this.setMessage(<span>You are {this.getPlayerHTML(this.getLocalPlayer())}. It is {playerHTML}'s turn</span>);
         }
     }
 
