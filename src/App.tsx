@@ -7,7 +7,8 @@ import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faBars } from '@fortawesome/free-solid-svg-icons'
 import Banner from './Banner';
-import FourPlay from './FourPlay';
+import FourPlay from './pages/fourplay/FourPlay';
+import { NotFound } from './pages/NotFound';
 
 interface IAppProps {
 }
@@ -29,16 +30,18 @@ export default class App extends React.Component<IAppProps, IAppState> {
            <BrowserRouter>
             <div className="App">
                 <Banner/>
+                <div className="main-content">
                 <Switch>
-                 <Route path="/" component={FourPlay} exact/>
-                 <Route path="/4play" component={FourPlay}/>
-               </Switch>
+                    <Route path="/" component={FourPlay} exact/>
+                    <Route path="/4play" component={FourPlay}/>
+                    <Route component={NotFound}/>
+                </Switch>
+                </div>
 
                <Button
                     variant="primary"
                     id="menu-button"
-                    onClick={() => this.setState({modalShow: true})}
-                >
+                    onClick={() => this.setState({modalShow: true})}>
                     <FontAwesomeIcon icon={faBars} />
                 </Button>
 

@@ -1,13 +1,5 @@
-@import "utilities/Variables";
-$alert-height: 20px;
 
-.FourPlay {
-    top: $banner-height;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    position: absolute;
-}
+$alert-height: 20px;
 
 #alert {
     top: 0;

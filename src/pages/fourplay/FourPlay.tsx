@@ -2,8 +2,8 @@ import React from 'react';
 import './FourPlay.scss';
 import GameCanvas from './GameCanvas';
 
-import ConnectionPrompt from './ConnectionPrompt';
-import { UserManager, UserStateType, IUserListener } from './model/UserManager';
+import ConnectionPrompt from '../../ConnectionPrompt';
+import { UserManager, UserStateType, IUserListener } from '../../model/UserManager';
 
 interface IFourPlayProps {}
 interface IFourPlayState {
