@@ -28,7 +28,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
 
     public render() {
         return (
-           <BrowserRouter>
+           <BrowserRouter basename="/p2pgames/">
             <div className="App">
                 <Banner/>
                 <div className="main-content">
