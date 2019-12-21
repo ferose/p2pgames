@@ -3,7 +3,7 @@ import './FourPlay.scss';
 import GameCanvas from './GameCanvas';
 
 import ConnectionPrompt from '../../ConnectionPrompt';
-import { UserManager, UserStateType, IUserListener } from '../../model/UserManager';
+import { UserManager, UserStateType, IUserListener } from '../../networking/UserManager';
 
 interface IFourPlayProps {}
 interface IFourPlayState {

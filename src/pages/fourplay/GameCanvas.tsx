@@ -4,8 +4,8 @@ import _ from 'lodash';
 import { createBoardCanvas, createBlankCanvas } from './CanvasFactory';
 import { GameState, Circle } from './GameState';
 import TWEEN from '@tweenjs/tween.js';
-import { UserManager, INetworkListener } from '../../model/UserManager';
-import { NetworkMessageType, INetworkMessage } from '../../model/NetworkHelper';
+import { UserManager, INetworkListener } from '../../networking/UserManager';
+import { NetworkMessageType, INetworkMessage } from '../../networking/NetworkHelper';
 
 type Cursor = {
     x: number,

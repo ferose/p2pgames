@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import * as React from 'react';
-import { UserManager } from '../../model/UserManager';
+import { UserManager } from '../../networking/UserManager';
 
 export class Pair<X=number, Y=number> {
     constructor(public x:X, public y:Y) {}

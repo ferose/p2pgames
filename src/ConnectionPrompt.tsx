@@ -2,7 +2,7 @@ import * as React from 'react';
 import './ConnectionPrompt.scss';
 import Spinner from 'react-bootstrap/Spinner';
 import QRCode from 'qrcode.react';
-import { UserManager, UserStateType, IUserListener } from './model/UserManager';
+import { UserManager, UserStateType, IUserListener } from './networking/UserManager';
 
 interface IConnectionPromptProps {
     userManager: UserManager;
