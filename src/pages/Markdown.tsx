@@ -17,19 +17,14 @@ export class Markdown extends React.Component<IMarkdownProps, IMarkdownState> {
         }
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         const readmePath = require(`./markdown/${this.props.name}.md`);
-
-        fetch(readmePath)
-          .then(response => {
-            return response.text()
-          })
-          .then(text => {
-            this.setState({
-              markdown: text
-            })
-          })
-      }
+        const response = await fetch(readmePath);
+        const markdown = await response.text();
+        this.setState({
+            markdown
+        });
+    }
 
     public render() {
         return (

@@ -6,7 +6,9 @@ interface IBannerProps {}
 const Banner: React.FC<IBannerProps> = (props) => {
   return (
     <div className="Banner">
-      <div id="ad"></div>
+      <div id="ad">
+        <h1>P2P Games</h1>
+      </div>
     </div>
   );
 }

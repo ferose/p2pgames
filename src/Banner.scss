@@ -14,4 +14,11 @@ $ad-margin: 60px;
     height: $banner-height;
     margin-left: $ad-margin;
     margin-right: $ad-margin;
+
+    // Remove when ads get approved
+    display: flex;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
 }
