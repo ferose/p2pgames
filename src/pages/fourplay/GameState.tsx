@@ -81,6 +81,7 @@ export class GameState {
         this.animatedCircle.alpha = 0;
         this.animatedCircle.type = CircleType.red;
         this.moves = [];
+        this.winningCircles = null;
         this.updateStatus();
     }
 

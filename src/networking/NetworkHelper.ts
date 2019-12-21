@@ -2,6 +2,7 @@ export enum NetworkMessageType {
     Connected = 1,
     Reject,
     Input,
+    Reset,
 }
 
 export interface INetworkRejectData {

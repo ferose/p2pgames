@@ -31,6 +31,12 @@ export class UserManager {
     private dataConnection?: Peer.DataConnection;
     private hostID?: string;
 
+    public constructor() {
+        // this.setUserState(UserStateType.Connected);
+        // return;
+        this.connect();
+    }
+
     private setUserState(state: UserStateType) {
         this.userStateType = state;
         for (const listener of this.listeners) {
@@ -60,12 +66,6 @@ export class UserManager {
 
     public removeNetworkListener(listener: INetworkListener) {
         _.pull(this.networkListeners, listener);
-    }
-
-    public constructor() {
-        // this.setUserState(UserStateType.Connected);
-        // return;
-        this.connect();
     }
 
     public sendData(networkMessage: INetworkMessage) {

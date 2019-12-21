@@ -1,11 +1,12 @@
 import * as React from 'react';
-import './GameCanvas.css';
+import styles from './GameCanvas.module.scss';
 import _ from 'lodash';
 import { createBoardCanvas, createBlankCanvas } from './CanvasFactory';
-import { GameState, Circle } from './GameState';
+import { GameState, Circle, CircleType } from './GameState';
 import TWEEN from '@tweenjs/tween.js';
 import { UserManager, INetworkListener } from '../../networking/UserManager';
 import { NetworkMessageType, INetworkMessage } from '../../networking/NetworkHelper';
+import { GameOver } from './GameOver';
 
 type Cursor = {
     x: number,
@@ -25,7 +26,9 @@ interface IGameCanvasProps {
     userManager: UserManager;
 }
 
-interface IGameCanvasState {}
+interface IGameCanvasState {
+    showGameOver: boolean
+}
 
 export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCanvasState> implements INetworkListener {
     private canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -45,7 +48,9 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
 
     public constructor(props: IGameCanvasProps) {
         super(props);
-        this.state = {};
+        this.state = {
+            showGameOver: false
+        };
         this.canvasRef = React.createRef();
         this.divRef = React.createRef();
     }
@@ -287,8 +292,9 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
                 this.makeMove(data.x);
             }
         }
-        else if (message.type === NetworkMessageType.Connected) {
-            this.gameState.reset();
+        else if (message.type === NetworkMessageType.Connected ||
+                 message.type === NetworkMessageType.Reset) {
+            this.reset();
         }
     }
 
@@ -340,9 +346,23 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
         }
     }
 
+    public reset = () => {
+        this.gameState.reset();
+        this.setState({showGameOver: false});
+        this.overlayCanvas = null;
+    }
+
+    public onRematch = () => {
+        this.reset();
+        this.props.userManager.sendData({
+            type: NetworkMessageType.Reset,
+        });
+    }
+
     private updateOverlay() {
         // If there's no winner there's no need for an overlay
         if (!this.gameState.winningCircles) return;
+        this.setState({showGameOver: true});
         this.overlayCanvas = createBlankCanvas({
             width: this.canvas.width,
             height: this.canvas.height,
@@ -408,8 +428,9 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
 
     public render() {
         return (
-            <div className="GameCanvas" ref={this.divRef}>
+            <div className="FourPlayGameCanvas" ref={this.divRef}>
                 <canvas
+                    className={styles.canvas}
                     ref={this.canvasRef}
                     width={1}
                     height={1}
@@ -423,6 +444,8 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
                     onTouchStart={this.onTouchStart}
                     onTouchEnd={this.onTouchEnd}
                 ></canvas>
+
+                {this.state.showGameOver && <GameOver onRematch={this.onRematch}/>}
             </div>
         );
     }
