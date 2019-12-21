@@ -377,12 +377,11 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
     }
 
     private onMouseDown = (e: React.MouseEvent) => {
-        if (!this.divRef.current) return;
-        const div = this.divRef.current;
+        const offsets = this.canvas.getBoundingClientRect();
         const dpr = window.devicePixelRatio || 1;
         this.cursor = {
-            x: (e.pageX-div.offsetLeft)*dpr,
-            y: (e.pageY-div.offsetTop)*dpr,
+            x: (e.pageX-offsets.left)*dpr,
+            y: (e.pageY-offsets.top)*dpr,
         }
     }
 
@@ -393,15 +392,14 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
     }
 
     private onTouchStart = (e: React.TouchEvent) => {
-        if (!this.divRef.current) return;
         e.preventDefault();
         e.stopPropagation();
-        const div = this.divRef.current;
+        const offsets = this.canvas.getBoundingClientRect();
         const dpr = window.devicePixelRatio || 1;
         const touch = e.touches[0];
         this.cursor = {
-            x: (touch.pageX-div.offsetLeft)*dpr,
-            y: (touch.pageY-div.offsetTop)*dpr,
+            x: (touch.pageX-offsets.left)*dpr,
+            y: (touch.pageY-offsets.top)*dpr,
         };
     }
 

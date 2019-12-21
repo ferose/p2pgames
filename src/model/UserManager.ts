@@ -54,8 +54,8 @@ export class UserManager {
     }
 
     public constructor() {
-        // this.setUserState(UserStateType.Connected);
-        // return;
+        this.setUserState(UserStateType.Connected);
+        return;
         this.connect();
     }
 
