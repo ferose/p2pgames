@@ -7,9 +7,9 @@ handlers:
     static_dir: build/static
     secure: always
 
-  - url: /(.*\.(json|ico|js))$
+  - url: /(.*\.(json|ico|js|png|txt))$
     static_files: build/\1
-    upload: build/.*\.(json|ico|js)$
+    upload: build/.*\.(json|ico|js|png|txt)$
     secure: always
 
   - url: .*
