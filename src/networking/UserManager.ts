@@ -143,7 +143,7 @@ export class UserManager {
             this.thisUser = new User({id});
             if (!window.location.hash) {
                 this.hostID = id;
-                window.location.hash = id;
+                history.replaceState(undefined, undefined as any, id);
             }
             if (this.thisIsHost()) {
                 this.setUserState(UserStateType.WaitingForPeer);
