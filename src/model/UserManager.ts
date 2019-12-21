@@ -123,6 +123,7 @@ export class UserManager {
             });
             conn.on('error', (e) => {
                 if (e && e.message) {
+                    console.error(e);
                     this.errorMessage = `Connection Error: ${e.message}`;
                 }
                 this.setUserState(UserStateType.Failed);
@@ -157,6 +158,7 @@ export class UserManager {
             });
             conn.on('error', (e) => {
                 if (e && e.message) {
+                    console.error(e);
                     this.errorMessage = `Remote Connection Error: ${e.message}`;
                     this.dataConnection?.close();
                     this.dataConnection = undefined;
@@ -177,9 +179,12 @@ export class UserManager {
             if (e) {
                 if (this.otherUser && e.type === "peer-unavailable") {
                     this.connect(this.otherUser.id);
-                    return;
                 }
-                if (e.message) {
+                else if (e.type === "unavailable-id") {
+                    this.connect();
+                }
+                else if (e.message) {
+                    console.error(e, e.type);
                     this.errorMessage = `Error: ${e.message}`;
                 }
             }
