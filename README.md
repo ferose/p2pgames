@@ -1,4 +1,4 @@
-Play demo on [github pages](https://ferose.github.io/p2pgames/).
+Play on [ferose.me](https://ferose.me/).
 
 ## Available Scripts
 
