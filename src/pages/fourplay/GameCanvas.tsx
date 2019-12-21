@@ -1,12 +1,12 @@
-import * as React from 'react';
-import styles from './GameCanvas.module.scss';
-import _ from 'lodash';
-import { createBoardCanvas, createBlankCanvas } from './CanvasFactory';
-import { GameState, Circle, CircleType } from './GameState';
 import TWEEN from '@tweenjs/tween.js';
-import { UserManager, INetworkListener } from '../../networking/UserManager';
-import { NetworkMessageType, INetworkMessage } from '../../networking/NetworkHelper';
+import _ from 'lodash';
+import * as React from 'react';
+import { INetworkMessage, NetworkMessageType } from '../../networking/NetworkHelper';
+import { INetworkListener, UserManager } from '../../networking/UserManager';
+import { createBlankCanvas, createBoardCanvas } from './CanvasFactory';
+import styles from './GameCanvas.module.scss';
 import { GameOver } from './GameOver';
+import { Circle, GameState } from './GameState';
 
 type Cursor = {
     x: number,

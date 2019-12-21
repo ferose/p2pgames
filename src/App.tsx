@@ -1,15 +1,16 @@
+import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as React from 'react';
+import Button from 'react-bootstrap/Button';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import './App.scss';
-
-import Menu from './Menu';
-import Button from 'react-bootstrap/Button';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBars } from '@fortawesome/free-solid-svg-icons'
 import Banner from './Banner';
+import Menu from './Menu';
 import FourPlay from './pages/fourplay/FourPlay';
-import { NotFound } from './pages/notfound/NotFound';
+import { Homepage } from './pages/homepage/Homepage';
 import { Markdown } from './pages/Markdown';
+import { NotFound } from './pages/notfound/NotFound';
+
 
 interface IAppProps {
 }
@@ -33,7 +34,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
                 <Banner/>
                 <div className="main-content">
                 <Switch>
-                    <Route path="/" component={FourPlay} exact/>
+                    <Route path="/" component={Homepage} exact/>
                     <Route path="/4play" component={FourPlay}/>
                     <Route path="/support" render={(props) => <Markdown {...props} name="Support" />}/>
                     <Route component={NotFound}/>

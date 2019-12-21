@@ -1,5 +1,5 @@
-# Support
+# Support and Feedback
 
-This is a beta site with a lot under construction.
+This is a beta site with active development.
 
-Feedback can be sent to: ferosegame@gmail.com
+Feedback and suggestions can be sent to: ferosegame@gmail.com

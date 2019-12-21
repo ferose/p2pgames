@@ -1,20 +1,18 @@
-.NotFound {
+:local(.container) {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 100%;
-    height: 100%;
 }
 
-.NotFound h1 {
+:local(.container)>h1 {
     font-size: 5rem;
 }
 
-.NotFound h4 {
+:local(.container)>h4 {
     margin-bottom: 30px;
 }
 
-.links > a {
+:local(.links)>a {
     margin: 5px;
 }
