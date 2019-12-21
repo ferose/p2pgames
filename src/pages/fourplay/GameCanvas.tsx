@@ -15,7 +15,6 @@ type Cursor = {
 const numRows = 6;
 const numCols = 7;
 
-
 // windowEdge <magin> boardEdge <boardPadding> circle <circleSpacing> circle...
 const boardPadding = 20;
 const circleSpacing = 10;
@@ -286,7 +285,7 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
             }
         }
         else if (message.type === NetworkMessageType.Connected) {
-            this.gameState.updateStatus();
+            this.gameState.reset();
         }
     }
 

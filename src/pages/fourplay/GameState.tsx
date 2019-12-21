@@ -77,8 +77,15 @@ export class GameState {
         this.animatedCircle.type = type;
     }
 
+    public reset() {
+        this.animatedCircle.alpha = 0;
+        this.animatedCircle.type = CircleType.red;
+        this.moves = [];
+        this.updateStatus();
+    }
+
     /**
-     * Make sure to call completeMove() once animation completes
+     * Make sure to call completeMove() once animation completess
      */
     public makeMove(x:number) {
         const circleBelow = _(this.moves)

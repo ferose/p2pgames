@@ -143,10 +143,14 @@ export class UserManager {
 
         peer.on('connection', (conn) => {
             if (this.dataConnection) {
-                conn.send({type: NetworkMessageType.Reject, data: {
-                    msg: "Host already connected to another peer",
-                } as INetworkRejectData})
-                conn.close();
+                conn.on('open', () => {
+                    conn.send({type: NetworkMessageType.Reject, data: {
+                        msg: "Host already connected to another peer",
+                    } as INetworkRejectData});
+                    setTimeout(() => {
+                        conn.close();
+                    }, 5000);
+                });
                 return;
             };
             this.dataConnection = conn;
