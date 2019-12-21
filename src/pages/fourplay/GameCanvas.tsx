@@ -48,7 +48,6 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
         this.state = {};
         this.canvasRef = React.createRef();
         this.divRef = React.createRef();
-        this.props.userManager.addNetworkListener(this);
     }
 
     private get canvas() {
@@ -204,24 +203,28 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
         }
     }
 
-      /**
+    /**
      * Add event listener
      */
     componentDidMount() {
         this.updateDimensions();
         window.addEventListener("resize", this.updateDimensions);
         window.requestAnimationFrame(this.draw);
+        document.addEventListener('gesturestart', this.preventDefault);
+        this.props.userManager.addNetworkListener(this);
+    }
 
-        document.addEventListener('gesturestart', function (e) {
-            e.preventDefault();
-        });
+    preventDefault(e:Event) {
+        e.preventDefault();
     }
 
     /**
      * Remove event listener
      */
     componentWillUnmount() {
+        this.props.userManager.removeNetworkListener(this);
         window.removeEventListener("resize", this.updateDimensions);
+        document.removeEventListener('gesturestart', this.preventDefault);
     }
 
     private set cursor(c:Cursor|null) {

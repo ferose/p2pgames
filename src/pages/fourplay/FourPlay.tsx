@@ -18,8 +18,14 @@ export default class FourPlay extends React.Component<IFourPlayProps, IFourPlayS
         this.state = {
             message: <span></span>,
         }
+    }
 
+    componentWillMount() {
         this.userManager.addListener(this);
+    }
+
+    componentWillUnmount() {
+        this.userManager.removeListener(this);
     }
 
     public render() {

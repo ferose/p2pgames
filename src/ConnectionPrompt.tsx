@@ -13,7 +13,14 @@ export default class ConnectionPrompt extends React.Component<IConnectionPromptP
     constructor(props: IConnectionPromptProps) {
         super(props);
         this.state = {};
+    }
+
+    componentWillMount() {
         this.props.userManager.addListener(this);
+    }
+
+    componentWillUnmount() {
+        this.props.userManager.removeListener(this);
     }
 
     private handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {

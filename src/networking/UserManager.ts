@@ -1,5 +1,6 @@
 import { User } from "./User";
 import Peer from 'peerjs';
+import _ from 'lodash';
 import { NetworkMessageType, INetworkMessage, INetworkRejectData } from "./NetworkHelper";
 
 export enum UserStateType {
@@ -49,8 +50,16 @@ export class UserManager {
         this.listeners.push(listener);
     }
 
+    public removeListener(listener: IUserListener) {
+        _.pull(this.listeners, listener);
+    }
+
     public addNetworkListener(listener: INetworkListener) {
         this.networkListeners.push(listener);
+    }
+
+    public removeNetworkListener(listener: INetworkListener) {
+        _.pull(this.networkListeners, listener);
     }
 
     public constructor() {
