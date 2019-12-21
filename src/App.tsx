@@ -9,7 +9,7 @@ import { faBars } from '@fortawesome/free-solid-svg-icons'
 import Banner from './Banner';
 import FourPlay from './pages/fourplay/FourPlay';
 import { NotFound } from './pages/notfound/NotFound';
-import { Support } from './pages/support/Support';
+import { Markdown } from './pages/Markdown';
 
 interface IAppProps {
 }
@@ -28,14 +28,14 @@ export default class App extends React.Component<IAppProps, IAppState> {
 
     public render() {
         return (
-           <BrowserRouter>
+           <BrowserRouter forceRefresh={true}>
             <div className="App">
                 <Banner/>
                 <div className="main-content">
                 <Switch>
                     <Route path="/" component={FourPlay} exact/>
                     <Route path="/4play" component={FourPlay}/>
-                    <Route path="/support" component={Support}/>
+                    <Route path="/support" render={(props) => <Markdown {...props} name="Support" />}/>
                     <Route component={NotFound}/>
                 </Switch>
                 </div>
