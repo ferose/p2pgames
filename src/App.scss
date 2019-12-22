@@ -38,3 +38,18 @@ $menu-margin: 10px;
     height: $banner-height - 2*$menu-margin;
     position: absolute;
 }
+
+#home-button {
+    top: $menu-margin;
+    left: $menu-margin;
+    position: absolute;
+}
+
+#home-button>img {
+    height: $banner-height - 2*$menu-margin;
+    transition: filter .15s ease-in-out;
+}
+
+#home-button>img:hover {
+    filter: brightness(0.9);
+}

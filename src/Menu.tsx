@@ -27,7 +27,7 @@ const Menu: React.FC<IMenuProps> = (props) => {
         </Modal.Header>
         <Modal.Body>
             <ListGroup>
-                <ListGroup.Item action href="/">
+                <ListGroup.Item action href="/" target="_blank">
                     <FontAwesomeIcon className="link-icon" icon={faGamepad} fixedWidth/> More Games
                 </ListGroup.Item>
                 <ListGroup.Item action href={"support"} target="_blank">

@@ -2,7 +2,7 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as React from 'react';
 import Button from 'react-bootstrap/Button';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
 import './App.scss';
 import Banner from './Banner';
 import Menu from './Menu';
@@ -47,6 +47,10 @@ export default class App extends React.Component<IAppProps, IAppState> {
                     onClick={() => this.setState({modalShow: true})}>
                     <FontAwesomeIcon icon={faBars} />
                 </Button>
+
+                <Link to="/" id="home-button" target="_blank">
+                    <img src="/img/icon.svg" alt="Games"/>
+                </Link>
 
                 <Menu
                     show={this.state.modalShow}
