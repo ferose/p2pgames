@@ -11,7 +11,7 @@ export class Homepage extends React.Component<IHomepageProps, IHomepageState> {
             <div className={styles.container}>
                 <GamePreview
                     description="Compete against a friend and be the first to connect 4 in a line."
-                    imageName="/img/fourplay.png"
+                    imageName="/img/connect4.png"
                     title="4 Play"
                     link="4play"/>
                 <GamePreview

@@ -33,7 +33,7 @@
     "typescript": "3.7.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "startdev": "react-scripts start",
     "build": "react-scripts build",
     "predeploy": "npm run build",
     "deploy": "gcloud app deploy -q",
