@@ -1,6 +1,7 @@
 env: standard
 runtime: nodejs10
 service: default
+default_expiration: "0d 15m"
 
 handlers:
   - url: /static
