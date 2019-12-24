@@ -1,3 +1,4 @@
+@import '../../utilities/Variables.scss';
 
 $alert-height: 20px;
 
@@ -20,5 +21,5 @@ $alert-height: 20px;
     position: absolute;
 }
 
-.red {color: #d2a3a9}
-.blue {color: #89aeb2}
+.red {color: $red}
+.blue {color: $blue}

@@ -37,7 +37,7 @@ export class Circle {
     }
 
     public get hexColor() {
-        return this.type === CircleType.red ? "#d2a3a9" : "#89aeb2";
+        return this.type === CircleType.red ? "#BD4F6C" : "#93B5C6";
     }
 }
 
