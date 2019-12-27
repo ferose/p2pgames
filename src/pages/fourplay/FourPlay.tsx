@@ -1,6 +1,7 @@
 import React from 'react';
 import './FourPlay.scss';
 import GameCanvas from './GameCanvas';
+import {Helmet} from "react-helmet";
 
 import ConnectionPrompt from '../../ConnectionPrompt';
 import { UserManager, UserStateType, IUserListener } from '../../networking/UserManager';
@@ -31,6 +32,10 @@ export default class FourPlay extends React.Component<IFourPlayProps, IFourPlayS
     public render() {
          return (
             <div className="FourPlay">
+                <Helmet>
+                    <title>Peer to Peer Games - 4 Play</title>
+                </Helmet>
+
                 <div id="alert">
                     {this.state.message}
                 </div>

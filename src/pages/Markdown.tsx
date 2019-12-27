@@ -1,6 +1,7 @@
 import * as React from 'react';
 import styles from './Markdown.module.scss';
 import ReactMarkdown from 'react-markdown';
+import Helmet from 'react-helmet';
 
 interface IMarkdownProps {
     name: string;
@@ -29,6 +30,9 @@ export class Markdown extends React.Component<IMarkdownProps, IMarkdownState> {
     public render() {
         return (
             <div className={styles.container}>
+                <Helmet>
+                    <title>Peer to Peer Games - {this.props.name}</title>
+                </Helmet>
                 <ReactMarkdown source={this.state.markdown} />
             </div>
         )
