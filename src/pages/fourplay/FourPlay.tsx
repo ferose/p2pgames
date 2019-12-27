@@ -7,18 +7,16 @@ import { setAlertMessageAction } from './duck/actions';
 import ConnectionPrompt from '../../ConnectionPrompt';
 import { UserManager, UserStateType } from '../../networking/UserManager';
 import { RootState } from '../../RootReducer';
+import { setUserStateAction } from '../../networking/duck/actions';
 
 interface IFourPlayProps {
     message: JSX.Element;
+    userState: UserStateType;
 }
 interface IFourPlayState {
 }
 
 class FourPlayClass extends React.Component<IFourPlayProps, IFourPlayState> {
-    static defaultProps = {
-        message: <span></span>
-    }
-
     private userManager: UserManager = new UserManager();
 
     public render() {
@@ -33,7 +31,7 @@ class FourPlayClass extends React.Component<IFourPlayProps, IFourPlayState> {
                 </div>
                 <GameCanvas userManager={this.userManager}/>
 
-                {this.userManager.getUserState() !== UserStateType.Connected &&
+                {this.props.userState !== UserStateType.Connected &&
                     <ConnectionPrompt/>
                 }
             </div>
@@ -43,6 +41,7 @@ class FourPlayClass extends React.Component<IFourPlayProps, IFourPlayState> {
 
 export default connect((state:RootState) => {
     return {
-        message: state.fourplay.alertMessage
+        message: state.fourplay.alertMessage,
+        userState: state.network.userState,
     }
-}, {setAlertMessageAction})(FourPlayClass);
+}, {setAlertMessageAction, setUserStateAction})(FourPlayClass);

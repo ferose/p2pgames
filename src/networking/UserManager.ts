@@ -21,10 +21,8 @@ export interface INetworkListener {
 export class UserManager {
     public thisUser?: User;
     public otherUser?: User;
-    public errorMessage?: string;
 
     private peer?: Peer;
-    private userStateType: UserStateType = UserStateType.NoLink;
     private networkListeners: INetworkListener[] = [];
     private dataConnection?: Peer.DataConnection;
     private hostID?: string;
@@ -36,8 +34,6 @@ export class UserManager {
     }
 
     private setUserState(userState: UserStateType, errorMessage?: string) {
-        this.userStateType = userState;
-        this.errorMessage = errorMessage;
         store.dispatch({
             type: USER_STATE,
             data: {
@@ -49,10 +45,6 @@ export class UserManager {
 
     public thisIsHost() {
         return this.thisUser?.id === this.hostID;
-    }
-
-    public getUserState() {
-        return this.userStateType;
     }
 
     public addNetworkListener(listener: INetworkListener) {
