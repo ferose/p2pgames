@@ -1,4 +1,4 @@
 import { createStore } from "redux";
-import { alertMessageReducer } from "./pages/fourplay/duck/reducers";
+import {rootReducer} from "./RootReducer";
 
-export default createStore(alertMessageReducer);
+export default createStore(rootReducer);

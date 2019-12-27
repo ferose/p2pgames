@@ -1,6 +1,4 @@
-import {IAction} from '../../../utilities/ActionHelper'
-
-export const ALERT_MESSAGE = 'ALERT_MESSAGE';
+import { ALERT_MESSAGE, IAction } from '../../../ActionHelper';
 
 export type IAlertMessageAction = IAction<typeof ALERT_MESSAGE, {message:JSX.Element}>;
 

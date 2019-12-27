@@ -2,7 +2,8 @@ import _ from 'lodash';
 import * as React from 'react';
 import { UserManager } from '../../networking/UserManager';
 import store from '../../Store';
-import { IAlertMessageAction, ALERT_MESSAGE } from './duck/actions';
+import { IAlertMessageAction } from './duck/actions';
+import { ALERT_MESSAGE } from '../../ActionHelper';
 
 export class Pair<X=number, Y=number> {
     constructor(public x:X, public y:Y) {}

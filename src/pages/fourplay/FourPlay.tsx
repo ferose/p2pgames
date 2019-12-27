@@ -5,7 +5,8 @@ import {Helmet} from 'react-helmet';
 import { connect } from 'react-redux';
 import { setAlertMessageAction } from './duck/actions';
 import ConnectionPrompt from '../../ConnectionPrompt';
-import { UserManager, UserStateType, IUserListener } from '../../networking/UserManager';
+import { UserManager, UserStateType } from '../../networking/UserManager';
+import { RootState } from '../../RootReducer';
 
 interface IFourPlayProps {
     message: JSX.Element;
@@ -13,20 +14,12 @@ interface IFourPlayProps {
 interface IFourPlayState {
 }
 
-class FourPlayClass extends React.Component<IFourPlayProps, IFourPlayState> implements IUserListener {
+class FourPlayClass extends React.Component<IFourPlayProps, IFourPlayState> {
     static defaultProps = {
         message: <span></span>
     }
 
     private userManager: UserManager = new UserManager();
-
-    componentDidMount() {
-        this.userManager.addListener(this);
-    }
-
-    componentDidUnmount() {
-        this.userManager.removeListener(this);
-    }
 
     public render() {
          return (
@@ -41,17 +34,15 @@ class FourPlayClass extends React.Component<IFourPlayProps, IFourPlayState> impl
                 <GameCanvas userManager={this.userManager}/>
 
                 {this.userManager.getUserState() !== UserStateType.Connected &&
-                    <ConnectionPrompt userManager={this.userManager}/>
+                    <ConnectionPrompt/>
                 }
             </div>
       );
     }
 }
 
-const mapStateToProps = (state:{alertMessage: JSX.Element}) => {
+export default connect((state:RootState) => {
     return {
-        message: state.alertMessage
+        message: state.fourplay.alertMessage
     }
-}
-
-export default connect(mapStateToProps, {setAlertMessageAction} )(FourPlayClass);
+}, {setAlertMessageAction})(FourPlayClass);

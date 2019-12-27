@@ -2,6 +2,9 @@ import { User } from "./User";
 import Peer from 'peerjs';
 import _ from 'lodash';
 import { NetworkMessageType, INetworkMessage, INetworkRejectData } from "./NetworkHelper";
+import store from '../Store';
+import { USER_STATE } from "../ActionHelper";
+import { IUserStateAction } from "./duck/actions";
 
 export enum UserStateType {
     NoLink = 1,
@@ -9,10 +12,6 @@ export enum UserStateType {
     WaitingForPeer,
     Connected,
     Failed,
-}
-
-export interface IUserListener {
-    forceUpdate(): void;
 }
 
 export interface INetworkListener {
@@ -26,7 +25,6 @@ export class UserManager {
 
     private peer?: Peer;
     private userStateType: UserStateType = UserStateType.NoLink;
-    private listeners: IUserListener[] = [];
     private networkListeners: INetworkListener[] = [];
     private dataConnection?: Peer.DataConnection;
     private hostID?: string;
@@ -37,11 +35,16 @@ export class UserManager {
         this.connect();
     }
 
-    private setUserState(state: UserStateType) {
-        this.userStateType = state;
-        for (const listener of this.listeners) {
-            listener.forceUpdate();
-        }
+    private setUserState(userState: UserStateType, errorMessage?: string) {
+        this.userStateType = userState;
+        this.errorMessage = errorMessage;
+        store.dispatch({
+            type: USER_STATE,
+            data: {
+                userState,
+                errorMessage,
+            }
+        } as IUserStateAction);
     }
 
     public thisIsHost() {
@@ -50,14 +53,6 @@ export class UserManager {
 
     public getUserState() {
         return this.userStateType;
-    }
-
-    public addListener(listener: IUserListener) {
-        this.listeners.push(listener);
-    }
-
-    public removeListener(listener: IUserListener) {
-        _.pull(this.listeners, listener);
     }
 
     public addNetworkListener(listener: INetworkListener) {
@@ -84,8 +79,7 @@ export class UserManager {
             case NetworkMessageType.Reject:
                 const data = networkMessage.data as INetworkRejectData;
                 if (data) {
-                    this.errorMessage = data.msg;
-                    this.setUserState(UserStateType.Failed);
+                    this.setUserState(UserStateType.Failed, data.msg);
                 }
                 break;
         }
@@ -133,9 +127,10 @@ export class UserManager {
             conn.on('error', (e) => {
                 if (e && e.message) {
                     console.error(e);
-                    this.errorMessage = `Connection Error: ${e.message}`;
+                    this.setUserState(UserStateType.Failed, `Connection Error: ${e.message}`);
+                } else {
+                    this.setUserState(UserStateType.Failed);
                 }
-                this.setUserState(UserStateType.Failed);
             });
         }
 
@@ -172,11 +167,12 @@ export class UserManager {
             conn.on('error', (e) => {
                 if (e && e.message) {
                     console.error(e);
-                    this.errorMessage = `Remote Connection Error: ${e.message}`;
+                    this.setUserState(UserStateType.Failed, `Remote Connection Error: ${e.message}`);
                     this.dataConnection?.close();
                     this.dataConnection = undefined;
+                } else {
+                    this.setUserState(UserStateType.Failed);
                 }
-                this.setUserState(UserStateType.Failed);
             });
         });
         peer.on('disconnected', () => {
@@ -189,6 +185,7 @@ export class UserManager {
             console.error('close');
         });
         peer.on('error', (e) => {
+            let errorMessage = undefined;
             if (e) {
                 if (this.otherUser && e.type === "peer-unavailable") {
                     this.connect(this.otherUser.id);
@@ -198,10 +195,10 @@ export class UserManager {
                 }
                 else if (e.message) {
                     console.error(e, e.type);
-                    this.errorMessage = `Error: ${e.message}`;
+                    errorMessage = `Error: ${e.message}`;
                 }
             }
-            this.setUserState(UserStateType.Failed);
+            this.setUserState(UserStateType.Failed, errorMessage);
         });
     }
 }

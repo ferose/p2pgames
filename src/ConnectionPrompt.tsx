@@ -2,25 +2,21 @@ import * as React from 'react';
 import './ConnectionPrompt.scss';
 import Spinner from 'react-bootstrap/Spinner';
 import QRCode from 'qrcode.react';
-import { UserManager, UserStateType, IUserListener } from './networking/UserManager';
+import { UserStateType } from './networking/UserManager';
+import { RootState } from './RootReducer';
+import { connect } from 'react-redux';
+import { setUserStateAction } from './networking/duck/actions';
 
 interface IConnectionPromptProps {
-    userManager: UserManager;
+    userState: UserStateType,
+    errorMessage?: string,
 }
 interface IConnectionPromptState {}
 
-export default class ConnectionPrompt extends React.Component<IConnectionPromptProps, IConnectionPromptState> implements IUserListener {
+class ConnectionPromptClass extends React.Component<IConnectionPromptProps, IConnectionPromptState> {
     constructor(props: IConnectionPromptProps) {
         super(props);
         this.state = {};
-    }
-
-    componentDidMount() {
-        this.props.userManager.addListener(this);
-    }
-
-    componentDidUnmount() {
-        this.props.userManager.removeListener(this);
     }
 
     private handleFocus = (event: React.FocusEvent<HTMLInputElement>) => {
@@ -28,7 +24,7 @@ export default class ConnectionPrompt extends React.Component<IConnectionPromptP
     }
 
     private message() {
-        switch (this.props.userManager.getUserState()) {
+        switch (this.props.userState) {
             case UserStateType.NoLink:
                 return "Generating URL";
             case UserStateType.WaitingForPeer:
@@ -38,13 +34,12 @@ export default class ConnectionPrompt extends React.Component<IConnectionPromptP
             case UserStateType.Connected:
                 return "Connected";
             case UserStateType.Failed:
-                return this.props.userManager.errorMessage || "Failed to connect";
+                return this.props.errorMessage || "Failed to connect";
         }
     }
 
     private shouldShowInstuctions() {
-        const userState = this.props.userManager.getUserState()
-        return userState === UserStateType.WaitingForPeer;
+        return this.props.userState === UserStateType.WaitingForPeer;
     }
 
     public render() {
@@ -74,3 +69,10 @@ export default class ConnectionPrompt extends React.Component<IConnectionPromptP
         )
     }
 }
+
+export default connect((state:RootState) => {
+    return {
+        userState: state.network.userState,
+        errorMessage: state.network.errorMessage
+    };
+}, {setUserStateAction})(ConnectionPromptClass);
