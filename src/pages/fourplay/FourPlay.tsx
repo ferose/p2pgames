@@ -38,7 +38,7 @@ class FourPlayClass extends React.Component<IFourPlayProps, IFourPlayState> impl
                 <div id="alert">
                     {this.props.message}
                 </div>
-                <GameCanvas userManager={this.userManager} setMessage={message => this.setState({message})}/>
+                <GameCanvas userManager={this.userManager}/>
 
                 {this.userManager.getUserState() !== UserStateType.Connected &&
                     <ConnectionPrompt userManager={this.userManager}/>

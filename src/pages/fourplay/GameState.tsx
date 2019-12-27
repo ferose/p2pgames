@@ -60,12 +60,10 @@ export class GameState {
     constructor(params: {
         numCols: number,
         numRows: number,
-        setMessage: (status: JSX.Element) => void,
         userManager: UserManager,
     }){
         this.numCols = params.numCols;
         this.numRows = params.numRows;
-        // this.setMessage = params.setMessage;
         this.userManager = params.userManager;
         this.updateStatus();
     }

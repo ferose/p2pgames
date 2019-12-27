@@ -22,7 +22,6 @@ const circleSpacing = 10;
 const margin = 10;
 
 interface IGameCanvasProps {
-    setMessage(status: JSX.Element): void;
     userManager: UserManager;
 }
 
@@ -41,7 +40,6 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
     private gameState = new GameState({
         numCols,
         numRows,
-        setMessage: this.props.setMessage,
         userManager: this.props.userManager,
     });
     private animationTweenDestination = {} as Circle;
