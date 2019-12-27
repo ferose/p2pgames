@@ -10,7 +10,8 @@ import FourPlay from './pages/fourplay/FourPlay';
 import { Homepage } from './pages/homepage/Homepage';
 import { Markdown } from './pages/Markdown';
 import { NotFound } from './pages/notfound/NotFound';
-
+import { Provider } from "react-redux";
+import store from './Store';
 
 interface IAppProps {
 }
@@ -29,35 +30,38 @@ export default class App extends React.Component<IAppProps, IAppState> {
 
     public render() {
         return (
-           <BrowserRouter forceRefresh={true}>
-            <div className="App">
-                <Banner/>
-                <div className="main-content">
-                <Switch>
-                    <Route path="/" component={Homepage} exact/>
-                    <Route path="/4play" component={FourPlay}/>
-                    <Route path="/support" render={(props) => <Markdown {...props} name="Support" />}/>
-                    <Route component={NotFound}/>
-                </Switch>
-                </div>
+            <Provider store={store}>
+                <BrowserRouter forceRefresh={true}>
+                    <div className="App">
+                        <Banner/>
+                        <div className="main-content">
+                        <Switch>
+                            <Route path="/" component={Homepage} exact/>
+                            <Route path="/4play" component={FourPlay}/>
+                            <Route path="/support" render={(props) => <Markdown {...props} name="Support" />}/>
+                            <Route component={NotFound}/>
+                        </Switch>
+                        </div>
 
-               <Button
-                    variant="primary"
-                    id="menu-button"
-                    onClick={() => this.setState({modalShow: true})}>
-                    <FontAwesomeIcon icon={faBars} />
-                </Button>
+                    <Button
+                            variant="primary"
+                            id="menu-button"
+                            onClick={() => this.setState({modalShow: true})}>
+                            <FontAwesomeIcon icon={faBars} />
+                        </Button>
 
-                <Link to="/" id="home-button" target="_blank">
-                    <img src="/img/icon.svg" alt="Games"/>
-                </Link>
+                        <Link to="/" id="home-button" target="_blank">
+                            <img src="/img/icon.svg" alt="Games"/>
+                        </Link>
 
-                <Menu
-                    show={this.state.modalShow}
-                    onHide={() => this.setState({modalShow: false})}
-                />
-            </div>
-          </BrowserRouter>
+                        <Menu
+                            show={this.state.modalShow}
+                            onHide={() => this.setState({modalShow: false})}
+                        />
+                    </div>
+                </BrowserRouter>
+            </Provider>
+
         );
     }
 }

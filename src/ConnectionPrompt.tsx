@@ -15,11 +15,11 @@ export default class ConnectionPrompt extends React.Component<IConnectionPromptP
         this.state = {};
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.props.userManager.addListener(this);
     }
 
-    componentWillUnmount() {
+    componentDidUnmount() {
         this.props.userManager.removeListener(this);
     }
 

@@ -226,7 +226,7 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
     /**
      * Remove event listener
      */
-    componentWillUnmount() {
+    componentDidUnmount() {
         this.props.userManager.removeNetworkListener(this);
         window.removeEventListener("resize", this.updateDimensions);
         document.removeEventListener('gesturestart', this.preventDefault);

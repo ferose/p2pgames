@@ -1,31 +1,30 @@
 import React from 'react';
 import './FourPlay.scss';
 import GameCanvas from './GameCanvas';
-import {Helmet} from "react-helmet";
-
+import {Helmet} from 'react-helmet';
+import { connect } from 'react-redux';
+import { setAlertMessageAction } from './duck/actions';
 import ConnectionPrompt from '../../ConnectionPrompt';
 import { UserManager, UserStateType, IUserListener } from '../../networking/UserManager';
 
-interface IFourPlayProps {}
-interface IFourPlayState {
+interface IFourPlayProps {
     message: JSX.Element;
 }
+interface IFourPlayState {
+}
 
-export default class FourPlay extends React.Component<IFourPlayProps, IFourPlayState> implements IUserListener {
-    private userManager: UserManager = new UserManager();
-
-    constructor(props: IFourPlayProps) {
-        super(props);
-        this.state = {
-            message: <span></span>,
-        }
+class FourPlayClass extends React.Component<IFourPlayProps, IFourPlayState> implements IUserListener {
+    static defaultProps = {
+        message: <span></span>
     }
 
-    componentWillMount() {
+    private userManager: UserManager = new UserManager();
+
+    componentDidMount() {
         this.userManager.addListener(this);
     }
 
-    componentWillUnmount() {
+    componentDidUnmount() {
         this.userManager.removeListener(this);
     }
 
@@ -37,7 +36,7 @@ export default class FourPlay extends React.Component<IFourPlayProps, IFourPlayS
                 </Helmet>
 
                 <div id="alert">
-                    {this.state.message}
+                    {this.props.message}
                 </div>
                 <GameCanvas userManager={this.userManager} setMessage={message => this.setState({message})}/>
 
@@ -48,3 +47,11 @@ export default class FourPlay extends React.Component<IFourPlayProps, IFourPlayS
       );
     }
 }
+
+const mapStateToProps = (state:{alertMessage: JSX.Element}) => {
+    return {
+        message: state.alertMessage
+    }
+}
+
+export default connect(mapStateToProps, {setAlertMessageAction} )(FourPlayClass);
