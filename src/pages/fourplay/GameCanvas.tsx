@@ -279,18 +279,21 @@ export default class GameCanvas extends NetworkComponent<IGameCanvasProps,IGameC
     }
 
     protected onRecievedData(message: INetworkMessage) {
-        if (message.type === NetworkMessageType.Input) {
-            const data = message.data as any;
-            if (!data) return;
-            if (data.method === "showAnimatedCircle") {
-                this.showAnimatedCircle(data.x);
-            } else if (data.method === "makeMove") {
-                this.makeMove(data.x);
+        switch (message.type) {
+            case NetworkMessageType.Input: {
+                const data = message.data as any;
+                if (!data) return;
+                if (data.method === "showAnimatedCircle") {
+                    this.showAnimatedCircle(data.x);
+                } else if (data.method === "makeMove") {
+                    this.makeMove(data.x);
+                }
+                break;
             }
-        }
-        else if (message.type === NetworkMessageType.Connected ||
-                 message.type === NetworkMessageType.Reset) {
-            this.reset();
+            case NetworkMessageType.Connected:
+            case NetworkMessageType.Reset:
+                this.reset();
+                break;
         }
     }
 

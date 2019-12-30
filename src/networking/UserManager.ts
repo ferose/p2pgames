@@ -1,10 +1,10 @@
 import { User } from "./User";
 import Peer from 'peerjs';
 import _ from 'lodash';
-import { NetworkMessageType, INetworkMessage, INetworkRejectData } from "./NetworkHelper";
+import { NetworkMessageType, INetworkMessage, INetworkRejectData, INetworkConnectedData } from "./NetworkHelper";
 import { store, sagaMiddleware } from '../Store';
 import { Actions } from "../ActionHelper";
-import { IUserStateAction, INetworkAction } from "./duck/actions";
+import { IUserStateAction, INetworkAction, IPlayerNumberAction, setPlayerNumber } from "./duck/actions";
 import { takeEvery } from 'redux-saga/effects'
 import { Task } from "redux-saga";
 
@@ -64,6 +64,7 @@ export class UserManager {
         switch (networkMessage.type) {
             case NetworkMessageType.Connected:
                 this.setUserState(UserStateType.Connected);
+                store.dispatch(setPlayerNumber((networkMessage.data as INetworkConnectedData).player));
                 break;
             case NetworkMessageType.Reject:
                 const data = networkMessage.data as INetworkRejectData;
@@ -119,7 +120,12 @@ export class UserManager {
                 this.recievedData(data);
             });
             conn.on('open', () => {
-                this.sendData({type: NetworkMessageType.Connected});
+                // Player 0 is host
+                this.sendData({type: NetworkMessageType.Connected,
+                    data: {
+                        player: 0
+                    } as INetworkConnectedData
+                });
             });
             conn.on('error', (e) => {
                 if (e && e.message) {
@@ -159,7 +165,11 @@ export class UserManager {
                 this.recievedData(data);
             });
             conn.on('open', () => {
-                this.sendData({type: NetworkMessageType.Connected});
+                this.sendData({type: NetworkMessageType.Connected,
+                    data: {
+                        player: 1
+                    } as INetworkConnectedData
+                });
             });
             conn.on('error', (e) => {
                 if (e && e.message) {

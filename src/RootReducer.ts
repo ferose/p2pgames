@@ -1,10 +1,16 @@
-import { combineReducers } from 'redux';
+import { combineReducers, CombinedState } from 'redux';
 import { fourplayReducer } from "./pages/fourplay/duck/reducers";
 import { networkReducer } from './networking/duck/reducers';
-import { UserStateData } from './networking/duck/actions';
+import { UserStateType } from './networking/UserManager';
+import { Reducer } from 'redux';
+import { IAction } from './ActionHelper';
 
 export type RootState = {
-    network: UserStateData,
+    network: {
+        userState: UserStateType,
+        errorMessage?: string,
+        playerNumber?: number,
+    },
     fourplay: {
         alertMessage: JSX.Element
     }
@@ -13,4 +19,4 @@ export type RootState = {
 export const rootReducer = combineReducers({
     network: networkReducer,
     fourplay: fourplayReducer
-});
+}) as Reducer<RootState, IAction<any, any>>;

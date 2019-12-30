@@ -115,8 +115,8 @@ export class GameState {
     }
 
     private getLocalPlayer() {
-        return CircleType.red; //TODO get this info from the state
-        // return this.userManager.thisIsHost() ? CircleType.red : CircleType.blue;
+        const playerNumber = store.getState().network.playerNumber;
+        return playerNumber === 0 ? CircleType.red : CircleType.blue;
     }
 
     public isLocalPlayersTurn() {
