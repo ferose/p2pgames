@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import * as React from 'react';
 import { UserManager } from '../../networking/UserManager';
-import store from '../../Store';
+import { store } from '../../Store';
 import { IAlertMessageAction } from './duck/actions';
-import { ALERT_MESSAGE } from '../../ActionHelper';
+import { Actions } from '../../ActionHelper';
 
 export class Pair<X=number, Y=number> {
     constructor(public x:X, public y:Y) {}
@@ -128,7 +128,7 @@ export class GameState {
 
     private setMessage(message: JSX.Element) {
         store.dispatch({
-            type: ALERT_MESSAGE,
+            type: Actions.ALERT_MESSAGE,
             data: {
                 message
             }

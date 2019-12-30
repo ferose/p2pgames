@@ -11,7 +11,7 @@ import { Homepage } from './pages/homepage/Homepage';
 import { Markdown } from './pages/Markdown';
 import { NotFound } from './pages/notfound/NotFound';
 import { Provider } from "react-redux";
-import store from './Store';
+import { store } from './Store';
 
 interface IAppProps {
 }

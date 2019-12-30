@@ -19,6 +19,11 @@ interface IFourPlayState {
 class FourPlayClass extends React.Component<IFourPlayProps, IFourPlayState> {
     private userManager: UserManager = new UserManager();
 
+    constructor(props: IFourPlayProps) {
+        super(props);
+        this.userManager = new UserManager();
+    }
+
     public render() {
          return (
             <div className="FourPlay">

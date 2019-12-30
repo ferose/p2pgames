@@ -1,10 +1,10 @@
-import { ALERT_MESSAGE, IAction } from '../../../ActionHelper';
+import { Actions, IAction } from '../../../ActionHelper';
 
-export type IAlertMessageAction = IAction<typeof ALERT_MESSAGE, {message:JSX.Element}>;
+export type IAlertMessageAction = IAction<typeof Actions.ALERT_MESSAGE, {message:JSX.Element}>;
 
 export function setAlertMessageAction(message: JSX.Element): IAlertMessageAction {
     return {
-        type: ALERT_MESSAGE,
+        type: Actions.ALERT_MESSAGE,
         data: {
             message
         }

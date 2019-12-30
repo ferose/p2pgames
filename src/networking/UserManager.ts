@@ -2,9 +2,11 @@ import { User } from "./User";
 import Peer from 'peerjs';
 import _ from 'lodash';
 import { NetworkMessageType, INetworkMessage, INetworkRejectData } from "./NetworkHelper";
-import store from '../Store';
-import { USER_STATE } from "../ActionHelper";
+import { store, sagaMiddleware } from '../Store';
+import { Actions } from "../ActionHelper";
 import { IUserStateAction } from "./duck/actions";
+import { takeEvery } from 'redux-saga/effects'
+import { Task } from "redux-saga";
 
 export enum UserStateType {
     NoLink = 1,
@@ -26,16 +28,18 @@ export class UserManager {
     private networkListeners: INetworkListener[] = [];
     private dataConnection?: Peer.DataConnection;
     private hostID?: string;
+    private recievedDataTask: Task;
 
     public constructor() {
         // this.setUserState(UserStateType.Connected);
         // return;
         this.connect();
+        this.recievedDataTask = sagaMiddleware.run(this.recievedDataGenerator.bind(this));
     }
 
     private setUserState(userState: UserStateType, errorMessage?: string) {
         store.dispatch({
-            type: USER_STATE,
+            type: Actions.USER_STATE,
             data: {
                 userState,
                 errorMessage,
@@ -63,7 +67,7 @@ export class UserManager {
         this.dataConnection.send(networkMessage);
     }
 
-    private recievedData(networkMessage: INetworkMessage) {
+    private recievedDataListener(networkMessage: INetworkMessage) {
         switch (networkMessage.type) {
             case NetworkMessageType.Connected:
                 this.setUserState(UserStateType.Connected);
@@ -75,6 +79,17 @@ export class UserManager {
                 }
                 break;
         }
+    }
+
+    private *recievedDataGenerator() {
+        yield takeEvery(Actions.RECEIVED_DATA, this.recievedDataListener);
+    }
+
+    private recievedData(networkMessage: INetworkMessage) {
+        store.dispatch({
+            type: Actions.RECEIVED_DATA,
+            data: networkMessage,
+        });
         for (const listener of this.networkListeners) {
             listener.onNetworkData(networkMessage);
         }
@@ -192,5 +207,10 @@ export class UserManager {
             }
             this.setUserState(UserStateType.Failed, errorMessage);
         });
+    }
+
+    public destroy() {
+        this.destroyConnections();
+        this.recievedDataTask.cancel();
     }
 }
