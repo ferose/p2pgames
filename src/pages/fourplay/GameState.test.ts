@@ -1,10 +1,9 @@
 import { GameState, Circle, CircleType } from './GameState';
 import { UserManager } from '../../networking/UserManager';
-jest.mock('../../networking/UserManager');
 jest.mock('../../Store');
 
 describe('Win condition', () => {
-    const gameState = new GameState({numCols:5, numRows:6, userManager: new UserManager()});
+    const gameState = new GameState({numCols:5, numRows:6});
 
     test('empty state', () => {
         expect(gameState.findWinningCircles()).toBeNull();

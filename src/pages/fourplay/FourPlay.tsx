@@ -17,7 +17,7 @@ interface IFourPlayState {
 }
 
 class FourPlayClass extends React.Component<IFourPlayProps, IFourPlayState> {
-    private userManager: UserManager = new UserManager();
+    private userManager: UserManager;
 
     constructor(props: IFourPlayProps) {
         super(props);
@@ -34,13 +34,17 @@ class FourPlayClass extends React.Component<IFourPlayProps, IFourPlayState> {
                 <div id="alert">
                     {this.props.message}
                 </div>
-                <GameCanvas userManager={this.userManager}/>
+                <GameCanvas/>
 
                 {this.props.userState !== UserStateType.Connected &&
                     <ConnectionPrompt/>
                 }
             </div>
       );
+    }
+
+    componentWillUnmount() {
+        this.userManager.destroy();
     }
 }
 

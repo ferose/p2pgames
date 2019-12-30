@@ -1,8 +1,10 @@
 import { IAction, Actions } from "../../ActionHelper";
 import { UserStateType } from "../UserManager";
+import { INetworkMessage } from "../NetworkHelper";
 
 export type UserStateData = {userState: UserStateType, errorMessage?: string};
 export type IUserStateAction = IAction<typeof Actions.USER_STATE, UserStateData>;
+export type INetworkAction = IAction<typeof Actions.NETWORK_RECEIVED_DATA | typeof Actions.NETWORK_SEND_DATA, INetworkMessage>;
 
 export function setUserStateAction(userState: UserStateType): IUserStateAction {
     return {

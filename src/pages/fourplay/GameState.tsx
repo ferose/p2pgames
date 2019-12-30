@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import * as React from 'react';
-import { UserManager } from '../../networking/UserManager';
 import { store } from '../../Store';
 import { IAlertMessageAction } from './duck/actions';
 import { Actions } from '../../ActionHelper';
@@ -56,16 +55,13 @@ export class GameState {
 
     private numCols: number;
     private numRows: number;
-    private userManager: UserManager;
 
     constructor(params: {
         numCols: number,
         numRows: number,
-        userManager: UserManager,
     }){
         this.numCols = params.numCols;
         this.numRows = params.numRows;
-        this.userManager = params.userManager;
         this.updateStatus();
     }
 
@@ -119,7 +115,8 @@ export class GameState {
     }
 
     private getLocalPlayer() {
-        return this.userManager.thisIsHost() ? CircleType.red : CircleType.blue;
+        return CircleType.red; //TODO get this info from the state
+        // return this.userManager.thisIsHost() ? CircleType.red : CircleType.blue;
     }
 
     public isLocalPlayersTurn() {

@@ -4,7 +4,7 @@ import _ from 'lodash';
 import { NetworkMessageType, INetworkMessage, INetworkRejectData } from "./NetworkHelper";
 import { store, sagaMiddleware } from '../Store';
 import { Actions } from "../ActionHelper";
-import { IUserStateAction } from "./duck/actions";
+import { IUserStateAction, INetworkAction } from "./duck/actions";
 import { takeEvery } from 'redux-saga/effects'
 import { Task } from "redux-saga";
 
@@ -16,25 +16,25 @@ export enum UserStateType {
     Failed,
 }
 
-export interface INetworkListener {
-    onNetworkData(message: INetworkMessage): void;
-}
-
 export class UserManager {
     public thisUser?: User;
     public otherUser?: User;
 
     private peer?: Peer;
-    private networkListeners: INetworkListener[] = [];
     private dataConnection?: Peer.DataConnection;
     private hostID?: string;
     private recievedDataTask: Task;
+    private sendDataTask: Task;
 
+    /**
+     * Make sure destroy() is called on componentWillUnmount() to avoid possible memory leak.
+     */
     public constructor() {
         // this.setUserState(UserStateType.Connected);
         // return;
         this.connect();
         this.recievedDataTask = sagaMiddleware.run(this.recievedDataGenerator.bind(this));
+        this.sendDataTask = sagaMiddleware.run(this.sendDataGenerator.bind(this));
     }
 
     private setUserState(userState: UserStateType, errorMessage?: string) {
@@ -51,15 +51,7 @@ export class UserManager {
         return this.thisUser?.id === this.hostID;
     }
 
-    public addNetworkListener(listener: INetworkListener) {
-        this.networkListeners.push(listener);
-    }
-
-    public removeNetworkListener(listener: INetworkListener) {
-        _.pull(this.networkListeners, listener);
-    }
-
-    public sendData(networkMessage: INetworkMessage) {
+    private sendData(networkMessage: INetworkMessage) {
         if (!this.dataConnection) {
             console.error("No data connection");
             return;
@@ -67,7 +59,8 @@ export class UserManager {
         this.dataConnection.send(networkMessage);
     }
 
-    private recievedDataListener(networkMessage: INetworkMessage) {
+    private recievedDataListener = (networkAction: INetworkAction) => {
+        const networkMessage = networkAction.data;
         switch (networkMessage.type) {
             case NetworkMessageType.Connected:
                 this.setUserState(UserStateType.Connected);
@@ -81,27 +74,24 @@ export class UserManager {
         }
     }
 
+    private sendDataListener = (networkAction: INetworkAction) => {
+        const networkMessage = networkAction.data;
+        this.sendData(networkMessage);
+    }
+
     private *recievedDataGenerator() {
-        yield takeEvery(Actions.RECEIVED_DATA, this.recievedDataListener);
+        yield takeEvery(Actions.NETWORK_RECEIVED_DATA, this.recievedDataListener);
+    }
+
+    private *sendDataGenerator() {
+        yield takeEvery(Actions.NETWORK_SEND_DATA, this.sendDataListener);
     }
 
     private recievedData(networkMessage: INetworkMessage) {
         store.dispatch({
-            type: Actions.RECEIVED_DATA,
+            type: Actions.NETWORK_RECEIVED_DATA,
             data: networkMessage,
         });
-        for (const listener of this.networkListeners) {
-            listener.onNetworkData(networkMessage);
-        }
-    }
-
-    private destroyConnections() {
-        this.peer?.destroy();
-        this.dataConnection?.close();
-        this.dataConnection = undefined;
-        this.peer = undefined;
-        this.thisUser = undefined;
-        this.otherUser = undefined;
     }
 
     private connect(id?: string) {
@@ -209,8 +199,18 @@ export class UserManager {
         });
     }
 
+    private destroyConnections() {
+        this.peer?.destroy();
+        this.dataConnection?.close();
+        this.dataConnection = undefined;
+        this.peer = undefined;
+        this.thisUser = undefined;
+        this.otherUser = undefined;
+    }
+
     public destroy() {
         this.destroyConnections();
         this.recievedDataTask.cancel();
+        this.sendDataTask.cancel();
     }
 }
