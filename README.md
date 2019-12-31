@@ -1,4 +1,4 @@
-Play on [pvpgames.io](https://pvpgames.io/).
+Play on [pvpgames.io](https://pvpgames.io/)
 
 ## Available Scripts
 
