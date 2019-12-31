@@ -426,7 +426,7 @@ export default class GameCanvas extends NetworkComponent<IGameCanvasProps,IGameC
 
     public render() {
         return (
-            <div className="FourPlayGameCanvas" ref={this.divRef}>
+            <div className="Play4GameCanvas" ref={this.divRef}>
                 <canvas
                     className={styles.canvas}
                     ref={this.canvasRef}

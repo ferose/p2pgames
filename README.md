@@ -1,4 +1,4 @@
-Play on [ferose.me](https://ferose.me/).
+Play on [pvpgames.io](https://pvpgames.io/).
 
 ## Available Scripts
 

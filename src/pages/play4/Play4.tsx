@@ -1,5 +1,5 @@
 import React from 'react';
-import './FourPlay.scss';
+import './Play4.scss';
 import GameCanvas from './GameCanvas';
 import {Helmet} from 'react-helmet';
 import { connect } from 'react-redux';
@@ -9,26 +9,26 @@ import { UserManager, UserStateType } from '../../networking/UserManager';
 import { RootState } from '../../RootReducer';
 import { setUserStateAction } from '../../networking/duck/actions';
 
-interface IFourPlayProps {
+interface IPlay4Props {
     message: JSX.Element;
     userState: UserStateType;
 }
-interface IFourPlayState {
+interface IPlay4State {
 }
 
-class FourPlayClass extends React.Component<IFourPlayProps, IFourPlayState> {
+class Play4Class extends React.Component<IPlay4Props, IPlay4State> {
     private userManager: UserManager;
 
-    constructor(props: IFourPlayProps) {
+    constructor(props: IPlay4Props) {
         super(props);
         this.userManager = new UserManager();
     }
 
     public render() {
          return (
-            <div className="FourPlay">
+            <div className="Play4">
                 <Helmet>
-                    <title>Peer to Peer Games - 4 Play</title>
+                    <title>PVP Games - Play 4</title>
                 </Helmet>
 
                 <div id="alert">
@@ -50,7 +50,7 @@ class FourPlayClass extends React.Component<IFourPlayProps, IFourPlayState> {
 
 export default connect((state:RootState) => {
     return {
-        message: state.fourplay.alertMessage,
+        message: state.play4.alertMessage,
         userState: state.network.userState,
     }
-}, {setAlertMessageAction, setUserStateAction})(FourPlayClass);
+}, {setAlertMessageAction, setUserStateAction})(Play4Class);

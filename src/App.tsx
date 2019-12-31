@@ -6,7 +6,7 @@ import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
 import './App.scss';
 import Banner from './Banner';
 import Menu from './Menu';
-import FourPlay from './pages/fourplay/FourPlay';
+import Play4 from './pages/play4/Play4';
 import { Homepage } from './pages/homepage/Homepage';
 import { Markdown } from './pages/Markdown';
 import { NotFound } from './pages/notfound/NotFound';
@@ -37,7 +37,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
                         <div className="main-content">
                         <Switch>
                             <Route path="/" component={Homepage} exact/>
-                            <Route path="/4play" component={FourPlay}/>
+                            <Route path="/4play" component={Play4}/>
                             <Route path="/support" render={(props) => <Markdown {...props} name="Support" />}/>
                             <Route component={NotFound}/>
                         </Switch>

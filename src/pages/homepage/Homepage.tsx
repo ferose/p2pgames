@@ -12,7 +12,7 @@ export class Homepage extends React.Component<IHomepageProps, IHomepageState> {
                 <GamePreview
                     description="Play against a friend and be the first to connect 4 in a line."
                     imageName="/img/connect4.png"
-                    title="4 Play"
+                    title="Play 4"
                     link="4play"/>
                 <GamePreview
                     description="More games under way. Suggestions are appreciated."

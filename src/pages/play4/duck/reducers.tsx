@@ -1,7 +1,7 @@
 import React from 'react';
 import { IAction, Actions } from '../../../ActionHelper';
 
-export function fourplayReducer(state={
+export function play4Reducer(state={
     alertMessage: <span></span>
 }, action: IAction<any, any>) {
     switch(action.type) {

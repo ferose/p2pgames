@@ -31,7 +31,7 @@ export class Markdown extends React.Component<IMarkdownProps, IMarkdownState> {
         return (
             <div className={styles.container}>
                 <Helmet>
-                    <title>Peer to Peer Games - {this.props.name}</title>
+                    <title>PVP Games - {this.props.name}</title>
                 </Helmet>
                 <ReactMarkdown source={this.state.markdown} />
             </div>
