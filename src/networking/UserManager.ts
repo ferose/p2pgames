@@ -1,12 +1,11 @@
-import { User } from "./User";
 import Peer from 'peerjs';
-import _ from 'lodash';
-import { NetworkMessageType, INetworkMessage, INetworkRejectData, INetworkConnectedData } from "./NetworkHelper";
-import { store, sagaMiddleware } from '../Store';
-import { Actions } from "../ActionHelper";
-import { IUserStateAction, INetworkAction, IPlayerNumberAction, setPlayerNumber } from "./duck/actions";
-import { takeEvery } from 'redux-saga/effects'
 import { Task } from "redux-saga";
+import { takeEvery } from 'redux-saga/effects';
+import { Actions } from "../ActionHelper";
+import { sagaMiddleware, store } from '../Store';
+import { INetworkAction, IUserStateAction, setPlayerNumber } from "./duck/actions";
+import { INetworkConnectedData, INetworkMessage, INetworkRejectData, NetworkMessageType } from "./NetworkHelper";
+import { User } from "./User";
 
 export enum UserStateType {
     NoLink = 1,

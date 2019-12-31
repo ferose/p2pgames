@@ -1,9 +1,8 @@
-import { combineReducers, CombinedState } from 'redux';
-import { fourplayReducer } from "./pages/fourplay/duck/reducers";
+import { combineReducers, Reducer } from 'redux';
+import { IAction } from './ActionHelper';
 import { networkReducer } from './networking/duck/reducers';
 import { UserStateType } from './networking/UserManager';
-import { Reducer } from 'redux';
-import { IAction } from './ActionHelper';
+import { fourplayReducer } from "./pages/fourplay/duck/reducers";
 
 export type RootState = {
     network: {
