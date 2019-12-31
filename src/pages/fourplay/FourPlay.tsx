@@ -1,32 +1,27 @@
 import React from 'react';
 import './FourPlay.scss';
 import GameCanvas from './GameCanvas';
-import {Helmet} from "react-helmet";
-
+import {Helmet} from 'react-helmet';
+import { connect } from 'react-redux';
+import { setAlertMessageAction } from './duck/actions';
 import ConnectionPrompt from '../../ConnectionPrompt';
-import { UserManager, UserStateType, IUserListener } from '../../networking/UserManager';
+import { UserManager, UserStateType } from '../../networking/UserManager';
+import { RootState } from '../../RootReducer';
+import { setUserStateAction } from '../../networking/duck/actions';
 
-interface IFourPlayProps {}
-interface IFourPlayState {
+interface IFourPlayProps {
     message: JSX.Element;
+    userState: UserStateType;
+}
+interface IFourPlayState {
 }
 
-export default class FourPlay extends React.Component<IFourPlayProps, IFourPlayState> implements IUserListener {
-    private userManager: UserManager = new UserManager();
+class FourPlayClass extends React.Component<IFourPlayProps, IFourPlayState> {
+    private userManager: UserManager;
 
     constructor(props: IFourPlayProps) {
         super(props);
-        this.state = {
-            message: <span></span>,
-        }
-    }
-
-    componentWillMount() {
-        this.userManager.addListener(this);
-    }
-
-    componentWillUnmount() {
-        this.userManager.removeListener(this);
+        this.userManager = new UserManager();
     }
 
     public render() {
@@ -37,14 +32,25 @@ export default class FourPlay extends React.Component<IFourPlayProps, IFourPlayS
                 </Helmet>
 
                 <div id="alert">
-                    {this.state.message}
+                    {this.props.message}
                 </div>
-                <GameCanvas userManager={this.userManager} setMessage={message => this.setState({message})}/>
+                <GameCanvas/>
 
-                {this.userManager.getUserState() !== UserStateType.Connected &&
-                    <ConnectionPrompt userManager={this.userManager}/>
+                {this.props.userState !== UserStateType.Connected &&
+                    <ConnectionPrompt/>
                 }
             </div>
       );
     }
+
+    componentWillUnmount() {
+        this.userManager.destroy();
+    }
 }
+
+export default connect((state:RootState) => {
+    return {
+        message: state.fourplay.alertMessage,
+        userState: state.network.userState,
+    }
+}, {setAlertMessageAction, setUserStateAction})(FourPlayClass);

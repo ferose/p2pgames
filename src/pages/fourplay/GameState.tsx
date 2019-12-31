@@ -1,6 +1,8 @@
 import _ from 'lodash';
 import * as React from 'react';
-import { UserManager } from '../../networking/UserManager';
+import { store } from '../../Store';
+import { IAlertMessageAction } from './duck/actions';
+import { Actions } from '../../ActionHelper';
 
 export class Pair<X=number, Y=number> {
     constructor(public x:X, public y:Y) {}
@@ -53,19 +55,13 @@ export class GameState {
 
     private numCols: number;
     private numRows: number;
-    private setMessage: (status: JSX.Element) => void;
-    private userManager: UserManager;
 
     constructor(params: {
         numCols: number,
         numRows: number,
-        setMessage: (status: JSX.Element) => void,
-        userManager: UserManager,
     }){
         this.numCols = params.numCols;
         this.numRows = params.numRows;
-        this.setMessage = params.setMessage;
-        this.userManager = params.userManager;
         this.updateStatus();
     }
 
@@ -119,11 +115,21 @@ export class GameState {
     }
 
     private getLocalPlayer() {
-        return this.userManager.thisIsHost() ? CircleType.red : CircleType.blue;
+        const playerNumber = store.getState().network.playerNumber;
+        return playerNumber === 0 ? CircleType.red : CircleType.blue;
     }
 
     public isLocalPlayersTurn() {
         return this.currentPlayer === this.getLocalPlayer();
+    }
+
+    private setMessage(message: JSX.Element) {
+        store.dispatch({
+            type: Actions.ALERT_MESSAGE,
+            data: {
+                message
+            }
+        } as IAlertMessageAction);
     }
 
     public updateStatus() {

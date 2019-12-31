@@ -1,8 +1,8 @@
 import TWEEN from '@tweenjs/tween.js';
 import _ from 'lodash';
 import * as React from 'react';
+import { NetworkComponent } from '../../networking/NetworkComponent';
 import { INetworkMessage, NetworkMessageType } from '../../networking/NetworkHelper';
-import { INetworkListener, UserManager } from '../../networking/UserManager';
 import { createBlankCanvas, createBoardCanvas } from './CanvasFactory';
 import styles from './GameCanvas.module.scss';
 import { GameOver } from './GameOver';
@@ -22,15 +22,13 @@ const circleSpacing = 10;
 const margin = 10;
 
 interface IGameCanvasProps {
-    setMessage(status: JSX.Element): void;
-    userManager: UserManager;
 }
 
 interface IGameCanvasState {
     showGameOver: boolean
 }
 
-export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCanvasState> implements INetworkListener {
+export default class GameCanvas extends NetworkComponent<IGameCanvasProps,IGameCanvasState> {
     private canvasRef: React.RefObject<HTMLCanvasElement>;
     private divRef: React.RefObject<HTMLDivElement>;
 
@@ -41,8 +39,6 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
     private gameState = new GameState({
         numCols,
         numRows,
-        setMessage: this.props.setMessage,
-        userManager: this.props.userManager,
     });
     private animationTweenDestination = {} as Circle;
 
@@ -216,7 +212,6 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
         window.addEventListener("resize", this.updateDimensions);
         window.requestAnimationFrame(this.draw);
         document.addEventListener('gesturestart', this.preventDefault);
-        this.props.userManager.addNetworkListener(this);
     }
 
     preventDefault(e:Event) {
@@ -227,7 +222,7 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
      * Remove event listener
      */
     componentWillUnmount() {
-        this.props.userManager.removeNetworkListener(this);
+        super.componentWillUnmount();
         window.removeEventListener("resize", this.updateDimensions);
         document.removeEventListener('gesturestart', this.preventDefault);
     }
@@ -242,7 +237,7 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
             let x = Math.round((c.x-(canvas.width-width)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing));
             let y = (canvas.height-height)/2;
             if (x >= 0 && x < numCols && c.y >= y && c.y <= y+height) {
-                this.props.userManager.sendData({
+                this.sendData({
                     type: NetworkMessageType.Input,
                     data: {
                         method: "showAnimatedCircle",
@@ -273,7 +268,7 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
         const {width, circleSize} = this.getBoardDimensions();
         let x = Math.round((c.x-(canvas.width-width)/2-boardPadding-margin-circleSize/2+circleSpacing)/(circleSize+circleSpacing));
         this.makeMove(x);
-        this.props.userManager.sendData({
+        this.sendData({
             type: NetworkMessageType.Input,
             data: {
                 method: "makeMove",
@@ -282,19 +277,22 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
         });
     }
 
-    public onNetworkData = (message: INetworkMessage) => {
-        if (message.type === NetworkMessageType.Input) {
-            const data = message.data as any;
-            if (!data) return;
-            if (data.method === "showAnimatedCircle") {
-                this.showAnimatedCircle(data.x);
-            } else if (data.method === "makeMove") {
-                this.makeMove(data.x);
+    protected onRecievedData(message: INetworkMessage) {
+        switch (message.type) {
+            case NetworkMessageType.Input: {
+                const data = message.data as any;
+                if (!data) return;
+                if (data.method === "showAnimatedCircle") {
+                    this.showAnimatedCircle(data.x);
+                } else if (data.method === "makeMove") {
+                    this.makeMove(data.x);
+                }
+                break;
             }
-        }
-        else if (message.type === NetworkMessageType.Connected ||
-                 message.type === NetworkMessageType.Reset) {
-            this.reset();
+            case NetworkMessageType.Connected:
+            case NetworkMessageType.Reset:
+                this.reset();
+                break;
         }
     }
 
@@ -354,7 +352,7 @@ export default class GameCanvas extends React.Component<IGameCanvasProps,IGameCa
 
     public onRematch = () => {
         this.reset();
-        this.props.userManager.sendData({
+        this.sendData({
             type: NetworkMessageType.Reset,
         });
     }
