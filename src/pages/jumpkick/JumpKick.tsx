@@ -3,6 +3,7 @@ import styles from './JumpKick.module.scss';
 import { JumpKickConsts } from './physics/JumpKickConsts';
 import WebpackWorker from './physics/Physics.worker.ts';
 import { IJumpKickSerializedGameState } from './physics/JumpKickGameState';
+import { JumpKickInputType } from './physics/JumpKickStateInterface';
 
 interface IJumpKickProps {}
 interface IJumpKickState {}
@@ -57,14 +58,38 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
 
     private onMessage = (event: MessageEvent) => {
         this.lastState = event.data;
+        // console.log(event.data);
     }
 
     componentDidMount() {
         window.requestAnimationFrame(this.draw);
+        window.addEventListener("keydown", this.onKeyDown);
     }
 
     componentWillUnmount() {
         this.physicsWorker.terminate();
+        window.removeEventListener("keydown", this.onKeyDown);
+    }
+
+    private onKeyDown = (event: KeyboardEvent) => {
+        let keyType: JumpKickInputType|null = null;
+        switch (event.key) {
+            case "z":
+                keyType = JumpKickInputType.redJump;
+                break;
+            case "a":
+                keyType = JumpKickInputType.redKick;
+                break;
+            case "/":
+                keyType = JumpKickInputType.blueJump;
+                break;
+            case "'":
+                keyType = JumpKickInputType.blueKick;
+                break;
+        }
+        if (keyType !== null) {
+            this.physicsWorker.postMessage(keyType);
+        }
     }
 
     public render() {

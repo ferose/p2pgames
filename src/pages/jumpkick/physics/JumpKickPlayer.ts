@@ -35,6 +35,10 @@ export class JumpKickPlayer implements IPhysicsObject{
         this.y = this.y.add(this.vy.mul(dt));
     }
 
+    public jump() {
+        this.vy = Big(-0.1);
+    }
+
     public serialize() {
         return {
             x: Number(this.x),

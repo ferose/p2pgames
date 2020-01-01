@@ -8,22 +8,23 @@ const playerWidth = Big(30);
 const playerHeight = Big(60);
 
 export class JumpKickGameState implements IPhysicsObject {
-    private frameNumber = 0;
-    private redPlayer = new JumpKickPlayer({
+    public redPlayer = new JumpKickPlayer({
         x: playerStartGap,
         y: Big(10),
         width: playerWidth,
         height: playerHeight,
         color: "#BD4F6C",
     });
-    private bluePlayer = new JumpKickPlayer({
+    public bluePlayer = new JumpKickPlayer({
         x: JumpKickConsts.width.minus(playerStartGap).minus(playerWidth),
         y: Big(10),
         width: playerWidth,
         height: playerHeight,
         color: "#93B5C6",
     });
-    private groundY = JumpKickConsts.height.minus(40);
+
+    public groundY = JumpKickConsts.height.minus(40);
+    public frameNumber = 0;
 
     public step(dt:Big) {
         this.frameNumber++;
