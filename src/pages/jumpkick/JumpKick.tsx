@@ -2,7 +2,7 @@ import * as React from 'react';
 import styles from './JumpKick.module.scss';
 import { JumpKickConsts } from './JumpKickConsts';
 import WebpackWorker from './physics/Physics.worker.ts';
-import { JumpKickGameState } from './physics/JumpKickGameState';
+import { IJumpKickSerializedGameState } from './physics/JumpKickGameState';
 
 interface IJumpKickProps {}
 interface IJumpKickState {}
@@ -10,7 +10,7 @@ interface IJumpKickState {}
 export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
     private canvasRef: React.RefObject<HTMLCanvasElement>;
     private physicsWorker: Worker;
-    private lastState?: JumpKickGameState;
+    private lastState?: IJumpKickSerializedGameState;
 
     public constructor(props: IJumpKickProps) {
         super(props);
@@ -46,7 +46,7 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
 
         ctx.fillStyle = "blue";
         ctx.beginPath();
-        ctx.arc(this.lastState.bluePlayer.x, this.lastState.bluePlayer.y, 20, 0, 2*Math.PI);
+        ctx.arc(Number(this.lastState.bluePlayer.x), Number(this.lastState.bluePlayer.y), 20, 0, 2*Math.PI);
         ctx.fill();
 
         ctx.restore();
@@ -68,8 +68,8 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
         return (
             <canvas
                 ref={this.canvasRef}
-                width={JumpKickConsts.width}
-                height={JumpKickConsts.height}
+                width={Number(JumpKickConsts.width)}
+                height={Number(JumpKickConsts.height)}
                 className={styles.container}
             ></canvas>
         )

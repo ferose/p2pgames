@@ -1,12 +1,14 @@
 import { JumpKickConsts } from "../JumpKickConsts";
 import { JumpKickGameState } from "./JumpKickGameState";
+import Big from 'big.js';
 
 (() => {
     const gameState = new JumpKickGameState();
-    const dt = (1/JumpKickConsts.fps)*1000;
+    const dt = Big(1).div(JumpKickConsts.fps).mul(1000);
     setInterval(() => {
         gameState.step(dt);
-        postMessage(gameState);
-    }, dt);
+        const serializedGameState = gameState.serialize();
+        postMessage(serializedGameState);
+    }, Number(dt));
 })();
 
