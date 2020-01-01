@@ -12,6 +12,7 @@ import { Markdown } from './pages/Markdown';
 import { NotFound } from './pages/notfound/NotFound';
 import { Provider } from "react-redux";
 import { store } from './Store';
+import { JumpKick } from './pages/jumpkick/JumpKick';
 
 interface IAppProps {
 }
@@ -38,6 +39,7 @@ export default class App extends React.Component<IAppProps, IAppState> {
                         <Switch>
                             <Route path="/" component={Homepage} exact/>
                             <Route path="/4play" component={Play4}/>
+                            <Route path="/jumpkick" component={JumpKick}/>
                             <Route path="/support" render={(props) => <Markdown {...props} name="Support" />}/>
                             <Route component={NotFound}/>
                         </Switch>
