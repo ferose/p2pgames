@@ -1,5 +1,5 @@
 module.exports = function override(config, env) {
-    config.module.rules.push({
+    config.module.rules.unshift({
         test: /\.worker\.ts$/,
         use: { loader: 'worker-loader' }
       })

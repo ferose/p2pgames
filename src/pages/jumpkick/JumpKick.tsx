@@ -1,7 +1,8 @@
 import * as React from 'react';
 import styles from './JumpKick.module.scss';
 import { JumpKickConsts } from './JumpKickConsts';
-import WebpackWorker from './Physics.worker.ts';
+import WebpackWorker from './physics/Physics.worker.ts';
+import { JumpKickGameState } from './physics/JumpKickGameState';
 
 interface IJumpKickProps {}
 interface IJumpKickState {}
@@ -9,6 +10,7 @@ interface IJumpKickState {}
 export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
     private canvasRef: React.RefObject<HTMLCanvasElement>;
     private physicsWorker: Worker;
+    private lastState?: JumpKickGameState;
 
     public constructor(props: IJumpKickProps) {
         super(props);
@@ -33,6 +35,10 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
             return;
         }
 
+        if (!this.lastState) {
+            return;
+        }
+
         ctx.save();
 
         ctx.fillStyle="red";
@@ -40,14 +46,14 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
 
         ctx.fillStyle = "blue";
         ctx.beginPath();
-        ctx.arc(40, 40, 20, 0, 2*Math.PI);
+        ctx.arc(this.lastState.bluePlayer.x, this.lastState.bluePlayer.y, 20, 0, 2*Math.PI);
         ctx.fill();
 
         ctx.restore();
     }
 
     private onMessage = (event: MessageEvent) => {
-        console.log(event);
+        this.lastState = event.data;
     }
 
     componentDidMount() {
