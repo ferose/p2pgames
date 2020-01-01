@@ -39,11 +39,11 @@
     "typescript": "3.7.2"
   },
   "scripts": {
-    "startdev": "react-scripts start",
-    "build": "react-scripts build",
+    "startdev": "react-app-rewired start",
+    "build": "react-app-rewired build",
     "predeploy": "npm run build",
     "deploy": "gcloud app deploy -q",
-    "test": "react-scripts test",
+    "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -62,6 +62,8 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^2.1.1"
+    "gh-pages": "^2.1.1",
+    "react-app-rewired": "^2.1.5",
+    "worker-loader": "^2.0.0"
   }
 }

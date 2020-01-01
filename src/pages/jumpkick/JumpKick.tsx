@@ -1,8 +1,7 @@
 import * as React from 'react';
 import styles from './JumpKick.module.scss';
-import webWorkerEnabler from '../../WebWorkerEnabler';
-import PhysicsWorker from './PhysicsWorker';
 import { JumpKickConsts } from './JumpKickConsts';
+import WebpackWorker from './Physics.worker.ts';
 
 interface IJumpKickProps {}
 interface IJumpKickState {}
@@ -15,7 +14,7 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
         super(props);
         this.canvasRef = React.createRef();
 
-        this.physicsWorker = webWorkerEnabler(PhysicsWorker);
+        this.physicsWorker = new WebpackWorker();
         this.physicsWorker.addEventListener("message", this.onMessage);
     }
 
