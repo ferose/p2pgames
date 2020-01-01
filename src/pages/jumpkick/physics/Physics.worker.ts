@@ -1,4 +1,4 @@
-import { JumpKickConsts } from "../JumpKickConsts";
+import { JumpKickConsts } from "./JumpKickConsts";
 import { JumpKickGameState } from "./JumpKickGameState";
 import Big from 'big.js';
 

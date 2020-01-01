@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styles from './JumpKick.module.scss';
-import { JumpKickConsts } from './JumpKickConsts';
+import { JumpKickConsts } from './physics/JumpKickConsts';
 import WebpackWorker from './physics/Physics.worker.ts';
 import { IJumpKickSerializedGameState } from './physics/JumpKickGameState';
 
@@ -41,13 +41,16 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
 
         ctx.save();
 
-        ctx.fillStyle="red";
-        ctx.fillRect(0, 0, 256, 224);
+        ctx.clearRect(0, 0, 256, 224);
 
-        ctx.fillStyle = "blue";
-        ctx.beginPath();
-        ctx.arc(Number(this.lastState.bluePlayer.x), Number(this.lastState.bluePlayer.y), 20, 0, 2*Math.PI);
-        ctx.fill();
+        ctx.fillStyle = "#DDEDAA";
+        ctx.fillRect(0, this.lastState.groundY, Number(JumpKickConsts.width), Number(JumpKickConsts.height.minus(this.lastState.groundY)));
+
+        const players = [this.lastState.redPlayer, this.lastState.bluePlayer];
+        for (const player of players) {
+            ctx.fillStyle = player.color;
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+        }
 
         ctx.restore();
     }

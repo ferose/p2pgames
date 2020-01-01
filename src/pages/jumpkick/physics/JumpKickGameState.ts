@@ -1,19 +1,51 @@
 import { JumpKickPlayer } from "./JumpKickPlayer";
 import { IPhysicsObject } from "./JumpKickStateInterface";
+import { JumpKickConsts } from "./JumpKickConsts";
 import Big from 'big.js';
 
+const playerStartGap = Big(10);
+const playerWidth = Big(30);
+const playerHeight = Big(60);
+
 export class JumpKickGameState implements IPhysicsObject {
-    public frameNumber = 0;
-    public bluePlayer = new JumpKickPlayer();
+    private frameNumber = 0;
+    private redPlayer = new JumpKickPlayer({
+        x: playerStartGap,
+        y: Big(10),
+        width: playerWidth,
+        height: playerHeight,
+        color: "#BD4F6C",
+    });
+    private bluePlayer = new JumpKickPlayer({
+        x: JumpKickConsts.width.minus(playerStartGap).minus(playerWidth),
+        y: Big(10),
+        width: playerWidth,
+        height: playerHeight,
+        color: "#93B5C6",
+    });
+    private groundY = JumpKickConsts.height.minus(40);
 
     public step(dt:Big) {
         this.frameNumber++;
-        this.bluePlayer.step(dt);
+
+        const players = [this.redPlayer, this.bluePlayer];
+        for (const player of players) {
+            player.step(dt);
+        }
+
+        for (const player of players) {
+            if (player.y.plus(player.height).gt(this.groundY)) {
+                player.y = this.groundY.minus(player.height);
+            }
+        }
     }
 
     public serialize() {
         return {
-            bluePlayer: this.bluePlayer.serialize()
+            frameNumber: this.frameNumber,
+            redPlayer: this.redPlayer.serialize(),
+            bluePlayer: this.bluePlayer.serialize(),
+            groundY: Number(this.groundY),
         }
     }
 }
