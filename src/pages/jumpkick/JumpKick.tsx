@@ -1,15 +1,22 @@
 import * as React from 'react';
 import styles from './JumpKick.module.scss';
+import webWorkerEnabler from '../../WebWorkerEnabler';
+import PhysicsWorker from './PhysicsWorker';
+import { JumpKickConsts } from './JumpKickConsts';
 
 interface IJumpKickProps {}
 interface IJumpKickState {}
 
 export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
     private canvasRef: React.RefObject<HTMLCanvasElement>;
+    private physicsWorker: Worker;
 
     public constructor(props: IJumpKickProps) {
         super(props);
         this.canvasRef = React.createRef();
+
+        this.physicsWorker = webWorkerEnabler(PhysicsWorker);
+        this.physicsWorker.addEventListener("message", this.onMessage);
     }
 
     private get canvas() {
@@ -40,16 +47,24 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
         ctx.restore();
     }
 
+    private onMessage = (event: MessageEvent) => {
+        console.log(event);
+    }
+
     componentDidMount() {
         window.requestAnimationFrame(this.draw);
+    }
+
+    componentWillUnmount() {
+        this.physicsWorker.terminate();
     }
 
     public render() {
         return (
             <canvas
                 ref={this.canvasRef}
-                width="256"
-                height="224"
+                width={JumpKickConsts.width}
+                height={JumpKickConsts.height}
                 className={styles.container}
             ></canvas>
         )
