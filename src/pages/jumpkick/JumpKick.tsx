@@ -50,7 +50,7 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
         const players = [this.lastState.redPlayer, this.lastState.bluePlayer];
         for (const player of players) {
             ctx.fillStyle = player.color;
-            ctx.fillRect(player.x, player.y, player.width, player.height);
+            ctx.fillRect(Number(player.x), Number(player.y), Number(player.width), Number(player.height));
         }
 
         ctx.restore();
@@ -58,7 +58,6 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
 
     private onMessage = (event: MessageEvent) => {
         this.lastState = event.data;
-        // console.log(event.data);
     }
 
     componentDidMount() {

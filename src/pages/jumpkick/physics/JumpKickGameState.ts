@@ -23,8 +23,26 @@ export class JumpKickGameState implements IPhysicsObject {
         color: "#93B5C6",
     });
 
-    public groundY = JumpKickConsts.height.minus(40);
     public frameNumber = 0;
+    public groundY = JumpKickConsts.height.minus(40);
+    public gravityAY = Big("0.0001");
+
+    private static instance: JumpKickGameState;
+
+    private constructor() {
+        // NOOP
+    }
+
+    static getInstance(): JumpKickGameState {
+        if (!JumpKickGameState.instance) {
+            JumpKickGameState.instance = new JumpKickGameState();
+        }
+        return JumpKickGameState.instance;
+    }
+
+    public getOpponent(player: JumpKickPlayer) {
+        return player === this.redPlayer ? this.bluePlayer : this.redPlayer;
+    }
 
     public step(dt:Big) {
         this.frameNumber++;
@@ -32,12 +50,6 @@ export class JumpKickGameState implements IPhysicsObject {
         const players = [this.redPlayer, this.bluePlayer];
         for (const player of players) {
             player.step(dt);
-        }
-
-        for (const player of players) {
-            if (player.y.plus(player.height).gt(this.groundY)) {
-                player.y = this.groundY.minus(player.height);
-            }
         }
     }
 
@@ -51,5 +63,5 @@ export class JumpKickGameState implements IPhysicsObject {
     }
 }
 
-const dummyState = new JumpKickGameState();
-export type IJumpKickSerializedGameState = ReturnType<typeof dummyState.serialize>
+const gameState = JumpKickGameState.getInstance();
+export type IJumpKickSerializedGameState = ReturnType<typeof gameState.serialize>
