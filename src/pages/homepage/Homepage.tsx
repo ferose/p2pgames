@@ -13,7 +13,7 @@ export class Homepage extends React.Component<IHomepageProps, IHomepageState> {
                     description="Play against a friend and be the first to connect 4 in a line."
                     imageName="/img/connect4.png"
                     title="Play 4"
-                    link="4play"/>
+                    link="play4"/>
                 <GamePreview
                     description="More games under way. Suggestions are appreciated."
                     imageName="/img/icon.svg"
