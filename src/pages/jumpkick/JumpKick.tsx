@@ -73,16 +73,16 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
     private onKeyDown = (event: KeyboardEvent) => {
         let keyType: JumpKickInputType|null = null;
         switch (event.key) {
-            case "z":
+            case "a":
                 keyType = JumpKickInputType.redJump;
                 break;
-            case "a":
+            case "s":
                 keyType = JumpKickInputType.redKick;
                 break;
-            case "/":
+            case "k":
                 keyType = JumpKickInputType.blueJump;
                 break;
-            case "'":
+            case "l":
                 keyType = JumpKickInputType.blueKick;
                 break;
         }
