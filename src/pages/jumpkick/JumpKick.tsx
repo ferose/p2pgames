@@ -48,7 +48,8 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
 
         ctx.save();
 
-        ctx.clearRect(0, 0, 256, 224);
+        ctx.fillStyle = "#BD4F6C";
+        ctx.fillRect(0, 0, Number(JumpKickConsts.width), Number(JumpKickConsts.height));
 
         ctx.fillStyle = "#DDEDAA";
         ctx.fillRect(0, this.lastState.groundY, Number(JumpKickConsts.width), Number(JumpKickConsts.height.minus(this.lastState.groundY)));
