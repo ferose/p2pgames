@@ -4,6 +4,7 @@ import { JumpKickConsts } from './physics/JumpKickConsts';
 import WebpackWorker from './physics/Physics.worker.ts';
 import { IJumpKickSerializedGameState } from './physics/JumpKickGameState';
 import { JumpKickInputType } from './physics/JumpKickStateInterface';
+import Texture from './texture.json';
 
 interface IJumpKickProps {}
 interface IJumpKickState {}
@@ -12,6 +13,7 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
     private canvasRef: React.RefObject<HTMLCanvasElement>;
     private physicsWorker: Worker;
     private lastState?: IJumpKickSerializedGameState;
+    private texture: HTMLImageElement;
 
     public constructor(props: IJumpKickProps) {
         super(props);
@@ -19,6 +21,10 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
 
         this.physicsWorker = new WebpackWorker();
         this.physicsWorker.addEventListener("message", this.onMessage);
+
+        const image = new Image(420, 420);
+        image.src = "img/texture.png";
+        this.texture = image;
     }
 
     private get canvas() {
@@ -49,8 +55,10 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
 
         const players = [this.lastState.redPlayer, this.lastState.bluePlayer];
         for (const player of players) {
-            ctx.fillStyle = player.color;
-            ctx.fillRect(Number(player.x), Number(player.y), Number(player.width), Number(player.height));
+            const s = Texture.frames[player.sprite as "Attack_000.png"].frame;
+            ctx.drawImage(this.texture,
+                Number(s.x), Number(s.y), Number(s.w), Number(s.h),
+                Number(player.x), Number(player.y), Number(s.w), Number(s.h));
         }
 
         ctx.restore();

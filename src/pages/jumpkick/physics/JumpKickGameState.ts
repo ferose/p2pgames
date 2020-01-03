@@ -1,26 +1,26 @@
 import { JumpKickPlayer } from "./JumpKickPlayer";
-import { IPhysicsObject } from "./JumpKickStateInterface";
+import { IPhysicsObject, JumpKickPlayerType } from "./JumpKickStateInterface";
 import { JumpKickConsts } from "./JumpKickConsts";
 import Big from 'big.js';
 
 const playerStartGap = Big(10);
-const playerWidth = Big(30);
-const playerHeight = Big(60);
+const playerWidth = Big(70);
+const playerHeight = Big(70);
 
 export class JumpKickGameState implements IPhysicsObject {
-    public redPlayer = new JumpKickPlayer({
+    public leftPlayer = new JumpKickPlayer({
         x: playerStartGap,
         y: Big(10),
         width: playerWidth,
         height: playerHeight,
-        color: "#BD4F6C",
+        type: JumpKickPlayerType.LeftPlayer,
     });
-    public bluePlayer = new JumpKickPlayer({
+    public rightPlayer = new JumpKickPlayer({
         x: JumpKickConsts.width.minus(playerStartGap).minus(playerWidth),
         y: Big(10),
         width: playerWidth,
         height: playerHeight,
-        color: "#93B5C6",
+        type: JumpKickPlayerType.RightPlayer,
     });
 
     public frameNumber = 0;
@@ -41,13 +41,13 @@ export class JumpKickGameState implements IPhysicsObject {
     }
 
     public getOpponent(player: JumpKickPlayer) {
-        return player === this.redPlayer ? this.bluePlayer : this.redPlayer;
+        return player === this.leftPlayer ? this.rightPlayer : this.leftPlayer;
     }
 
     public step(dt:Big) {
         this.frameNumber++;
 
-        const players = [this.redPlayer, this.bluePlayer];
+        const players = [this.leftPlayer, this.rightPlayer];
         for (const player of players) {
             player.step(dt);
         }
@@ -56,8 +56,8 @@ export class JumpKickGameState implements IPhysicsObject {
     public serialize() {
         return {
             frameNumber: this.frameNumber,
-            redPlayer: this.redPlayer.serialize(),
-            bluePlayer: this.bluePlayer.serialize(),
+            redPlayer: this.leftPlayer.serialize(),
+            bluePlayer: this.rightPlayer.serialize(),
             groundY: Number(this.groundY),
         }
     }

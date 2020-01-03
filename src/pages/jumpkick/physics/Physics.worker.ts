@@ -6,27 +6,26 @@ import { JumpKickInputType } from "./JumpKickStateInterface";
 (() => {
     const gameState = JumpKickGameState.getInstance();
     const dt = Big(1).div(JumpKickConsts.fps).mul(1000);
-    const dt2 = dt.mul(4);
 
     onmessage = function(e) {
         switch (e.data) {
             case JumpKickInputType.redJump:
-                gameState.redPlayer.jump();
+                gameState.leftPlayer.jump();
                 break;
             case JumpKickInputType.blueJump:
-                gameState.bluePlayer.jump();
+                gameState.rightPlayer.jump();
                 break;
             case JumpKickInputType.redKick:
-                gameState.redPlayer.kick();
+                gameState.leftPlayer.kick();
                 break;
             case JumpKickInputType.blueKick:
-                gameState.bluePlayer.kick();
+                gameState.rightPlayer.kick();
                 break;
         }
     }
 
     setInterval(() => {
-        gameState.step(dt2);
+        gameState.step(dt);
         const serializedGameState = gameState.serialize();
         postMessage(serializedGameState);
     }, Number(dt));

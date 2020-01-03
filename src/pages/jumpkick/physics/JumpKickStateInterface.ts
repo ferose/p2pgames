@@ -11,3 +11,8 @@ export enum JumpKickInputType {
     blueJump,
     blueKick,
 }
+
+export enum JumpKickPlayerType {
+    LeftPlayer,
+    RightPlayer,
+}
