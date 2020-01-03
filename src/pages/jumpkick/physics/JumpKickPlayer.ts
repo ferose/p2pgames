@@ -47,6 +47,12 @@ export class JumpKickPlayer implements IPhysicsObject{
         } else {
             this.vy = this.vy.add(this.ay.add(gameState.gravityAY).mul(dt2).div(2))
         }
+
+        const velocityLimit = Big("0.075");
+        if (this.vy.gt(velocityLimit)) {
+            this.vy = velocityLimit;
+        }
+
         this.vx = this.vx.add(this.ax.mul(dt2).div(2))
 
         this.x = this.x.add(this.vx.mul(dt2));
@@ -74,7 +80,7 @@ export class JumpKickPlayer implements IPhysicsObject{
             const gameState = JumpKickGameState.getInstance();
             const opponent = gameState.getOpponent(this);
             this.state = PlayerState.Kick;
-            this.vx = Big("0.02").mul(opponent.x.gt(this.x) ? 1 : -1);
+            this.vx = Big("0.03").mul(opponent.x.gt(this.x) ? 1 : -1);
         }
     }
 
