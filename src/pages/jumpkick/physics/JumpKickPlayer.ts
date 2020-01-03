@@ -4,8 +4,7 @@ import { JumpKickGameState } from "./JumpKickGameState";
 import { JumpKickSprite } from "./JumpKickSprite";
 
 enum PlayerState {
-    Attack = "Attack",
-    Die = "Die",
+    Kick = "Kick",
     Idle = "Idle",
     Jump = "Jump",
 }
@@ -43,7 +42,7 @@ export class JumpKickPlayer implements IPhysicsObject{
         const gameState = JumpKickGameState.getInstance();
         const dt2 = dt.mul(4);
 
-        if (this.state === PlayerState.Attack) {
+        if (this.state === PlayerState.Kick) {
             this.vy = Big("0.06");
         } else {
             this.vy = this.vy.add(this.ay.add(gameState.gravityAY).mul(dt2).div(2))
@@ -74,7 +73,7 @@ export class JumpKickPlayer implements IPhysicsObject{
         if (!this.isTouchingGround()) {
             const gameState = JumpKickGameState.getInstance();
             const opponent = gameState.getOpponent(this);
-            this.state = PlayerState.Attack;
+            this.state = PlayerState.Kick;
             this.vx = Big("0.02").mul(opponent.x.gt(this.x) ? 1 : -1);
         }
     }

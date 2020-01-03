@@ -55,7 +55,7 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
 
         const players = [this.lastState.redPlayer, this.lastState.bluePlayer];
         for (const player of players) {
-            const s = Texture.frames[player.sprite as "Attack_000.png"].frame;
+            const s = Texture.frames[player.sprite as "Idle_000.png"].frame;
             ctx.drawImage(this.texture,
                 Number(s.x), Number(s.y), Number(s.w), Number(s.h),
                 Number(player.x), Number(player.y), Number(s.w), Number(s.h));

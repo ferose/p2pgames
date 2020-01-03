@@ -4,8 +4,7 @@ import Big from "big.js";
 const frameInterval = Big(1000).div(8); //milliseconds
 
 const frameCounts = {
-    Attack: 6,
-    Die: 12,
+    Kick: 3,
     Idle: 12,
     Jump: 6,
 }
@@ -38,8 +37,8 @@ export class JumpKickSprite implements IPhysicsObject {
             this.elapsed = this.elapsed.minus(frameInterval);
             this.frame++;
         }
-        const frameLength = frameCounts[this.spriteName as "Attack"];
-        if (this.frame >= frameCounts[this.spriteName as "Attack"]) {
+        const frameLength = frameCounts[this.spriteName as "Idle"];
+        if (this.frame >= frameCounts[this.spriteName as "Idle"]) {
             if (this.loop) {
                 this.frame = 0;
             } else {
