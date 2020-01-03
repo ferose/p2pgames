@@ -44,7 +44,7 @@ export class JumpKickPlayer implements IPhysicsObject{
         const dt2 = dt.mul(4);
 
         if (this.state === PlayerState.Attack) {
-            this.vy = Big("0.04");
+            this.vy = Big("0.06");
         } else {
             this.vy = this.vy.add(this.ay.add(gameState.gravityAY).mul(dt2).div(2))
         }
@@ -65,7 +65,7 @@ export class JumpKickPlayer implements IPhysicsObject{
 
     public jump() {
         if (this.isTouchingGround()) {
-            this.vy = Big("-0.1");
+            this.vy = Big("-0.15");
             this.state = PlayerState.Jump;
         }
     }
