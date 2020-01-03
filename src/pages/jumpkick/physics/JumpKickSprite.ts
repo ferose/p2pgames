@@ -28,6 +28,10 @@ export class JumpKickSprite implements IPhysicsObject {
         if (this._spriteName !== val) {
             this._spriteName = val;
             this.frame = 0;
+            // TODO remove after finishing spritesheet
+            if (this.spriteName === "Kick") {
+                this.frame = 1;
+            }
         }
     }
 

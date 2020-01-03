@@ -22,7 +22,7 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
         this.physicsWorker = new WebpackWorker();
         this.physicsWorker.addEventListener("message", this.onMessage);
 
-        const image = new Image(420, 420);
+        const image = new Image(1, 1);
         image.src = "img/texture.png";
         this.texture = image;
     }
@@ -48,19 +48,28 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
 
         ctx.save();
 
-        ctx.fillStyle = "#BD4F6C";
+        ctx.fillStyle = "#D7816A";
         ctx.fillRect(0, 0, Number(JumpKickConsts.width), Number(JumpKickConsts.height));
 
         ctx.fillStyle = "#DDEDAA";
         ctx.fillRect(0, this.lastState.groundY, Number(JumpKickConsts.width), Number(JumpKickConsts.height.minus(this.lastState.groundY)));
 
         const players = [this.lastState.redPlayer, this.lastState.bluePlayer];
+
         for (const player of players) {
+            ctx.save();
             const s = Texture.frames[player.sprite as "Idle_000.png"].frame;
+            // ctx.translate(-Number(player.x) + Number(s.w)/2, 0);
+            const scaleX = player.flip ? -1 : 1;
+            if (player.flip) {
+                ctx.scale(-1, 1);
+            }
             ctx.drawImage(this.texture,
                 Number(s.x), Number(s.y), Number(s.w), Number(s.h),
-                Number(player.x), Number(player.y), Number(s.w), Number(s.h));
+                scaleX*Number(player.x), Number(player.y), scaleX*Number(s.w), Number(s.h));
+            ctx.restore();
         }
+
 
         ctx.restore();
     }

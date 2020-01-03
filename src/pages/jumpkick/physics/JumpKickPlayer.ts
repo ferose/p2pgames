@@ -22,6 +22,7 @@ export class JumpKickPlayer implements IPhysicsObject{
     private ay = Big(0);
     private _state = PlayerState.Idle;
     private sprite: JumpKickSprite;
+    private flip = false;
 
     constructor(params: {
         x: Big,
@@ -63,6 +64,7 @@ export class JumpKickPlayer implements IPhysicsObject{
             this.vy = Big(0);
             this.vx = Big(0);
             this.state = PlayerState.Idle;
+            this.updateFlip();
         }
 
         this.sprite.step(dt);
@@ -88,6 +90,11 @@ export class JumpKickPlayer implements IPhysicsObject{
         return this.y.plus(this.height).gte(JumpKickGameState.getInstance().groundY);
     }
 
+    private updateFlip() {
+        const opponent = JumpKickGameState.getInstance().getOpponent(this);
+        this.flip = this.x.gt(opponent.x);
+    }
+
     public serialize() {
         return {
             x: this.x.toFixed(0),
@@ -95,6 +102,7 @@ export class JumpKickPlayer implements IPhysicsObject{
             width: this.width.toFixed(),
             height: this.height.toFixed(),
             sprite: this.sprite.serialize(),
+            flip: this.flip
         }
     }
 
