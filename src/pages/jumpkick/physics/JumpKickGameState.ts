@@ -64,4 +64,4 @@ export class JumpKickGameState implements IPhysicsObject {
 }
 
 const gameState = JumpKickGameState.getInstance();
-export type IJumpKickSerializedGameState = ReturnType<typeof gameState.serialize>
+export type JumpKickSerializedGameState = ReturnType<typeof gameState.serialize>

@@ -5,7 +5,7 @@ import { INetworkMessage } from "../NetworkHelper";
 export type UserStateData = {userState: UserStateType, errorMessage?: string};
 export type IUserStateAction = IAction<typeof Actions.USER_STATE, UserStateData>;
 export type INetworkAction = IAction<typeof Actions.NETWORK_RECEIVED_DATA | typeof Actions.NETWORK_SEND_DATA, INetworkMessage>;
-export type IPlayerNumberAction = ReturnType<typeof setPlayerNumber>;
+export type PlayerNumberAction = ReturnType<typeof setPlayerNumber>;
 
 export function setPlayerNumber(playerNumber: number) {
     return {

@@ -3,8 +3,12 @@ import { IAction } from './ActionHelper';
 import { networkReducer } from './networking/duck/reducers';
 import { UserStateType } from './networking/UserManager';
 import { play4Reducer } from "./pages/play4/duck/reducers";
+import { generalReducer } from './duck/reducers';
 
 export type RootState = {
+    general: {
+        inGame: boolean,
+    }
     network: {
         userState: UserStateType,
         errorMessage?: string,
@@ -16,6 +20,7 @@ export type RootState = {
 }
 
 export const rootReducer = combineReducers({
+    general: generalReducer,
     network: networkReducer,
     play4: play4Reducer
 }) as Reducer<RootState, IAction<any, any>>;

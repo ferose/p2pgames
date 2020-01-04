@@ -4,10 +4,12 @@ import GameCanvas from './GameCanvas';
 import {Helmet} from 'react-helmet';
 import { connect } from 'react-redux';
 import { setAlertMessageAction } from './duck/actions';
-import ConnectionPrompt from '../../ConnectionPrompt';
+import ConnectionPrompt from '../../components/ConnectionPrompt';
 import { UserManager, UserStateType } from '../../networking/UserManager';
 import { RootState } from '../../RootReducer';
 import { setUserStateAction } from '../../networking/duck/actions';
+import { store } from '../../Store';
+import { setInGameAction } from '../../duck/actions';
 
 interface IPlay4Props {
     message: JSX.Element;
@@ -41,6 +43,10 @@ class Play4Class extends React.Component<IPlay4Props, IPlay4State> {
                 }
             </div>
       );
+    }
+
+    componentDidMount() {
+        store.dispatch(setInGameAction(true));
     }
 
     componentWillUnmount() {

@@ -2,10 +2,10 @@ import { faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import * as React from 'react';
 import Button from 'react-bootstrap/Button';
-import { BrowserRouter, Route, Switch, Link } from 'react-router-dom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import './App.scss';
-import Banner from './Banner';
-import Menu from './Menu';
+import Banner from './components/Banner';
+import Menu from './components/Menu';
 import Play4 from './pages/play4/Play4';
 import { Homepage } from './pages/homepage/Homepage';
 import { Markdown } from './pages/Markdown';
@@ -13,6 +13,7 @@ import { NotFound } from './pages/notfound/NotFound';
 import { Provider } from "react-redux";
 import { store } from './Store';
 import { JumpKick } from './pages/jumpkick/JumpKick';
+import { ConditionalLink } from './components/ConditionalLink';
 
 interface IAppProps {
 }
@@ -52,9 +53,9 @@ export default class App extends React.Component<IAppProps, IAppState> {
                             <FontAwesomeIcon icon={faBars} />
                         </Button>
 
-                        <Link to="/" id="home-button" target="_blank">
+                        <ConditionalLink to="/" id="home-button">
                             <img src="/img/icon.svg" alt="Games"/>
-                        </Link>
+                        </ConditionalLink>
 
                         <Menu
                             show={this.state.modalShow}

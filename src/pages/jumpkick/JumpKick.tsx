@@ -2,9 +2,11 @@ import * as React from 'react';
 import styles from './JumpKick.module.scss';
 import { JumpKickConsts } from './physics/JumpKickConsts';
 import WebpackWorker from './physics/Physics.worker.ts';
-import { IJumpKickSerializedGameState } from './physics/JumpKickGameState';
+import { JumpKickSerializedGameState } from './physics/JumpKickGameState';
 import { JumpKickInputType } from './physics/JumpKickStateInterface';
 import Texture from './texture.json';
+import { store } from '../../Store';
+import { setInGameAction } from '../../duck/actions';
 
 interface IJumpKickProps {}
 interface IJumpKickState {}
@@ -12,7 +14,7 @@ interface IJumpKickState {}
 export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
     private canvasRef: React.RefObject<HTMLCanvasElement>;
     private physicsWorker: Worker;
-    private lastState?: IJumpKickSerializedGameState;
+    private lastState?: JumpKickSerializedGameState;
     private texture: HTMLImageElement;
 
     public constructor(props: IJumpKickProps) {
@@ -81,6 +83,7 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
     componentDidMount() {
         window.requestAnimationFrame(this.draw);
         window.addEventListener("keydown", this.onKeyDown);
+        store.dispatch(setInGameAction(true));
     }
 
     componentWillUnmount() {

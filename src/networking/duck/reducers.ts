@@ -1,6 +1,6 @@
 import { UserStateType } from "../UserManager";
 import { IAction, Actions } from "../../ActionHelper";
-import { UserStateData, IPlayerNumberAction } from "./actions";
+import { UserStateData, PlayerNumberAction } from "./actions";
 
 export function networkReducer(state={
     userState: UserStateType.NoLink
@@ -11,7 +11,7 @@ export function networkReducer(state={
             return {...state, userState: data.userState};
         }
         case Actions.PLAYER_NUMBER: {
-            const data = (action as IPlayerNumberAction).data;
+            const data = (action as PlayerNumberAction).data;
             return {...state, playerNumber: data.playerNumber};
         }
         default:

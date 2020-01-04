@@ -5,11 +5,14 @@ import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEnvelope, faGamepad } from '@fortawesome/free-solid-svg-icons'
+import { makeConditionalLink } from './ConditionalLink';
 
 interface IMenuProps {
     onHide: () => void;
     show: boolean;
 }
+
+const ConditionalItem = makeConditionalLink(ListGroup.Item) as typeof ListGroup.Item;
 
 const Menu: React.FC<IMenuProps> = (props) => {
     return (
@@ -27,12 +30,12 @@ const Menu: React.FC<IMenuProps> = (props) => {
         </Modal.Header>
         <Modal.Body>
             <ListGroup>
-                <ListGroup.Item action href="/" target="_blank">
+                <ConditionalItem action href="/" target="_blank">
                     <FontAwesomeIcon className="link-icon" icon={faGamepad} fixedWidth/> More Games
-                </ListGroup.Item>
-                <ListGroup.Item action href={"support"} target="_blank">
+                </ConditionalItem>
+                <ConditionalItem action href={"support"} target="_blank">
                     <FontAwesomeIcon className="link-icon" icon={faEnvelope} fixedWidth/> Feedback
-                </ListGroup.Item>
+                </ConditionalItem>
             </ListGroup>
         </Modal.Body>
         <Modal.Footer>
