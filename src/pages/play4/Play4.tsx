@@ -3,11 +3,9 @@ import './Play4.scss';
 import GameCanvas from './GameCanvas';
 import {Helmet} from 'react-helmet';
 import { connect } from 'react-redux';
-import { setAlertMessageAction } from './duck/actions';
 import ConnectionPrompt from '../../components/ConnectionPrompt';
 import { UserManager, UserStateType } from '../../networking/UserManager';
 import { RootState } from '../../RootReducer';
-import { setUserStateAction } from '../../networking/duck/actions';
 import { store } from '../../Store';
 import { setInGameAction } from '../../duck/actions';
 
@@ -59,4 +57,4 @@ export default connect((state:RootState) => {
         message: state.play4.alertMessage,
         userState: state.network.userState,
     }
-}, {setAlertMessageAction, setUserStateAction})(Play4Class);
+}, {})(Play4Class);

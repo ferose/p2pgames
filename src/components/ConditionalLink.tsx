@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { setInGameAction } from '../duck/actions';
 import { RootState } from '../RootReducer';
 
 /**
@@ -13,7 +12,7 @@ export function makeConditionalLink(componentClass: typeof React.Component) {
         return {
             target: state.general.inGame ? "_blank" : "_self",
         }
-    }, {setInGameAction})(componentClass) as any;
+    }, {})(componentClass) as any;
 }
 
 export const ConditionalLink = makeConditionalLink(Link) as typeof Link;

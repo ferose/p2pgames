@@ -1,11 +1,10 @@
-import * as React from 'react';
-import './ConnectionPrompt.scss';
-import Spinner from 'react-bootstrap/Spinner';
 import QRCode from 'qrcode.react';
+import * as React from 'react';
+import Spinner from 'react-bootstrap/Spinner';
+import { connect } from 'react-redux';
 import { UserStateType } from '../networking/UserManager';
 import { RootState } from '../RootReducer';
-import { connect } from 'react-redux';
-import { setUserStateAction } from '../networking/duck/actions';
+import './ConnectionPrompt.scss';
 
 interface IConnectionPromptProps {
     userState: UserStateType,
@@ -75,4 +74,4 @@ export default connect((state:RootState) => {
         userState: state.network.userState,
         errorMessage: state.network.errorMessage
     };
-}, {setUserStateAction})(ConnectionPromptClass);
+})(ConnectionPromptClass);
