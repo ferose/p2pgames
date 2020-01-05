@@ -7,7 +7,7 @@ import { JumpKickInputType } from './physics/JumpKickStateInterface';
 import Texture from './texture.json';
 import { store } from '../../Store';
 import { setInGameAction } from '../../duck/actions';
-import { ObjectWithValues } from '../../Types';
+import { ObjectWithValues } from '../../utilities/Types';
 
 interface IJumpKickProps {}
 interface IJumpKickState {}

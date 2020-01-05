@@ -2,6 +2,7 @@ import Big from "big.js";
 import { IPhysicsObject } from "./JumpKickStateInterface";
 import { JumpKickConsts } from "./JumpKickConsts";
 import { JumpKickGameState } from "./JumpKickGameState";
+import { BigMath } from "../../../utilities/BigMath";
 
 export class JumpKickViewport implements IPhysicsObject {
     public x = Big(0);
@@ -11,7 +12,8 @@ export class JumpKickViewport implements IPhysicsObject {
 
     public step(dt:Big) {
         const {leftPlayer, rightPlayer} = JumpKickGameState.getInstance();
-        this.x = leftPlayer.x;
+        const centerX = BigMath.mean(leftPlayer.x.add(leftPlayer.width.div(2)), rightPlayer.x.add(rightPlayer.width.div(2)));
+        this.x = centerX.sub(this.width.div(2));
         this.y = Big(65);
     }
 

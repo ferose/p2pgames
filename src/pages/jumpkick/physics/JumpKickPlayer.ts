@@ -103,8 +103,9 @@ export class JumpKickPlayer implements IPhysicsObject{
     }
 
     public serialize() {
+        const viewport = JumpKickGameState.getInstance().viewport;
         return {
-            x: this.x.toFixed(0),
+            x: this.x.sub(viewport.x).toFixed(0),
             y: this.y.toFixed(0),
             width: this.width.toFixed(),
             height: this.height.toFixed(),
