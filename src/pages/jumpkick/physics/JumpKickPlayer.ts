@@ -62,6 +62,14 @@ export class JumpKickPlayer implements IPhysicsObject{
         this.x = this.x.add(this.vx.mul(dt2));
         this.y = this.y.add(this.vy.mul(dt2));
 
+        const {viewport} = gameState;
+        if (this.x.lt(viewport.x) && this.vx.lt(0)) {
+            this.x = viewport.x;
+        }
+        else if (this.x.plus(this.width).gt(viewport.x.plus(viewport.width)) && this.vx.gt(0)) {
+            this.x = viewport.x.plus(viewport.width).minus(this.width);
+        }
+
         if (this.isTouchingGround()) {
             this.y = gameState.groundY.minus(this.height);
             this.vy = Big(0);

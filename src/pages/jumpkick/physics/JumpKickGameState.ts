@@ -4,13 +4,17 @@ import { JumpKickConsts } from "./JumpKickConsts";
 import { JumpKickViewport } from "./JumpKickViewport";
 import Big from 'big.js';
 
-const playerStartGap = Big(10);
+const playerStartDistance = Big(180);
 const playerWidth = Big(70);
 const playerHeight = Big(70);
 
+const worldCenter = JumpKickConsts.worldWidth.div(2);
+const leftPlayerX = worldCenter.minus(playerWidth.div(2)).minus(playerStartDistance.div(2));
+const rightPlayerX = worldCenter.minus(playerWidth.div(2)).plus(playerStartDistance.div(2));
+
 export class JumpKickGameState implements IPhysicsObject {
     public leftPlayer = new JumpKickPlayer({
-        x: playerStartGap,
+        x: leftPlayerX,
         y: Big(10),
         width: playerWidth,
         height: playerHeight,
@@ -18,7 +22,7 @@ export class JumpKickGameState implements IPhysicsObject {
         flip: false,
     });
     public rightPlayer = new JumpKickPlayer({
-        x: JumpKickConsts.width.minus(playerStartGap).minus(playerWidth),
+        x: rightPlayerX,
         y: Big(10),
         width: playerWidth,
         height: playerHeight,

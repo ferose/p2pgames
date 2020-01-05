@@ -14,6 +14,11 @@ export class JumpKickViewport implements IPhysicsObject {
         const {leftPlayer, rightPlayer} = JumpKickGameState.getInstance();
         const centerX = BigMath.mean(leftPlayer.x.add(leftPlayer.width.div(2)), rightPlayer.x.add(rightPlayer.width.div(2)));
         this.x = centerX.sub(this.width.div(2));
+        if (this.x.lt(0)) {
+            this.x = Big(0);
+        } else if (this.x.plus(this.width).gt(JumpKickConsts.worldWidth)) {
+            this.x = JumpKickConsts.worldWidth.minus(this.width);
+        }
         this.y = Big(65);
     }
 
