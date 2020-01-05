@@ -7,6 +7,7 @@ import { JumpKickInputType } from './physics/JumpKickStateInterface';
 import Texture from './texture.json';
 import { store } from '../../Store';
 import { setInGameAction } from '../../duck/actions';
+import { ObjectWithValues } from '../../Types';
 
 interface IJumpKickProps {}
 interface IJumpKickState {}
@@ -15,7 +16,7 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
     private canvasRef: React.RefObject<HTMLCanvasElement>;
     private physicsWorker: Worker;
     private lastState?: JumpKickSerializedGameState;
-    private texture: HTMLImageElement;
+    private images: ObjectWithValues<HTMLImageElement> = {};
 
     public constructor(props: IJumpKickProps) {
         super(props);
@@ -24,9 +25,19 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
         this.physicsWorker = new WebpackWorker();
         this.physicsWorker.addEventListener("message", this.onMessage);
 
-        const image = new Image(1, 1);
-        image.src = "img/texture.png";
-        this.texture = image;
+        const imageNames = [
+            "texture.png",
+            "jumpkickbg0.svg",
+            "jumpkickbg1.svg",
+            "jumpkickbg2.svg",
+            "jumpkickbg3.svg",
+            "jumpkickbg4.svg",
+        ]
+        for (const name of imageNames) {
+            const image = new Image(1, 1);
+            image.src = "img/" + name;
+            this.images[name] = image;
+        }
     }
 
     private get canvas() {
@@ -50,11 +61,24 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
 
         ctx.save();
 
-        ctx.fillStyle = "#D7816A";
+        ctx.fillStyle = "#7a7c92";
         ctx.fillRect(0, 0, Number(JumpKickConsts.width), Number(JumpKickConsts.height));
 
-        ctx.fillStyle = "#DDEDAA";
-        ctx.fillRect(0, this.lastState.groundY, Number(JumpKickConsts.width), Number(JumpKickConsts.height.minus(this.lastState.groundY)));
+        // ctx.fillStyle = "#DDEDAA";
+        // ctx.fillRect(0, this.lastState.groundY, Number(JumpKickConsts.width), Number(JumpKickConsts.height.minus(this.lastState.groundY)));
+
+        const parallaxMult = [
+            1,
+            0.75,
+            0.25,
+            0,
+            0
+        ];
+        for (let i = parallaxMult.length-1; i >= 0; i--) {
+            ctx.drawImage(this.images[`jumpkickbg${i}.svg`],
+            Math.round(Number(this.lastState.viewport.x)*parallaxMult[i]), Number(this.lastState.viewport.y), Number(this.lastState.viewport.width), Number(this.lastState.viewport.height),
+            0, 0, Number(JumpKickConsts.width), Number(JumpKickConsts.height));
+        }
 
         const players = [this.lastState.redPlayer, this.lastState.bluePlayer];
 
@@ -66,7 +90,7 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
             if (player.flip) {
                 ctx.scale(-1, 1);
             }
-            ctx.drawImage(this.texture,
+            ctx.drawImage(this.images["texture.png"],
                 Number(s.x), Number(s.y), Number(s.w), Number(s.h),
                 scaleX*Number(player.x), Number(player.y), scaleX*Number(s.w), Number(s.h));
             ctx.restore();
@@ -105,6 +129,19 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
                 break;
             case "l":
                 keyType = JumpKickInputType.blueKick;
+                break;
+
+            case "ArrowUp":
+                keyType = JumpKickInputType.viewportUp;
+                break;
+            case "ArrowDown":
+                keyType = JumpKickInputType.viewportDown;
+                break;
+            case "ArrowLeft":
+                keyType = JumpKickInputType.viewportLeft;
+                break;
+            case "ArrowRight":
+                keyType = JumpKickInputType.viewportRight;
                 break;
         }
         if (keyType !== null) {

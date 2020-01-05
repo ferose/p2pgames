@@ -10,6 +10,11 @@ export enum JumpKickInputType {
     redKick,
     blueJump,
     blueKick,
+
+    viewportUp,
+    viewportDown,
+    viewportLeft,
+    viewportRight,
 }
 
 export enum JumpKickPlayerType {

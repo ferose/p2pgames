@@ -1,6 +1,7 @@
 import { JumpKickPlayer } from "./JumpKickPlayer";
 import { IPhysicsObject, JumpKickPlayerType } from "./JumpKickStateInterface";
 import { JumpKickConsts } from "./JumpKickConsts";
+import { JumpKickViewport } from "./JumpKickViewport";
 import Big from 'big.js';
 
 const playerStartGap = Big(10);
@@ -14,6 +15,7 @@ export class JumpKickGameState implements IPhysicsObject {
         width: playerWidth,
         height: playerHeight,
         type: JumpKickPlayerType.LeftPlayer,
+        flip: false,
     });
     public rightPlayer = new JumpKickPlayer({
         x: JumpKickConsts.width.minus(playerStartGap).minus(playerWidth),
@@ -21,8 +23,10 @@ export class JumpKickGameState implements IPhysicsObject {
         width: playerWidth,
         height: playerHeight,
         type: JumpKickPlayerType.RightPlayer,
+        flip: true,
     });
 
+    public viewport = new JumpKickViewport();
     public frameNumber = 0;
     public groundY = JumpKickConsts.height.minus(40);
     public gravityAY = Big("0.0002");
@@ -51,6 +55,8 @@ export class JumpKickGameState implements IPhysicsObject {
         for (const player of players) {
             player.step(dt);
         }
+
+        this.viewport.step(dt);
     }
 
     public serialize() {
@@ -59,6 +65,7 @@ export class JumpKickGameState implements IPhysicsObject {
             redPlayer: this.leftPlayer.serialize(),
             bluePlayer: this.rightPlayer.serialize(),
             groundY: Number(this.groundY),
+            viewport: this.viewport.serialize(),
         }
     }
 }
