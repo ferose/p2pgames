@@ -7,6 +7,7 @@ enum PlayerState {
     Kick = "Kick",
     Idle = "Idle",
     Jump = "Jump",
+    Dive = "Dive",
 }
 
 export class JumpKickPlayer implements IPhysicsObject{
@@ -80,9 +81,13 @@ export class JumpKickPlayer implements IPhysicsObject{
     }
 
     public kick() {
-        if (!this.isTouchingGround()) {
-            const gameState = JumpKickGameState.getInstance();
-            const opponent = gameState.getOpponent(this);
+        const gameState = JumpKickGameState.getInstance();
+        const opponent = gameState.getOpponent(this);
+        if (this.isTouchingGround()) {
+            this.state = PlayerState.Dive;
+            this.vy = Big("-0.13");
+            this.vx = Big("-0.02").mul(opponent.x.gt(this.x) ? 1 : -1);
+        } else {
             this.state = PlayerState.Kick;
             this.vx = Big("0.06").mul(opponent.x.gt(this.x) ? 1 : -1);
         }
@@ -110,8 +115,12 @@ export class JumpKickPlayer implements IPhysicsObject{
 
     private set state(val:PlayerState) {
         this._state = val;
-        this.sprite.spriteName = val;
         this.sprite.loop = val === PlayerState.Idle;
+        let spriteName = val;
+        if (val === PlayerState.Dive) {
+            spriteName = PlayerState.Jump;
+        }
+        this.sprite.spriteName = spriteName;
     }
 
     private get state() {

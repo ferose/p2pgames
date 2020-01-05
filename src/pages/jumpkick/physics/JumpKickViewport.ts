@@ -10,8 +10,8 @@ export class JumpKickViewport implements IPhysicsObject {
     public height = JumpKickConsts.height;
 
     public step(dt:Big) {
-        const player = JumpKickGameState.getInstance().leftPlayer;
-        this.x = player.x;
+        const {leftPlayer, rightPlayer} = JumpKickGameState.getInstance();
+        this.x = leftPlayer.x;
         this.y = Big(65);
     }
 
