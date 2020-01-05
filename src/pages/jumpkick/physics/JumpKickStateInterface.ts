@@ -6,15 +6,10 @@ export interface IPhysicsObject {
 }
 
 export enum JumpKickInputType {
-    redJump,
-    redKick,
-    blueJump,
-    blueKick,
-
-    viewportUp,
-    viewportDown,
-    viewportLeft,
-    viewportRight,
+    leftJump,
+    leftKick,
+    rightJump,
+    rightKick,
 }
 
 export enum JumpKickPlayerType {

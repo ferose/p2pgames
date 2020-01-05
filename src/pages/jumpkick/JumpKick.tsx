@@ -119,33 +119,34 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
         let keyType: JumpKickInputType|null = null;
         switch (event.key) {
             case "a":
-                keyType = JumpKickInputType.redJump;
+                keyType = JumpKickInputType.leftJump;
                 break;
             case "s":
-                keyType = JumpKickInputType.redKick;
-                break;
-            case "k":
-                keyType = JumpKickInputType.blueJump;
-                break;
-            case "l":
-                keyType = JumpKickInputType.blueKick;
-                break;
-
-            case "ArrowUp":
-                keyType = JumpKickInputType.viewportUp;
+                keyType = JumpKickInputType.leftKick;
                 break;
             case "ArrowDown":
-                keyType = JumpKickInputType.viewportDown;
-                break;
-            case "ArrowLeft":
-                keyType = JumpKickInputType.viewportLeft;
+                keyType = JumpKickInputType.rightJump;
                 break;
             case "ArrowRight":
-                keyType = JumpKickInputType.viewportRight;
+                keyType = JumpKickInputType.rightKick;
                 break;
         }
         if (keyType !== null) {
             this.physicsWorker.postMessage(keyType);
+        }
+    }
+
+    private onTouchStart = (e: React.TouchEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const touches = e.touches;
+        for (let i = 0; i < touches.length; i++) {
+            const touch = touches[i];
+            if (touch.pageX < window.innerWidth/2) {
+                this.physicsWorker.postMessage(JumpKickInputType.leftJump);
+            } else {
+                this.physicsWorker.postMessage(JumpKickInputType.leftKick);
+            }
         }
     }
 
@@ -156,6 +157,7 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
                 width={Number(JumpKickConsts.width)}
                 height={Number(JumpKickConsts.height)}
                 className={styles.container}
+                onTouchStart={this.onTouchStart}
             ></canvas>
         )
     }

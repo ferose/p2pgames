@@ -8,33 +8,18 @@ import { JumpKickInputType } from "./JumpKickStateInterface";
     const dt = Big(1).div(JumpKickConsts.fps).mul(1000);
 
     onmessage = function(e) {
-        const viewportInc = Big(1);
-
         switch (e.data) {
-            case JumpKickInputType.redJump:
+            case JumpKickInputType.leftJump:
                 gameState.leftPlayer.jump();
                 break;
-            case JumpKickInputType.blueJump:
+            case JumpKickInputType.rightJump:
                 gameState.rightPlayer.jump();
                 break;
-            case JumpKickInputType.redKick:
+            case JumpKickInputType.leftKick:
                 gameState.leftPlayer.kick();
                 break;
-            case JumpKickInputType.blueKick:
+            case JumpKickInputType.rightKick:
                 gameState.rightPlayer.kick();
-                break;
-
-            case JumpKickInputType.viewportUp:
-                gameState.viewport.y = gameState.viewport.y.minus(viewportInc);
-                break;
-            case JumpKickInputType.viewportDown:
-                gameState.viewport.y = gameState.viewport.y.plus(viewportInc);
-                break;
-            case JumpKickInputType.viewportLeft:
-                gameState.viewport.x = gameState.viewport.x.minus(viewportInc);
-                break;
-            case JumpKickInputType.viewportRight:
-                gameState.viewport.x = gameState.viewport.x.plus(viewportInc);
                 break;
         }
     }
