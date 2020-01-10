@@ -94,7 +94,7 @@ export class JumpKickPlayer implements IPhysicsObject{
         if (this.isTouchingGround()) {
             this.state = PlayerState.Dive;
             this.vy = Big("-0.13");
-            this.vx = Big("-0.02").mul(opponent.x.gt(this.x) ? 1 : -1);
+            this.vx = Big("-0.03").mul(opponent.x.gt(this.x) ? 1 : -1);
         } else {
             this.state = PlayerState.Kick;
             this.vx = Big("0.06").mul(opponent.x.gt(this.x) ? 1 : -1);
@@ -114,7 +114,7 @@ export class JumpKickPlayer implements IPhysicsObject{
         const viewport = JumpKickGameState.getInstance().viewport;
         return {
             x: this.x.sub(viewport.x).toFixed(0),
-            y: this.y.toFixed(0),
+            y: this.y.sub(viewport.y).toFixed(0),
             width: this.width.toFixed(),
             height: this.height.toFixed(),
             sprite: this.sprite.serialize(),

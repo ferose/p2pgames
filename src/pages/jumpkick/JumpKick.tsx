@@ -12,6 +12,15 @@ import { ObjectWithValues } from '../../utilities/Types';
 interface IJumpKickProps {}
 interface IJumpKickState {}
 
+const bgImageNames = [
+    "jumpkickbg0.svg",
+    "jumpkickbg1.svg",
+    "jumpkickbg2.svg",
+    "jumpkickbg3.svg",
+    "jumpkickbg4.svg",
+]
+
+
 export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
     private canvasRef: React.RefObject<HTMLCanvasElement>;
     private physicsWorker: Worker;
@@ -27,11 +36,7 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
 
         const imageNames = [
             "texture.png",
-            "jumpkickbg0.svg",
-            "jumpkickbg1.svg",
-            "jumpkickbg2.svg",
-            "jumpkickbg3.svg",
-            "jumpkickbg4.svg",
+            ...bgImageNames
         ]
         for (const name of imageNames) {
             const image = new Image(1, 1);
@@ -75,7 +80,7 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
             0
         ];
         for (let i = parallaxMult.length-1; i >= 0; i--) {
-            ctx.drawImage(this.images[`jumpkickbg${i}.svg`],
+            ctx.drawImage(this.images[bgImageNames[i]],
             Math.round(Number(this.lastState.viewport.x)*parallaxMult[i]), Number(this.lastState.viewport.y), Number(this.lastState.viewport.width), Number(this.lastState.viewport.height),
             0, 0, Number(JumpKickConsts.width), Number(JumpKickConsts.height));
         }

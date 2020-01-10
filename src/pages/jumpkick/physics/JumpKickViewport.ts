@@ -19,13 +19,13 @@ export class JumpKickViewport implements IPhysicsObject {
         } else if (this.x.plus(this.width).gt(JumpKickConsts.worldWidth)) {
             this.x = JumpKickConsts.worldWidth.minus(this.width);
         }
-        this.y = Big(65);
+        this.y = JumpKickConsts.worldHeight.sub(this.height).add("25");
     }
 
     public serialize() {
         return {
-            x: this.x.toFixed(),
-            y: this.y.toFixed(),
+            x: this.x.toFixed(0),
+            y: this.y.toFixed(0),
             width: this.width.toFixed(),
             height: this.height.toFixed(),
         }

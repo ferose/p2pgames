@@ -32,7 +32,7 @@ export class JumpKickGameState implements IPhysicsObject {
 
     public viewport = new JumpKickViewport();
     public frameNumber = 0;
-    public groundY = JumpKickConsts.height.minus(40);
+    public groundY = JumpKickConsts.height.minus("-25");
     public gravityAY = Big("0.0002");
 
     private static instance: JumpKickGameState;
