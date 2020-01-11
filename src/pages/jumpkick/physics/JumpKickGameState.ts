@@ -5,8 +5,8 @@ import { JumpKickViewport } from "./JumpKickViewport";
 import Big from 'big.js';
 
 const playerStartDistance = Big(180);
-const playerWidth = Big(70);
-const playerHeight = Big(70);
+const playerWidth = Big(105);
+const playerHeight = Big(105);
 
 const worldCenter = JumpKickConsts.worldWidth.div(2);
 const leftPlayerX = worldCenter.minus(playerWidth.div(2)).minus(playerStartDistance.div(2));
@@ -32,7 +32,7 @@ export class JumpKickGameState implements IPhysicsObject {
 
     public viewport = new JumpKickViewport();
     public frameNumber = 0;
-    public groundY = JumpKickConsts.height.minus("-25");
+    public groundY = JumpKickConsts.height.minus("-35");
     public gravityAY = Big("0.0002");
 
     private static instance: JumpKickGameState;
