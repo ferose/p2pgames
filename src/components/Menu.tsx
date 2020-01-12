@@ -4,17 +4,21 @@ import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEnvelope, faGamepad } from '@fortawesome/free-solid-svg-icons'
+import { faEnvelope, faGamepad, faExpand } from '@fortawesome/free-solid-svg-icons'
 import { makeConditionalLink } from './ConditionalLink';
+import { RootState } from '../RootReducer';
+import { connect } from 'react-redux';
 
 interface IMenuProps {
     onHide: () => void;
     show: boolean;
+    gameName?: string;
 }
 
 const ConditionalItem = makeConditionalLink(ListGroup.Item) as typeof ListGroup.Item;
 
-const Menu: React.FC<IMenuProps> = (props) => {
+const MenuClass: React.FC<IMenuProps> = (props) => {
+    const rootDiv = document.getElementById("root");
     return (
         <Modal
             onHide={props.onHide}
@@ -28,6 +32,17 @@ const Menu: React.FC<IMenuProps> = (props) => {
             Menu
             </Modal.Title>
         </Modal.Header>
+
+        {props.gameName && rootDiv && rootDiv.requestFullscreen &&
+            <Modal.Body>
+                <ListGroup>
+                    <ConditionalItem action onClick={() => rootDiv.requestFullscreen()}>
+                        <FontAwesomeIcon className="link-icon" icon={faExpand} fixedWidth/> Fullscreen
+                    </ConditionalItem>
+                </ListGroup>
+            </Modal.Body>
+        }
+
         <Modal.Body>
             <ListGroup>
                 <ConditionalItem action href="/" target="_blank">
@@ -45,4 +60,8 @@ const Menu: React.FC<IMenuProps> = (props) => {
     );
 }
 
-export default Menu;
+export default connect((state:RootState) => {
+    return {
+        gameName: state.general.gameName,
+    }
+}, {})(MenuClass);
