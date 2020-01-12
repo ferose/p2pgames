@@ -103,6 +103,8 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
 
             ctx.restore();
 
+            // ctx.save();
+
             // const {hitbox, hurtbox, headbox} = player;
             // ctx.fillStyle = "rgb(0,0,255,0.3)";
             // ctx.fillRect(Number(hitbox.left), Number(hitbox.top), Number(hitbox.right)-Number(hitbox.left), Number(hitbox.bottom)-Number(hitbox.top));

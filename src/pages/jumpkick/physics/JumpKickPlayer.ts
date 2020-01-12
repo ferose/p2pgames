@@ -89,10 +89,10 @@ export class JumpKickPlayer implements IPhysicsObject{
         }
         const hitbox = this.getHitBox();
         const hurtbox = player.getHurtBox();
-        return hurtbox.right < hitbox.right &&
-            hurtbox.right > hitbox.left &&
-            hurtbox.bottom < hitbox.bottom &&
-            hurtbox.bottom > hitbox.top;
+        return hurtbox.right.lt(hitbox.right) &&
+               hurtbox.right.gt(hitbox.left) &&
+               hurtbox.bottom.lt(hitbox.bottom) &&
+               hurtbox.bottom.gt(hitbox.top);
     }
 
     public step(dt:Big) {
@@ -116,10 +116,10 @@ export class JumpKickPlayer implements IPhysicsObject{
         this.y = this.y.add(this.vy.mul(dt2));
 
         const {viewport} = gameState;
-        if (this.x.plus(JumpKickConsts.hitbox.x) < viewport.x && this.vx < BigMath.zero) {
+        if (this.x.plus(JumpKickConsts.hitbox.x).lt(viewport.x) && this.vx.lt(BigMath.zero)) {
             this.x = viewport.x.minus(JumpKickConsts.hitbox.x);
         }
-        else if (this.x.minus(JumpKickConsts.hitbox.x).plus(JumpKickConsts.playerWidth) > viewport.x.plus(viewport.width) && this.vx > BigMath.zero) {
+        else if (this.x.minus(JumpKickConsts.hitbox.x).plus(JumpKickConsts.playerWidth).gt(viewport.x.plus(viewport.width)) && this.vx.gt(BigMath.zero)) {
             this.x = viewport.x.plus(viewport.width).minus(JumpKickConsts.playerWidth).plus(JumpKickConsts.hitbox.x);
         }
 
