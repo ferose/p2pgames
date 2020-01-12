@@ -10,16 +10,16 @@ import { JumpKickInputType } from "./JumpKickStateInterface";
     onmessage = function(e) {
         switch (e.data) {
             case JumpKickInputType.leftJump:
-                gameState.leftPlayer.jump();
+                gameState.redPlayer.jump();
                 break;
             case JumpKickInputType.rightJump:
-                gameState.rightPlayer.jump();
+                gameState.bluePlayer.jump();
                 break;
             case JumpKickInputType.leftKick:
-                gameState.leftPlayer.kick();
+                gameState.redPlayer.kick();
                 break;
             case JumpKickInputType.rightKick:
-                gameState.rightPlayer.kick();
+                gameState.bluePlayer.kick();
                 break;
         }
     }

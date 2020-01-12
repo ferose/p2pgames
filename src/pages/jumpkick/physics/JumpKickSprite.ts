@@ -7,6 +7,7 @@ const frameCounts = {
     Kick: 3,
     Idle: 12,
     Jump: 6,
+    Die: 6,
 }
 
 export class JumpKickSprite implements IPhysicsObject {
@@ -30,7 +31,7 @@ export class JumpKickSprite implements IPhysicsObject {
             this.frame = 0;
             // TODO remove after finishing spritesheet
             if (this.spriteName === "Kick") {
-                this.frame = 1;
+                this.frame = 0;
             }
         }
     }

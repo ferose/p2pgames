@@ -5,28 +5,22 @@ import { JumpKickViewport } from "./JumpKickViewport";
 import Big from 'big.js';
 
 const playerStartDistance = Big(180);
-const playerWidth = Big(105);
-const playerHeight = Big(105);
 
 const worldCenter = JumpKickConsts.worldWidth.div(2);
-const leftPlayerX = worldCenter.minus(playerWidth.div(2)).minus(playerStartDistance.div(2));
-const rightPlayerX = worldCenter.minus(playerWidth.div(2)).plus(playerStartDistance.div(2));
+const leftPlayerX = worldCenter.minus(JumpKickConsts.playerWidth.div(2)).minus(playerStartDistance.div(2));
+const rightPlayerX = worldCenter.minus(JumpKickConsts.playerWidth.div(2)).plus(playerStartDistance.div(2));
 
 export class JumpKickGameState implements IPhysicsObject {
-    public leftPlayer = new JumpKickPlayer({
+    public redPlayer = new JumpKickPlayer({
         x: leftPlayerX,
         y: Big(10),
-        width: playerWidth,
-        height: playerHeight,
-        type: JumpKickPlayerType.LeftPlayer,
+        type: JumpKickPlayerType.RedPlayer,
         flip: false,
     });
-    public rightPlayer = new JumpKickPlayer({
+    public bluePlayer = new JumpKickPlayer({
         x: rightPlayerX,
         y: Big(10),
-        width: playerWidth,
-        height: playerHeight,
-        type: JumpKickPlayerType.RightPlayer,
+        type: JumpKickPlayerType.BluePlayer,
         flip: true,
     });
 
@@ -49,16 +43,35 @@ export class JumpKickGameState implements IPhysicsObject {
     }
 
     public getOpponent(player: JumpKickPlayer) {
-        return player === this.leftPlayer ? this.rightPlayer : this.leftPlayer;
+        return player === this.redPlayer ? this.bluePlayer : this.redPlayer;
+    }
+
+    private handleCollision() {
+        let redHit = false;
+        let blueHit = false;
+        if (this.redPlayer.isHitWith(this.bluePlayer)) {
+            redHit = true;
+        }
+        if (this.bluePlayer.isHitWith(this.redPlayer)) {
+            blueHit = true;
+        }
+        if (redHit) {
+            this.redPlayer.die();
+        }
+        if (blueHit) {
+            this.bluePlayer.die();
+        }
     }
 
     public step(dt:Big) {
         this.frameNumber++;
 
-        const players = [this.leftPlayer, this.rightPlayer];
+        const players = [this.redPlayer, this.bluePlayer];
         for (const player of players) {
             player.step(dt);
         }
+
+        this.handleCollision();
 
         this.viewport.step(dt);
     }
@@ -66,8 +79,8 @@ export class JumpKickGameState implements IPhysicsObject {
     public serialize() {
         return {
             frameNumber: this.frameNumber,
-            redPlayer: this.leftPlayer.serialize(),
-            bluePlayer: this.rightPlayer.serialize(),
+            redPlayer: this.redPlayer.serialize(),
+            bluePlayer: this.bluePlayer.serialize(),
             groundY: Number(this.groundY),
             viewport: this.viewport.serialize(),
         }

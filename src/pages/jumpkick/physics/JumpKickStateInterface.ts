@@ -13,6 +13,6 @@ export enum JumpKickInputType {
 }
 
 export enum JumpKickPlayerType {
-    LeftPlayer,
-    RightPlayer,
+    RedPlayer,
+    BluePlayer,
 }

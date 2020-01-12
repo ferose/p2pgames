@@ -35,7 +35,8 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
         this.physicsWorker.addEventListener("message", this.onMessage);
 
         const imageNames = [
-            "texture.png",
+            "texture_red.png",
+            "texture_blue.png",
             ...bgImageNames
         ]
         for (const name of imageNames) {
@@ -95,10 +96,25 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
             if (player.flip) {
                 ctx.scale(-1, 1);
             }
-            ctx.drawImage(this.images["texture.png"],
+            const texture = player === this.lastState.redPlayer ? "texture_red.png" : "texture_blue.png";
+            ctx.drawImage(this.images[texture],
                 Number(s.x), Number(s.y), Number(s.w), Number(s.h),
                 scaleX*Number(player.x), Number(player.y), scaleX*Number(s.w), Number(s.h));
+
             ctx.restore();
+
+            // const {hitbox, hurtbox, headbox} = player;
+            // ctx.fillStyle = "rgb(0,0,255,0.3)";
+            // ctx.fillRect(Number(hitbox.left), Number(hitbox.top), Number(hitbox.right)-Number(hitbox.left), Number(hitbox.bottom)-Number(hitbox.top));
+
+            // ctx.fillStyle = "rgb(255,0,0,0.3)";
+            // ctx.fillRect(Number(hurtbox.left), Number(hurtbox.top), Number(hurtbox.right)-Number(hurtbox.left), Number(hurtbox.bottom)-Number(hurtbox.top));
+
+            // ctx.fillStyle = "rgb(0,255,0,0.3)";
+            // ctx.fillRect(Number(headbox.left), Number(headbox.top), Number(headbox.right)-Number(headbox.left), Number(headbox.bottom)-Number(headbox.top));
+
+            // ctx.restore();
+
         }
 
 
