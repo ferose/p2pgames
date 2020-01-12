@@ -41,7 +41,7 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
         ]
         for (const name of imageNames) {
             const image = new Image(1, 1);
-            image.src = "img/" + name;
+            image.src = "img/jumpkick/" + name;
             this.images[name] = image;
         }
     }
