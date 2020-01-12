@@ -10,7 +10,7 @@ import { RootState } from '../RootReducer';
 export function makeConditionalLink(componentClass: typeof React.Component) {
     return connect((state:RootState) => {
         return {
-            target: state.general.inGame ? "_blank" : "_self",
+            target: state.general.gameName ? "_blank" : "_self",
         }
     }, {})(componentClass) as any;
 }

@@ -1,12 +1,12 @@
 import { Actions } from '../ActionHelper';
 
-export type SetInGameAction = ReturnType<typeof setInGameAction>;
+export type SetGameNameAction = ReturnType<typeof setGameNameAction>;
 
-export function setInGameAction(inGame: boolean) {
+export function setGameNameAction(gameName: string) {
     return {
-        type: Actions.IN_GAME,
+        type: Actions.GAME_NAME,
         data: {
-            inGame
+            gameName
         }
     }
 }

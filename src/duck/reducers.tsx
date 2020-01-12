@@ -1,11 +1,11 @@
 import { IAction, Actions } from '../ActionHelper';
 
 export function generalReducer(state={
-    inGame: false
+    gameName: undefined
 }, action: IAction<any, any>) {
     switch(action.type) {
-        case Actions.IN_GAME:
-            return {...state, inGame: action.data.inGame};
+        case Actions.GAME_NAME:
+            return {...state, gameName: action.data.gameName};
         default:
             return state;
     }

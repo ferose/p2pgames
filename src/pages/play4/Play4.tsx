@@ -7,7 +7,7 @@ import ConnectionPrompt from '../../components/ConnectionPrompt';
 import { UserManager, UserStateType } from '../../networking/UserManager';
 import { RootState } from '../../RootReducer';
 import { store } from '../../Store';
-import { setInGameAction } from '../../duck/actions';
+import { setGameNameAction } from '../../duck/actions';
 
 interface IPlay4Props {
     message: JSX.Element;
@@ -15,6 +15,8 @@ interface IPlay4Props {
 }
 interface IPlay4State {
 }
+
+export const PLAY4_ID = "play4";
 
 class Play4Class extends React.Component<IPlay4Props, IPlay4State> {
     private userManager: UserManager;
@@ -44,7 +46,7 @@ class Play4Class extends React.Component<IPlay4Props, IPlay4State> {
     }
 
     componentDidMount() {
-        store.dispatch(setInGameAction(true));
+        store.dispatch(setGameNameAction(PLAY4_ID));
     }
 
     componentWillUnmount() {

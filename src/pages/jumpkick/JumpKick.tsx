@@ -6,7 +6,7 @@ import { JumpKickSerializedGameState } from './physics/JumpKickGameState';
 import { JumpKickInputType } from './physics/JumpKickStateInterface';
 import Texture from './texture.json';
 import { store } from '../../Store';
-import { setInGameAction } from '../../duck/actions';
+import { setGameNameAction } from '../../duck/actions';
 import { ObjectWithValues } from '../../utilities/Types';
 
 interface IJumpKickProps {}
@@ -20,6 +20,7 @@ const bgImageNames = [
     "jumpkickbg4.svg",
 ]
 
+export const JUMPKICK_ID = "jumpkick";
 
 export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
     private canvasRef: React.RefObject<HTMLCanvasElement>;
@@ -130,7 +131,7 @@ export class JumpKick extends React.Component<IJumpKickProps, IJumpKickState> {
     componentDidMount() {
         window.requestAnimationFrame(this.draw);
         window.addEventListener("keydown", this.onKeyDown);
-        store.dispatch(setInGameAction(true));
+        store.dispatch(setGameNameAction(JUMPKICK_ID));
     }
 
     componentWillUnmount() {

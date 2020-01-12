@@ -5,7 +5,7 @@ export enum Actions {
     ALERT_MESSAGE = 'ALERT_MESSAGE',
     USER_STATE = 'USER_STATE',
     PLAYER_NUMBER = 'PLAYER_NUMBER',
-    IN_GAME = 'IN_GAME',
+    GAME_NAME = 'GAME_NAME',
 }
 
 export interface IAction<TTypeName, TAction> {

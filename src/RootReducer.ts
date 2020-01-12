@@ -7,7 +7,7 @@ import { generalReducer } from './duck/reducers';
 
 export type RootState = {
     general: {
-        inGame: boolean,
+        gameName?: string,
     }
     network: {
         userState: UserStateType,
